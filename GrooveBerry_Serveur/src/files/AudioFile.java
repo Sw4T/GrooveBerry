@@ -14,7 +14,6 @@ public class AudioFile implements Runnable
 	private boolean running, mute, pause, loop, restart;
 	private final int byteChunkSize = 4096;//number of bytes to read at one time
 	private byte[] muteData;
-	
 
 	public AudioFile() 
 	{
