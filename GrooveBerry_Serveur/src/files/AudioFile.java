@@ -8,12 +8,13 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
 
-public class AudioFile implements Runnable 
+public class AudioFile implements Runnable
 {
 	private File file;
 	private boolean running, mute, pause, loop, restart;
 	private final int byteChunkSize = 4096;//number of bytes to read at one time
 	private byte[] muteData;
+	private AudioListener listenerEvent;
 
 	public AudioFile() 
 	{
@@ -66,6 +67,21 @@ public class AudioFile implements Runnable
 			}
 		}
 	}
+	
+	/**
+	 * Ajoute un listener au fichier audio
+	 * @param listener
+	 */
+	public void addListener(AudioListener listener)
+	{
+	 	this.listenerEvent = listener;
+	}
+	
+	public void removeListener() 
+	{
+		this.listenerEvent = null;
+	}
+	
 	/**
 	* Pauses the audio at its current place. Calling this method once pauses the audio stream, calling it
 	* again unpauses the audio stream.
@@ -73,7 +89,7 @@ public class AudioFile implements Runnable
 	public void pause() 
 	{
 		if (file != null) {
-			if (pause)
+			if (pause) 
 				pause = false;
 			else
 				pause = true;
@@ -96,7 +112,7 @@ public class AudioFile implements Runnable
 	*/
 	public void mute()
 	{
-		if(file != null) {
+		if (file != null) {
 			if (mute)
 				mute = false;
 			else
@@ -162,7 +178,7 @@ public class AudioFile implements Runnable
 	* Returns if a file is loaded or not.
 	* @return File status of null or a file.
 	*/
-	public boolean isLoaded(){
+	public boolean isLoaded() {
 		if (file == null)
 			return false;
 		else
@@ -193,6 +209,8 @@ public class AudioFile implements Runnable
 				in.close();
 			} while((loop || restart) && running);
 			running = false;
+			if (this.listenerEvent != null)
+				this.listenerEvent.endOfPlay();
 		} catch(Exception e) {
 			System.err.println("Problem getting audio stream!");
 			e.printStackTrace();
@@ -206,7 +224,7 @@ public class AudioFile implements Runnable
 	*/
 	private void stream(AudioFormat targetFormat, AudioInputStream din)
 	{
-		try{
+		try {
 			byte[] data = new byte[byteChunkSize];
 			SourceDataLine line = getLine(targetFormat);
 			if (line != null) 
