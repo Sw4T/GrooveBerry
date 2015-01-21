@@ -1,28 +1,33 @@
 package com.example.grooveberry;
 
+
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarActivity; //Faut virer ça
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class PlayActivity extends ActionBarActivity implements OnClickListener {
 	
-	Button play, stop;
-	TextView musicStatus,musicName;
+	private ImageButton play, stop, pause, previous, next;
+	private TextView musicStatus,musicName;
+	private boolean isPlaying = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_play);
 		
-		this.play = (Button) findViewById(R.id.button1);
-		this.stop = (Button) findViewById(R.id.button2);
+		this.play = (ImageButton) findViewById(R.id.playButton);
+		this.stop = (ImageButton) findViewById(R.id.stopButton);
+		this.next = (ImageButton) findViewById(R.id.nextButton);
+		this.previous = (ImageButton) findViewById(R.id.previousButton);
 		this.musicStatus = (TextView) findViewById(R.id.textView1);
 		this.musicName = (TextView) findViewById(R.id.textView2);
 		
@@ -44,7 +49,8 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
-			return true;
+			Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);  
 		}
 		if (id == R.id.action_exit) {
 			android.os.Process.killProcess(android.os.Process.myPid());
@@ -57,15 +63,28 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 	public void onClick (View view) {
 		
 		switch (view.getId()) {
-		case R.id.button1 : 
-			this.musicStatus.setText("Playing !");
-			this.musicName.setTextColor(Color.GREEN);
-			
-			
+		case R.id.playButton : 
+			if (!this.isPlaying)
+			{
+				this.play.setImageResource(R.drawable.ic_tab_play_selected);
+				this.musicStatus.setText("Playing !");
+				this.musicName.setTextColor(Color.GREEN);
+				this.isPlaying = true;
+			}
+			else
+			{
+				this.play.setImageResource(R.drawable.ic_tab_pause_selected);
+				this.musicStatus.setText("Pause.");
+				this.musicName.setTextColor(Color.YELLOW);
+				this.isPlaying = false;;
+			}
+
 			break;
-		case R.id.button2 :
+		case R.id.stopButton :
 			this.musicStatus.setText("Music stopped.");
 			this.musicName.setTextColor(Color.RED);
+			this.isPlaying = false;
+			this.play.setImageResource(R.drawable.ic_tab_play_selected);
 			break;
 		}
 		
