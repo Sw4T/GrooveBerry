@@ -1,4 +1,4 @@
-package tests;
+package files;
 
 import static org.junit.Assert.*;
 
@@ -14,7 +14,7 @@ public class AudioFileTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		audioFile = new AudioFile("audio/Bob Marley - Jammin.mp3");
+		audioFile = new AudioFile("audio/test.wav"); //Durée de moins de 5 secondes
 	}
 
 	@After
@@ -24,6 +24,8 @@ public class AudioFileTest {
 
 	@Test
 	public void test_mute() {
+		audioFile.play();
+		assertEquals(true, audioFile.isPlaying());
 		audioFile.mute();
 		assertEquals(true, audioFile.isMuted());
 		audioFile.mute();
@@ -31,11 +33,22 @@ public class AudioFileTest {
 	}
 	
 	@Test
-	public void test_play() {
+	public void test_play() throws InterruptedException {
 		audioFile.play();
 		assertEquals(true, audioFile.isPlaying());
-		audioFile.stop();
+		Thread.sleep(5000);
 		assertEquals(false, audioFile.isPlaying());
+	}
+	
+	@Test
+	public void test_loop() throws InterruptedException {
+		audioFile.play();
+		assertEquals(true, audioFile.isPlaying());
+		audioFile.loop();
+		assertEquals(true, audioFile.isPlaying());
+		assertEquals(true, audioFile.isLooping());
+		Thread.sleep(5000);
+		assertEquals(true, audioFile.isPlaying());
 	}
 
 }
