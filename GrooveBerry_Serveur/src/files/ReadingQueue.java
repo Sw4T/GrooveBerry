@@ -2,7 +2,7 @@ package files;
 
 import java.util.LinkedList;
 
-public class ReadingQueue {
+public class ReadingQueue implements AudioListener {
 
 	private	AudioFile playingTrack;
 	
@@ -16,6 +16,7 @@ public class ReadingQueue {
 		this.queue.add(track);
 		
 		this.playingTrack = track;
+		this.playingTrack.addListener(this);
 	}
 	
 	public void clearQueue() {
@@ -78,6 +79,13 @@ public class ReadingQueue {
 	public AudioFile getPlayingTrack() {
 		return playingTrack;
 	}
+
+	@Override
+	public void endOfPlay() {
+		next();	
+		this.playingTrack.play();
+	}
+
 	
 	
 }

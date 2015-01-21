@@ -113,5 +113,18 @@ public class ReadingQueueTest {
 		this.readingQueue.clearQueue();
 		assertEquals(null, this.readingQueue.getPlayingTrack());
 	}
+	
+	@Test
+	public void testPlaying() {
+		this.readingQueue = new ReadingQueue();
+		
+		this.readingQueue.addLast(audioFileTest);
+		this.readingQueue.addLast(audioFileTest2);
+		
+		audioFileTest.play();
+		this.readingQueue.getPlayingTrack().play();
+		
+	}
+	
 
 }
