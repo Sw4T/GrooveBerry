@@ -9,5 +9,18 @@
     <string name="stopbutton">Stop</string>
     <string name="playstatus">Tap "Play" to launch your music !"</string>
     <string name="musicname">Music Name // 00:00:00</string>
+    <string name="grooveBerryLogoDesc">GrooveBerry</string>
+    <string name="stopButtonDesc">Stop Button</string>
+    <string name="playButtonDesc">Play Button</string>
+    <string name="previousButtonDesc">Previous Button</string>
+    <string name="nextButtonDesc">Next Button</string>
+    
+    
+    <string name="title_activity_menu">Main menu</string>
+    <string name="title_section1">Launch your music</string>
+    <string name="title_section2">Connection</string>
+    <string name="title_section3">Section 3</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
 </resources>

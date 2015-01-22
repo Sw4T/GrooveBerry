@@ -6,31 +6,13 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.grooveberry.PlayActivity" >
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/button1"
-        android:layout_centerHorizontal="true"
-        android:text="@string/stopbutton" />
-
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button2"
-        android:layout_alignStart="@+id/button2"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="165dp"
-        android:text="@string/playbutton" />
+    tools:context=".PlayActivity" >
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button2"
+        android:layout_below="@+id/playButton"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="35dp"
         android:text="@string/playstatus"
@@ -53,6 +35,48 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="72dp"
-        android:src="@drawable/ic_launcher" />
+        android:src="@drawable/ic_launcher" 
+        android:contentDescription="@string/grooveBerryLogoDesc"/>
+
+    <ImageButton
+        android:id="@+id/nextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView1"
+        android:layout_toRightOf="@+id/playButton"
+        android:layout_toEndOf="@+id/playButton"
+        android:src="@drawable/ic_tab_next_selected" 
+        android:contentDescription="@string/nextButtonDesc"/>
+
+    <ImageButton
+        android:id="@+id/stopButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/playButton"
+        android:layout_toRightOf="@+id/previousButton"
+        android:layout_toEndOf="@+id/previousButton"
+        android:contentDescription="@string/stopButtonDesc"
+        android:src="@drawable/ic_tab_stop_selected" />
+
+    <ImageButton
+        android:id="@+id/playButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView1"
+        android:layout_marginTop="56dp"
+        android:layout_toRightOf="@+id/stopButton"
+        android:layout_toEndOf="@+id/stopButton"
+        android:contentDescription="@string/playButtonDesc"
+        android:src="@drawable/ic_tab_play_selected" />
+
+    <ImageButton
+        android:id="@+id/previousButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView1"
+        android:layout_marginStart="50dp"
+        android:layout_marginLeft="50dp"
+        android:src="@drawable/ic_tab_previous_selected"
+        android:contentDescription="@string/previousButtonDesc" />
 
 </RelativeLayout>
