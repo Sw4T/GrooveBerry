@@ -5,7 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity; //Faut virer ça
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +34,7 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		this.play.setOnClickListener(this);
 		this.stop.setOnClickListener(this);
 	}
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -41,29 +42,36 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		getMenuInflater().inflate(R.menu.play, menu);
 		return true;
 	}
-
+	
+	@SuppressLint("NewApi")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
+		Intent intent;
 		if (id == R.id.action_settings) {
-			Intent intent = new Intent(this, SettingsActivity.class);
+			intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);  
 		}
-		if (id == R.id.action_exit) {
-			android.os.Process.killProcess(android.os.Process.myPid());
-            System.exit(1);
+		if (id == R.id.action_connect) {
+			intent = new Intent(this,ConnectActivity.class);
+			startActivity(intent);
 		}
+		if (id == R.id.action_exit) {
+			finish();
+		}
+
 		return super.onOptionsItemSelected(item);
 	}
 	
 	@SuppressLint("NewApi")
 	public void onClick (View view) {
 		
-		switch (view.getId()) {
-		case R.id.playButton : 
+		switch(view.getId())
+		{
+		case R.id.playButton :
 			if (!this.isPlaying)
 			{
 				this.play.setImageResource(R.drawable.ic_tab_play_selected);
@@ -78,7 +86,6 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 				this.musicName.setTextColor(Color.YELLOW);
 				this.isPlaying = false;;
 			}
-
 			break;
 		case R.id.stopButton :
 			this.musicStatus.setText("Music stopped.");
