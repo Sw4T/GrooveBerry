@@ -39,7 +39,7 @@ public class AudioFile implements Runnable
 	* @param filePath Path to the file.
 	* @return If the file is loaded or not.
 	*/
-	private boolean loadFile(String filePath) 
+	public boolean loadFile(String filePath) 
 	{
 		file = new File(filePath);
 		if (file.exists() && !running) {
@@ -72,13 +72,11 @@ public class AudioFile implements Runnable
 	 * Ajoute un listener au fichier audio
 	 * @param listener
 	 */
-	public void addListener(AudioListener listener)
-	{
+	public void addListener(AudioListener listener) {
 	 	this.listenerEvent = listener;
 	}
 	
-	public void removeListener() 
-	{
+	public void removeListener() {
 		this.listenerEvent = null;
 	}
 	
