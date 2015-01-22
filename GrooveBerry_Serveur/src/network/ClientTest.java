@@ -93,4 +93,8 @@ public class ClientTest {
 		System.out.println("6. Loop");
 		System.out.println("7. Exit");
 	}
+	
+	public Socket getSocket() {
+		return this.socket;
+	}
 }
