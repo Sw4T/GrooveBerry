@@ -8,11 +8,30 @@ import java.util.Scanner;
 
 public class ClientTest {
 
+	private Socket socket;
+	private PrintWriter printer;
+	public final static String fileToTest = "audio/Bob Marley - Jammin.mp3";
+	
+	public void connectionServer() {
+		try {
+			this.socket = new Socket("localhost", Server.SERVER_PORT);
+			this.printer = new PrintWriter(socket.getOutputStream(), true);
+		} catch (IOException e) {
+			e.printStackTrace();
+			this.socket = null;
+		}
+	}
+	
+	public void sendString(String str) {
+		if (this.printer != null)
+			printer.println(str);
+	}
+	
 	//Main du client Android ici simulé 
 	public static void main (String [] args) {
 		Socket socket = null;
 		Scanner scan = new Scanner(System.in);
-		int entreeUser = 0; String constanteTraitement = null;
+		int entreeUser = 0; String treatment = null;
 		
 		try {
 			//Connexion au serveur
@@ -22,19 +41,19 @@ public class ClientTest {
 			
 			//Envoi de la chaine correspondant au chemin du fichier pouvant etre lu sur le serveur
 			PrintWriter printer = new PrintWriter(socket.getOutputStream(), true);
-			printer.println("audio/Bob Marley - Jammin.mp3");
+			printer.println(fileToTest);
 			
 			//Envoi de chaines définissant des constantes au serveur
 			do {
 				showMenu();
 				try {
 					entreeUser = scan.nextInt();
-					constanteTraitement = convertIntToMusicConst(entreeUser);
+					treatment = convertIntToMusicConst(entreeUser);
 				} catch (InputMismatchException inputFail) {
-					constanteTraitement = "";
+					treatment = "";
 				}
-				if (!constanteTraitement.equals(""))
-					printer.println(constanteTraitement);
+				if (!treatment.equals(""))
+					printer.println(treatment);
 			} while (entreeUser != 7);
 			
 			//Fermeture de la connexion avec le serveur
