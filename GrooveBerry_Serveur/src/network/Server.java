@@ -57,7 +57,7 @@ public class Server {
 			constant = bufferRead.readLine();
 			execute(audioFileToPlay, constant);
 		} while (!constant.equals("exit"));
-		
+		System.out.println("Serveur déconnecté !");
 	}
 	
 	public void execute(AudioFile file, String constant) throws IOException 
