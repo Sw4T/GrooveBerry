@@ -10,7 +10,7 @@
     <string name="playstatus">Tap "Play" to launch your music !"</string>
     <string name="musicname">Music Name // 00:00:00</string>
     <string name="grooveBerryLogoDesc">GrooveBerry</string>
-    <string name="stopButtonDesc">Stop Button</string>
+    <string name="pauseButtonDesc">Pause Button</string>
     <string name="playButtonDesc">Play Button</string>
     <string name="previousButtonDesc">Previous Button</string>
     <string name="nextButtonDesc">Next Button</string>

@@ -398,6 +398,7 @@ int id never 0x7f0a0017
 int id nextButton 0x7f0a0046
 int id none 0x7f0a000f
 int id normal 0x7f0a000b
+int id pauseButton 0x7f0a0047
 int id playButton 0x7f0a0043
 int id previousButton 0x7f0a0048
 int id progress_circular 0x7f0a0007
@@ -418,7 +419,6 @@ int id showCustom 0x7f0a0010
 int id showHome 0x7f0a0011
 int id showTitle 0x7f0a0012
 int id split_action_bar 0x7f0a0004
-int id stopButton 0x7f0a0047
 int id submit_area 0x7f0a003c
 int id tabMode 0x7f0a000c
 int id textView1 0x7f0a0042
@@ -488,6 +488,7 @@ int string musicname 0x7f0b0017
 int string navigation_drawer_close 0x7f0b0022
 int string navigation_drawer_open 0x7f0b0021
 int string nextButtonDesc 0x7f0b001c
+int string pauseButtonDesc 0x7f0b0019
 int string playButtonDesc 0x7f0b001a
 int string playbutton 0x7f0b0014
 int string playstatus 0x7f0b0016
@@ -506,7 +507,6 @@ int string pref_title_sync_frequency 0x7f0b0031
 int string pref_title_system_sync_settings 0x7f0b0032
 int string pref_title_vibrate 0x7f0b0037
 int string previousButtonDesc 0x7f0b001b
-int string stopButtonDesc 0x7f0b0019
 int string stopbutton 0x7f0b0015
 int string title_activity_connect 0x7f0b0023
 int string title_activity_menu 0x7f0b001d

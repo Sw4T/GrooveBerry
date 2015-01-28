@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,7 +16,7 @@ import android.widget.TextView;
 
 public class PlayActivity extends ActionBarActivity implements OnClickListener {
 	
-	private ImageButton play, stop, pause, previous, next;
+	private ImageButton play, pause, previous, next;
 	private TextView musicStatus,musicName;
 	private boolean isPlaying = false;
 
@@ -25,14 +26,14 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		setContentView(R.layout.activity_play);
 		
 		this.play = (ImageButton) findViewById(R.id.playButton);
-		this.stop = (ImageButton) findViewById(R.id.stopButton);
+		this.pause = (ImageButton) findViewById(R.id.pauseButton);
 		this.next = (ImageButton) findViewById(R.id.nextButton);
 		this.previous = (ImageButton) findViewById(R.id.previousButton);
 		this.musicStatus = (TextView) findViewById(R.id.textView1);
 		this.musicName = (TextView) findViewById(R.id.textView2);
 		
 		this.play.setOnClickListener(this);
-		this.stop.setOnClickListener(this);
+		this.pause.setOnClickListener(this);
 	}
 	
 
@@ -76,20 +77,30 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 			{
 				this.play.setImageResource(R.drawable.ic_tab_play_selected);
 				this.musicStatus.setText("Playing !");
+				ConnectActivity.printer.println("play");
+				Log.d("PlayActivity", "PA : play sent");
 				this.musicName.setTextColor(Color.GREEN);
+				this.play.setEnabled(false);
+				this.pause.setEnabled(true);
 				this.isPlaying = true;
 			}
-			else
-			{
-				this.play.setImageResource(R.drawable.ic_tab_pause_selected);
-				this.musicStatus.setText("Pause.");
-				this.musicName.setTextColor(Color.YELLOW);
-				this.isPlaying = false;;
-			}
+//			else
+//			{
+//				this.play.setImageResource(R.drawable.ic_tab_pause_selected);
+//				this.musicStatus.setText("Pause.");
+//				ConnectActivity.printer.println("pause");
+//				Log.d("PlayActivity", "PA : pause sent");
+//				this.musicName.setTextColor(Color.YELLOW);
+//				this.isPlaying = false;;
+//			}
 			break;
-		case R.id.stopButton :
+		case R.id.pauseButton :
 			this.musicStatus.setText("Music stopped.");
+			ConnectActivity.printer.println("pause");
+			Log.d("PlayActivity", "PA : pause sent");
 			this.musicName.setTextColor(Color.RED);
+			this.play.setEnabled(true);
+			this.pause.setEnabled(false);
 			this.isPlaying = false;
 			this.play.setImageResource(R.drawable.ic_tab_play_selected);
 			break;

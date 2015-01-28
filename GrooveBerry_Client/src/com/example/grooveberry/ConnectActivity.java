@@ -1,4 +1,4 @@
-package com.example.grooveberry;
+	package com.example.grooveberry;
 
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
@@ -24,14 +24,17 @@ public class ConnectActivity extends ActionBarActivity implements OnClickListene
 	private TextView connectionStatus;
 	private String serverIpAddress = "";
 	private boolean connected = false;
+	static Thread cThread;
 	private Handler handler = new Handler ();
+	public static PrintWriter printer;
+	public final static String fileToTest = "audio/Bob Marley - Jammin.mp3";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_connect);
 		
-		this.serverIpAddress = "192.168.1.10";
+		this.serverIpAddress = "192.168.1.12";
 		this.wifiConnect = (ImageButton) findViewById(R.id.wifiConnectButton);
 		this.wifiDisconnect = (ImageButton) findViewById(R.id.wifiDisconnectButton);
 		this.connectionStatus = (TextView) findViewById(R.id.connectionStatus);
@@ -72,15 +75,20 @@ public class ConnectActivity extends ActionBarActivity implements OnClickListene
 		case R.id.wifiConnectButton :
 			if (!connected) {
                 if (!serverIpAddress.equals("")) {
-                	Thread cThread = new Thread(new ClientThread());
-                    cThread.start();
+                	this.cThread = new Thread(new ClientThread());
+                    this.cThread.start();
+                    
                     this.connectionStatus.setText("Connected to "+this.serverIpAddress);
                 }
 			}
 			break;
 		case R.id.wifiDisconnectButton :
-				this.connected = false;
-				this.connectionStatus.setText("Disconnected");
+				if (connected) {
+					printer.println("exit");
+					this.connected = false;
+					this.connectionStatus.setText("Disconnected");
+				}
+				
 			break;
 		}
 	}
@@ -92,22 +100,38 @@ public class ConnectActivity extends ActionBarActivity implements OnClickListene
                 InetAddress serverAddr = InetAddress.getByName(serverIpAddress);
                 Socket socket = new Socket(serverAddr, 12345);
                 connected = true;
-                while (connected) {
+                if (connected) {
                     try {
-                        PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-                            // WHERE YOU ISSUE THE COMMANDS
+                        printer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+                        printer.println(fileToTest);
+                        Log.d("ConnectActivity", "CA : Sent " + fileToTest);
+                        while (connected) {
+                        	printer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+                        }
                             
-                            Log.d("ClientActivity", "C: Sent.");
+                        // WHERE YOU ISSUE THE COMMANDS
+                       
+                            //Log.d("ClientActivity", "C: Sent.");
                         
                     } catch (Exception e) {
                     }
                 }
+                stopThread(this);
                 socket.close();
             } catch (Exception e) {
                 connected = false;
             }
         }
         
+        private synchronized void stopThread(ClientThread clientThread)
+        {
+            if (clientThread != null)
+            {
+                clientThread = null;
+            }
+        }
+        
     }
-					
+	
+	
 }

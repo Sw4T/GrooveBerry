@@ -49,14 +49,14 @@
         android:contentDescription="@string/nextButtonDesc"/>
 
     <ImageButton
-        android:id="@+id/stopButton"
+        android:id="@+id/pauseButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/playButton"
         android:layout_toRightOf="@+id/previousButton"
         android:layout_toEndOf="@+id/previousButton"
-        android:contentDescription="@string/stopButtonDesc"
-        android:src="@drawable/ic_tab_stop_selected" />
+        android:contentDescription="@string/pauseButtonDesc"
+        android:src="@drawable/ic_tab_pause_selected" />
 
     <ImageButton
         android:id="@+id/playButton"
@@ -64,8 +64,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageView1"
         android:layout_marginTop="56dp"
-        android:layout_toRightOf="@+id/stopButton"
-        android:layout_toEndOf="@+id/stopButton"
+        android:layout_toRightOf="@+id/pauseButton"
+        android:layout_toEndOf="@+id/pauseButton"
         android:contentDescription="@string/playButtonDesc"
         android:src="@drawable/ic_tab_play_selected" />
 
