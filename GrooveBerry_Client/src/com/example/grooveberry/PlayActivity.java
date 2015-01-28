@@ -19,7 +19,8 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 	private ImageButton play, pause, previous, next;
 	private TextView musicStatus,musicName;
 	private boolean onPause = false;
-
+	private int activity_flag;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -34,9 +35,11 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		
 		this.play.setOnClickListener(this);
 		this.pause.setOnClickListener(this);
+		
 	}
 	
-
+	
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -58,6 +61,7 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		}
 		if (id == R.id.action_connect) {
 			intent = new Intent(this,ConnectActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			startActivity(intent);
 		}
 		if (id == R.id.action_exit) {
@@ -74,17 +78,20 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		{
 		case R.id.playButton :
 			this.play.setImageResource(R.drawable.ic_tab_play_selected);
+			Connection.getPrinter().println(MusicList.getFilePlaying());
 			if (!this.onPause)
 			{
-				ConnectActivity.printer.println("play");
+				Connection.getPrinter().println("play");
+				
 				Log.d("PlayActivity", "PA : play sent");
 			}
 			else 
 			{
-				ConnectActivity.printer.println("pause");
+				//ConnectActivity.printer.println("pause");
+				Connection.getPrinter().println("pause");
 				Log.d("PlayActivity", "PA : unpause sent");
 			}
-			this.musicStatus.setText("Playing !");
+			this.musicStatus.setText("Playing " + MusicList.getFilePlaying());
 			this.musicName.setTextColor(Color.GREEN);
 			this.play.setEnabled(false);
 			this.pause.setEnabled(true);
@@ -101,7 +108,7 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 			break;
 		case R.id.pauseButton :
 			this.musicStatus.setText("Music paused.");
-			ConnectActivity.printer.println("pause");
+			Connection.getPrinter().println("pause");
 			Log.d("PlayActivity", "PA : pause sent");
 			this.musicName.setTextColor(Color.RED);
 			this.play.setEnabled(true);
@@ -109,8 +116,28 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 			this.onPause = true;
 			this.play.setImageResource(R.drawable.ic_tab_play_selected);
 			break;
-		}
 		
+		case R.id.nextButton :
+			if (MusicList.getMusicNb() != MusicList.countMusicInList()) {
+				MusicList.nextMusic();
+				Connection.getPrinter().println("next");
+				this.musicName.setText("Playing " + MusicList.getFilePlaying());
+			}
+			else {
+				
+			}
+			break;
+		case R.id.previousButton : 
+			if (MusicList.getMusicNb() != 0) {
+				MusicList.previousMusic();
+				Connection.getPrinter().println("previous");
+				this.musicName.setText("Playing " + MusicList.getFilePlaying());
+			}
+			else {
+				this.previous.setEnabled(false);
+			}
+			break;
+		}
 			
 	}
 }

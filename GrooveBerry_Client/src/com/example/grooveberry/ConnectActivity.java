@@ -3,10 +3,9 @@
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
@@ -21,28 +20,37 @@ import android.widget.TextView;
 public class ConnectActivity extends ActionBarActivity implements OnClickListener {
 
 	private ImageButton wifiConnect, wifiDisconnect;
+	private Connection connection;
 	private TextView connectionStatus;
-	private String serverIpAddress = "";
-	private boolean connected = false;
+	//private String serverIpAddress = "";
+	//private boolean connected = false;
 	static Thread cThread;
 	private Handler handler = new Handler ();
-	public static PrintWriter printer;
-	public final static String fileToTest = "audio/Bob Marley - Jammin.mp3";
+	private MusicList musicList;
+	//public static PrintWriter printer;
+	//public final static String fileToTest = "audio/Bob Marley - Jammin.mp3";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_connect);
 		
-		this.serverIpAddress = "192.168.1.12";
+		//this.serverIpAddress = "192.168.1.12";
+		this.connection = new Connection ("192.168.1.12");
+		this.musicList = new MusicList();
+		
 		this.wifiConnect = (ImageButton) findViewById(R.id.wifiConnectButton);
 		this.wifiDisconnect = (ImageButton) findViewById(R.id.wifiDisconnectButton);
+		this.wifiConnect.setBackgroundColor(Color.TRANSPARENT);
+		this.wifiDisconnect.setBackgroundColor(Color.TRANSPARENT);
 		this.connectionStatus = (TextView) findViewById(R.id.connectionStatus);
 		
 		this.wifiConnect.setOnClickListener(this);
 		this.wifiDisconnect.setOnClickListener(this);
 	}
 
+	
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -63,8 +71,10 @@ public class ConnectActivity extends ActionBarActivity implements OnClickListene
 		}
 		if (id == R.id.action_play) {
 			intent = new Intent(this,PlayActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			startActivity(intent);
-			finish();
+			//finish();
+			
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -73,21 +83,31 @@ public class ConnectActivity extends ActionBarActivity implements OnClickListene
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.wifiConnectButton :
-			if (!connected) {
-                if (!serverIpAddress.equals("")) {
-                	this.cThread = new Thread(new ClientThread());
-                    this.cThread.start();
-                    
-                    this.connectionStatus.setText("Connected to "+this.serverIpAddress);
-                }
+//			if (!connected) {
+//                if (!serverIpAddress.equals("")) {
+//                	this.cThread = new Thread(new ClientThread());
+//                    this.cThread.start();
+//                    
+//                    this.connectionStatus.setText("Connected to "+this.serverIpAddress);
+//                }
+			
+			if (!this.connection.getConnected() && !this.connection.getServerIpAddress().equals("")) {
+				ConnectActivity.cThread = new Thread(new ClientThread());
+				ConnectActivity.cThread.start();
+				this.connectionStatus.setText("Connected to "+this.connection.getServerIpAddress());
 			}
 			break;
 		case R.id.wifiDisconnectButton :
-				if (connected) {
-					printer.println("exit");
-					this.connected = false;
-					this.connectionStatus.setText("Disconnected");
-				}
+//				if (connected) {
+//					printer.println("exit");
+//					this.connected = false;
+//					this.connectionStatus.setText("Disconnected");
+//				}
+			if (this.connection.getConnected()) {
+				this.connection.getPrinter().println("exit");
+				this.connection.setConnected(true);
+				this.connectionStatus.setText("Disconnected");
+			}
 				
 			break;
 		}
@@ -97,29 +117,25 @@ public class ConnectActivity extends ActionBarActivity implements OnClickListene
 		 
         public void run() {
             try {
-                InetAddress serverAddr = InetAddress.getByName(serverIpAddress);
-                Socket socket = new Socket(serverAddr, 12345);
-                connected = true;
-                if (connected) {
-                    try {
-                        printer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-                        printer.println(fileToTest);
-                        Log.d("ConnectActivity", "CA : Sent " + fileToTest);
-                        while (connected) {
-                        	printer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-                        }
-                            
-                        // WHERE YOU ISSUE THE COMMANDS
-                       
-                            //Log.d("ClientActivity", "C: Sent.");
-                        
-                    } catch (Exception e) {
-                    }
-                }
-                stopThread(this);
-                socket.close();
-            } catch (Exception e) {
-                connected = false;
+            	connection.connectToServer();
+            	if (connection.getConnected()) {
+            		try {
+            			connection.setPrinter(new PrintWriter(new BufferedWriter(new OutputStreamWriter(connection.getSocket().getOutputStream())), true));
+            			//connection.getPrinter().println(connection.getFilePlaying());
+            			Log.d("ConnectActivity", "CA : Sent " + musicList.getFilePlaying());
+	                    while (connection.getConnected()) {
+	                    	  connection.setPrinter(new PrintWriter(new BufferedWriter(new OutputStreamWriter(connection.getSocket().getOutputStream())), true));
+	                    }
+            		}
+            		catch (Exception e) {
+            			
+            		}
+            	}
+            	stopThread(this);
+            	connection.getSocket().close();
+            }
+            catch (Exception e) {
+            	connection.setConnected(false);
             }
         }
         
