@@ -74,6 +74,8 @@ public class ReadingQueue implements AudioListener {
 		if (trackIndex + 1 < this.queue.size()) {
 			if (this.currentTrack.isPlaying()) {
 				this.currentTrack.stop();
+				next();
+				this.currentTrack.play();
 			}
 			else {
 				this.currentTrack = this.queue.get(trackIndex + 1);
@@ -83,9 +85,11 @@ public class ReadingQueue implements AudioListener {
 		}
 	}
 	
+	// TODO
 	public void prev() {
 		int trackIndex = getCurrentTrackPosition();
 		if (trackIndex - 1 >= 0) {
+			this.currentTrack.stop();
 			this.currentTrack = this.queue.get(trackIndex - 1);
 			this.currentTrackIndex = trackIndex - 1;
 			this.currentTrack.addListener(this);
@@ -113,9 +117,16 @@ public class ReadingQueue implements AudioListener {
 			this.currentTrack.play();
 		}
 	}
+	
+	@Override
+	public void stopOfPlay() {
+		
+	}
 
 	public void setCurrentTrack(AudioFile track) {
 		this.currentTrack = track;		
 	}
+
+
 
 }

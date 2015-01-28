@@ -15,6 +15,7 @@ public class AudioFile implements Runnable
 	private final int byteChunkSize = 4096;//number of bytes to read at one time
 	private byte[] muteData;
 	private AudioListener listenerEvent;
+	private boolean isStopped;
 
 	public AudioFile() 
 	{
@@ -24,6 +25,7 @@ public class AudioFile implements Runnable
 		pause = false;
 		loop = false;
 		restart = false;
+		isStopped = false;
 		muteData = setMuteData();
 	}
 	
@@ -100,8 +102,12 @@ public class AudioFile implements Runnable
 	*/
 	public void stop() 
 	{
-		if (file != null) 
+		if (file != null) {
 			running = false;
+			isStopped = true;
+			if (this.listenerEvent != null)
+				this.listenerEvent.stopOfPlay();
+		}
 	}
 	
 	/**
@@ -207,8 +213,9 @@ public class AudioFile implements Runnable
 				in.close();
 			} while((loop || restart) && running);
 			running = false;
-			if (this.listenerEvent != null)
+			if (this.listenerEvent != null && !isStopped)
 				this.listenerEvent.endOfPlay();
+			isStopped = false;
 		} catch(Exception e) {
 			System.err.println("Problem getting audio stream!");
 			e.printStackTrace();
@@ -229,7 +236,7 @@ public class AudioFile implements Runnable
 			{
 				line.start();
 				int nBytesRead = 0;
-				while(nBytesRead != -1 && running && !restart) 
+				while(nBytesRead != -1 && running && !restart && !isStopped) 
 				{
 					nBytesRead = din.read(data, 0, data.length);
 					if(nBytesRead != -1)
