@@ -16,6 +16,7 @@ public class ConnectionServerApp {
 		server = new Server();
 		server.waitConnectionForTest();
 		client = new ClientTest();
+		client.connectionServer();
 	}
 
 	@After
@@ -26,11 +27,18 @@ public class ConnectionServerApp {
 	@Test
 	public void test_connection_ok() 
 	{
-		client.connectionServer();
 		assertEquals(true, client.getSocket().isConnected());
 		assertEquals(true, client.getSocket().isBound());
 		assertEquals(true, server.getSocket().isConnected());
 		assertEquals(true, server.getSocket().isBound());
+	}
+	
+	@Test
+	public void test_send_string_to_server() 
+	{
+		assertNotEquals(null, client.getSocket());
+		client.sendString("test");
+		assertEquals(server.getStringFromRemote(), "test");
 	}
 
 }
