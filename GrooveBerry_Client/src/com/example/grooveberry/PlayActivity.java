@@ -18,7 +18,7 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 	
 	private ImageButton play, pause, previous, next;
 	private TextView musicStatus,musicName;
-	private boolean isPlaying = false;
+	private boolean onPause = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,17 +73,22 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		switch(view.getId())
 		{
 		case R.id.playButton :
-			if (!this.isPlaying)
+			this.play.setImageResource(R.drawable.ic_tab_play_selected);
+			if (!this.onPause)
 			{
-				this.play.setImageResource(R.drawable.ic_tab_play_selected);
-				this.musicStatus.setText("Playing !");
 				ConnectActivity.printer.println("play");
 				Log.d("PlayActivity", "PA : play sent");
-				this.musicName.setTextColor(Color.GREEN);
-				this.play.setEnabled(false);
-				this.pause.setEnabled(true);
-				this.isPlaying = true;
 			}
+			else 
+			{
+				ConnectActivity.printer.println("pause");
+				Log.d("PlayActivity", "PA : unpause sent");
+			}
+			this.musicStatus.setText("Playing !");
+			this.musicName.setTextColor(Color.GREEN);
+			this.play.setEnabled(false);
+			this.pause.setEnabled(true);
+			
 //			else
 //			{
 //				this.play.setImageResource(R.drawable.ic_tab_pause_selected);
@@ -95,13 +100,13 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 //			}
 			break;
 		case R.id.pauseButton :
-			this.musicStatus.setText("Music stopped.");
+			this.musicStatus.setText("Music paused.");
 			ConnectActivity.printer.println("pause");
 			Log.d("PlayActivity", "PA : pause sent");
 			this.musicName.setTextColor(Color.RED);
 			this.play.setEnabled(true);
 			this.pause.setEnabled(false);
-			this.isPlaying = false;
+			this.onPause = true;
 			this.play.setImageResource(R.drawable.ic_tab_play_selected);
 			break;
 		}
