@@ -19,10 +19,10 @@ public class ConnectionServerApp {
 		client.connectionServer();
 	}
 
-	@After
+	/*@After
 	public void tearDownAfterClass() throws Exception {
 		client = null;
-	}
+	}*/
 
 	@Test
 	public void test_connection_ok() 
@@ -36,6 +36,8 @@ public class ConnectionServerApp {
 	@Test
 	public void test_send_string_to_server() 
 	{
+		if (client == null)
+			System.out.println("zzz");
 		assertNotEquals(null, client.getSocket());
 		client.sendString("test");
 		assertEquals(server.getStringFromRemote(), "test");
