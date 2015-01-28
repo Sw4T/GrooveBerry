@@ -7,7 +7,7 @@ public class MusicList {
 	
 	public MusicList () {
 		MusicList.listOfMusic[0] = "audio/Bob Marley - Jammin.mp3";
-		MusicList.listOfMusic[1] = "audio/Bob Marley - Jammin.mp3";
+		MusicList.listOfMusic[1] = "audio/Lalal_tamère_Bastien.mp3";
 		MusicList.musicNb = 0;
 	}
 	

@@ -35,6 +35,8 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		
 		this.play.setOnClickListener(this);
 		this.pause.setOnClickListener(this);
+		this.next.setOnClickListener(this);
+		this.previous.setOnClickListener(this);
 		
 	}
 	
@@ -91,7 +93,8 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 				Connection.getPrinter().println("pause");
 				Log.d("PlayActivity", "PA : unpause sent");
 			}
-			this.musicStatus.setText("Playing " + MusicList.getFilePlaying());
+			this.musicStatus.setText("Playing : ");
+			this.musicName.setText(MusicList.getFilePlaying());
 			this.musicName.setTextColor(Color.GREEN);
 			this.play.setEnabled(false);
 			this.pause.setEnabled(true);
@@ -121,16 +124,18 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 			if (MusicList.getMusicNb() != MusicList.countMusicInList()) {
 				MusicList.nextMusic();
 				Connection.getPrinter().println("next");
+				Log.d("PlayActivity", "PA : next");
 				this.musicName.setText("Playing " + MusicList.getFilePlaying());
 			}
 			else {
-				
+				this.next.setEnabled(false);
 			}
 			break;
 		case R.id.previousButton : 
 			if (MusicList.getMusicNb() != 0) {
 				MusicList.previousMusic();
-				Connection.getPrinter().println("previous");
+				Connection.getPrinter().println("prev");
+				Log.d("PlayActivity", "PA : prev");
 				this.musicName.setText("Playing " + MusicList.getFilePlaying());
 			}
 			else {
