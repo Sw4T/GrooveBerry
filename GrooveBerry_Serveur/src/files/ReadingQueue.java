@@ -3,89 +3,119 @@ package files;
 import java.util.LinkedList;
 
 public class ReadingQueue implements AudioListener {
-
-	private	AudioFile playingTrack;
+	private	AudioFile currentTrack;
+	private int currentTrackIndex = -1;
 	
-	private LinkedList<AudioFile> queue = new LinkedList<>();
+	private LinkedList<AudioFile> queue;
 	
 	public ReadingQueue() {
-		
+		this.queue = new LinkedList<>();
+
 	}
 	
 	public ReadingQueue(AudioFile track) {
+		this.queue = new LinkedList<>();
 		this.queue.add(track);
 		
-		this.playingTrack = track;
-		this.playingTrack.addListener(this);
+		this.currentTrack = track;
+		this.currentTrack.addListener(this);
+		this.currentTrackIndex = 0;
 	}
 	
-	public void clearQueue() {
-		this.queue.removeAll(this.queue);
-		this.playingTrack = null;
+	public boolean isEmpty() {
+		return this.queue.isEmpty();
 	}
-	
+
 	public void addLast(AudioFile track){
-		if (isEmpty()) {
-			this.playingTrack = track;
+		if (this.isEmpty()) {
+			this.currentTrack = track;
+			this.currentTrackIndex = 0;
+			this.currentTrack.addListener(this);
 		}
 		this.queue.add(track);
 	}
 	
 	public void addAt(int index, AudioFile track) {
-		if (isEmpty()) {
-			this.playingTrack = track;
+		if (this.isEmpty()) {
+			this.currentTrack = track;
+			this.currentTrackIndex = 0;
+			this.currentTrack.addListener(this);
+		}
+		if (index <= this.currentTrackIndex && !this.isEmpty()) {
+			this.currentTrackIndex++;
 		}
 		this.queue.add(index, track);
 	} 
 	
 	public void remove(int index) {
 		AudioFile removeFile = this.queue.get(index);
+		if (removeFile == this.currentTrack) {
+			if (this.queue.getLast() != this.currentTrack) {
+				next();
+			} else {
+				this.currentTrack = null;
+				this.currentTrackIndex = -1;
+			}
+		}
 		this.queue.remove(index);
-		if (isEmpty() || removeFile == this.playingTrack) {
-			this.playingTrack = null;
+		if (index <= this.currentTrackIndex) {
+			this.currentTrackIndex--;
 		}
 	}
 	
+	public void clearQueue() {
+		this.queue.removeAll(this.queue);
+		this.currentTrack = null;
+		this.currentTrackIndex = -1;
+	}
+
 	public void next() {
-		int trackIndex = this.queue.indexOf(playingTrack);
-		
+		int trackIndex = getCurrentTrackPosition();
 		if (trackIndex + 1 < this.queue.size()) {
-			this.playingTrack = this.queue.get(trackIndex + 1);
-		} else {
-			this.playingTrack = this.queue.getFirst();
+			if (this.currentTrack.isPlaying()) {
+				this.currentTrack.stop();
+			}
+			else {
+				this.currentTrack = this.queue.get(trackIndex + 1);
+				this.currentTrackIndex = trackIndex + 1;
+				this.currentTrack.addListener(this);
+			} 
 		}
-		
 	}
 	
 	public void prev() {
-		int trackIndex = this.queue.indexOf(playingTrack);
-		
-		if (trackIndex - 1 <= 0) {
-			this.playingTrack = this.queue.get(trackIndex - 1);
-		} else {
-			this.playingTrack = this.queue.getLast();
+		int trackIndex = getCurrentTrackPosition();
+		if (trackIndex - 1 >= 0) {
+			this.currentTrack = this.queue.get(trackIndex - 1);
+			this.currentTrackIndex = trackIndex - 1;
+			this.currentTrack.addListener(this);
+			this.currentTrack.play();
 		}
-		
 	}
-
-	public boolean isEmpty() {
-		return this.queue.isEmpty();
+	
+	public int getCurrentTrackPosition() {
+		return this.currentTrackIndex;
 	}
 
 	public LinkedList<AudioFile> getAudioFileList() {
 		return new LinkedList<>(this.queue);
 	}
 
-	public AudioFile getPlayingTrack() {
-		return playingTrack;
-	}
+	public AudioFile getCurrentTrack() {
+		return this.currentTrack;
+	}	
 
 	@Override
 	public void endOfPlay() {
-		next();	
-		this.playingTrack.play();
+		int trackIndex = getCurrentTrackPosition();
+		if (trackIndex + 1 < this.queue.size()) {
+			next();
+			this.currentTrack.play();
+		}
 	}
 
-	
-	
+	public void setCurrentTrack(AudioFile track) {
+		this.currentTrack = track;		
+	}
+
 }

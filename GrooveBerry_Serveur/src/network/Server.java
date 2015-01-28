@@ -7,6 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import files.AudioFile;
+import files.ReadingQueue;
 
 public class Server {
 
@@ -53,9 +54,13 @@ public class Server {
 		System.out.println("File used : " + audioFileName);
 		
 		AudioFile audioFileToPlay = new AudioFile(audioFileName);
+		ReadingQueue readingQueueTest = new ReadingQueue(audioFileToPlay);
+		readingQueueTest.addLast(new AudioFile("audio/conneriesd1formaticiens.wav"));
+		readingQueueTest.addLast(new AudioFile("audio/9.wav"));
+		readingQueueTest.addLast(new AudioFile("audio/aol.wav"));
 		do {
 			constant = bufferRead.readLine();
-			execute(audioFileToPlay, constant);
+			execute(readingQueueTest, constant);
 		} while (!constant.equals("exit"));
 		System.out.println("Serveur déconnecté !");
 	}
@@ -70,6 +75,23 @@ public class Server {
 			case "restart" : file.restart(); break;
 			case "stop" : file.stop(); break;
 			case "loop" : file.loop(); break;
+			default : 
+		}
+		System.out.println("Received " + constant + " from the client, processing...");
+	}
+	
+	public void execute(ReadingQueue readingQueue, String constant) throws IOException 
+	{
+		switch (constant)
+		{
+			case "play" : readingQueue.getCurrentTrack().play(); break;
+			case "pause" : readingQueue.getCurrentTrack().pause(); break;
+			case "mute" : readingQueue.getCurrentTrack().mute(); break;
+			case "restart" : readingQueue.getCurrentTrack().restart(); break;
+			case "stop" : readingQueue.getCurrentTrack().stop(); break;
+			case "loop" : readingQueue.getCurrentTrack().loop(); break;
+			case "next" : readingQueue.next(); break;
+			case "prev" : readingQueue.prev(); break;
 			default : 
 		}
 		System.out.println("Received " + constant + " from the client, processing...");

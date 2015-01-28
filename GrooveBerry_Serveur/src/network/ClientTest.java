@@ -78,6 +78,8 @@ public class ClientTest {
 			case 5 : toReturn = "stop"; break;
 			case 6 : toReturn = "loop"; break;
 			case 7 : toReturn = "exit"; break;
+			case 8 : toReturn = "next"; break;
+			case 9 : toReturn = "prev"; break;
 			default : toReturn = "";
 		}
 		return toReturn;
@@ -92,6 +94,8 @@ public class ClientTest {
 		System.out.println("5. Stop");
 		System.out.println("6. Loop");
 		System.out.println("7. Exit");
+		System.out.println("8. Next");
+		System.out.println("9. Prev");
 	}
 	
 	public Socket getSocket() {
