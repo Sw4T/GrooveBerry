@@ -5,13 +5,13 @@ import java.util.LinkedList;
 
 public class ReadingQueue implements AudioListener {
 	private	AudioFile currentTrack;
-	private int currentTrackIndex = -1;
+	private int currentTrackIndex;
 	
 	private LinkedList<AudioFile> queue;
 	
 	public ReadingQueue() {
 		this.queue = new LinkedList<>();
-
+		this.currentTrackIndex = -1;
 	}
 	
 	public ReadingQueue(AudioFile track) {
@@ -79,51 +79,48 @@ public class ReadingQueue implements AudioListener {
 
 	public void next() {
 		int trackIndex = getCurrentTrackPosition();
-		boolean muted = false;
 		if (trackIndex + 1 < this.queue.size()) {
-			if (this.currentTrack.isPlaying()) {
-				if (this.currentTrack.isPaused()) {
-					this.currentTrack.pause();
-				}
-				if (this.currentTrack.isMuted()) {
-					muted = true;
-					this.currentTrack.mute();
-				}
-				this.currentTrack.stop();
-			}
-			this.currentTrack = this.queue.get(trackIndex + 1);
-			this.currentTrackIndex = trackIndex + 1;
-			this.currentTrack.addListener(this);
-			if (muted) {
-				this.currentTrack.mute();
-			}
-			this.currentTrack.play();
+			changeTrack(true,trackIndex);
 		}
 	}
 	
 	public void prev() {
 		int trackIndex = getCurrentTrackPosition();
-		boolean muted = false;
 		if (trackIndex - 1 >= 0) {
-			if (this.currentTrack.isPlaying()) {
-				if (this.currentTrack.isPaused()) {
-					this.currentTrack.pause();
-				}
-				if (this.currentTrack.isMuted()) {
-					muted = true;
-					this.currentTrack.mute();
-				}
-				this.currentTrack.stop();
-			}
-			this.currentTrack = this.queue.get(trackIndex - 1);
-			this.currentTrackIndex = trackIndex - 1;
-			this.currentTrack.addListener(this);
-			if (muted) {
-				this.currentTrack.mute();
-			}
-			this.currentTrack.play();
+			changeTrack(false, trackIndex);
 		}
 	}
+	
+	private void changeTrack(boolean forward, int trackIndex){
+		boolean muted = false;
+		if (this.currentTrack.isPlaying()) {
+			if (this.currentTrack.isPaused()) {
+				this.currentTrack.pause();
+			}
+			if (this.currentTrack.isMuted()) {
+				muted = true;
+				this.currentTrack.mute();
+			}
+			this.currentTrack.stop();
+		}
+		
+		if(forward){
+			this.currentTrack = this.queue.get(trackIndex + 1);
+			this.currentTrackIndex = trackIndex + 1;
+		}
+		else{
+			this.currentTrack = this.queue.get(trackIndex - 1);
+			this.currentTrackIndex = trackIndex - 1;
+		}
+		this.currentTrack.addListener(this);
+		if (muted) {
+			this.currentTrack.mute();
+		}
+		this.currentTrack.play();
+	}
+	
+	
+	
 	
 	public int getCurrentTrackPosition() {
 		return this.currentTrackIndex;
