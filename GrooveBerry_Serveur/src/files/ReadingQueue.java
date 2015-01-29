@@ -79,27 +79,48 @@ public class ReadingQueue implements AudioListener {
 
 	public void next() {
 		int trackIndex = getCurrentTrackPosition();
+		boolean muted = false;
 		if (trackIndex + 1 < this.queue.size()) {
 			if (this.currentTrack.isPlaying()) {
+				if (this.currentTrack.isPaused()) {
+					this.currentTrack.pause();
+				}
+				if (this.currentTrack.isMuted()) {
+					muted = true;
+					this.currentTrack.mute();
+				}
 				this.currentTrack.stop();
-				next();
-				this.currentTrack.play();
 			}
-			else {
-				this.currentTrack = this.queue.get(trackIndex + 1);
-				this.currentTrackIndex = trackIndex + 1;
-				this.currentTrack.addListener(this);
-			} 
+			this.currentTrack = this.queue.get(trackIndex + 1);
+			this.currentTrackIndex = trackIndex + 1;
+			this.currentTrack.addListener(this);
+			if (muted) {
+				this.currentTrack.mute();
+			}
+			this.currentTrack.play();
 		}
 	}
 	
 	public void prev() {
 		int trackIndex = getCurrentTrackPosition();
+		boolean muted = false;
 		if (trackIndex - 1 >= 0) {
-			this.currentTrack.stop();
+			if (this.currentTrack.isPlaying()) {
+				if (this.currentTrack.isPaused()) {
+					this.currentTrack.pause();
+				}
+				if (this.currentTrack.isMuted()) {
+					muted = true;
+					this.currentTrack.mute();
+				}
+				this.currentTrack.stop();
+			}
 			this.currentTrack = this.queue.get(trackIndex - 1);
 			this.currentTrackIndex = trackIndex - 1;
 			this.currentTrack.addListener(this);
+			if (muted) {
+				this.currentTrack.mute();
+			}
 			this.currentTrack.play();
 		}
 	}
@@ -121,7 +142,6 @@ public class ReadingQueue implements AudioListener {
 		int trackIndex = getCurrentTrackPosition();
 		if (trackIndex + 1 < this.queue.size()) {
 			next();
-			this.currentTrack.play();
 		}
 	}
 	

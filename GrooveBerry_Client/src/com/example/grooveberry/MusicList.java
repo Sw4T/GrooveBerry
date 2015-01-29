@@ -1,21 +1,29 @@
 package com.example.grooveberry;
 
+import java.util.ArrayList;
+
 public class MusicList {
 
-	private static String [] listOfMusic = new String [15];
+	private static ArrayList<String> listOfMusic;
 	private static int musicNb;
 	
 	public MusicList () {
-		MusicList.listOfMusic[0] = "audio/Bob Marley - Jammin.mp3";
-		MusicList.listOfMusic[1] = "audio/Lalal_tamère_Bastien.mp3";
+		//Récupérer la liste des fichiers présents dans audio/ 
+		//sur le serveur
+//		MusicList.listOfMusic[0] = "audio/Bob Marley - Jammin.mp3";
+//		MusicList.listOfMusic[1] = "audio/Lalal_tamère_Bastien.mp3";
+//		MusicList.listOfMusic[2] = null;
+		MusicList.listOfMusic = new ArrayList<String> ();
+		MusicList.listOfMusic.add("audio/Bob Marley - Jammin.mp3");
+		MusicList.listOfMusic.add("audio/Lalal_tamère_Bastien.mp3");
 		MusicList.musicNb = 0;
 	}
 	
 	public static String getFilePlaying() {
-		return listOfMusic[musicNb];
+		return MusicList.listOfMusic.get(musicNb);
 	}
 	
-	public String[] getListOfMusic () {
+	public ArrayList<String> getListOfMusic () {
 		return MusicList.listOfMusic;
 	}
 	
@@ -32,6 +40,14 @@ public class MusicList {
 	}
 	
 	public static int countMusicInList () {
-		return MusicList.listOfMusic.length;
+		int i = 0;
+		
+		for (String s : MusicList.listOfMusic) {
+			if (s == null) {
+				return i;
+			}
+			i++;
+		}
+		return i-1;
 	}
 }

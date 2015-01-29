@@ -4,20 +4,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Library {
 	public static final String DEFAULT_PATHNAME = "res/library.txt";
-	ArrayList<AudioFile> audioFileList;
-	File file;
+	public static final String DELIMITER = "#";
+	
+	private ArrayList<AudioFile> audioFileList;
+	private File file;
 
 	public Library() {
 		this.audioFileList = new ArrayList<>();
 		this.file = new File(DEFAULT_PATHNAME);
-		if (this.file.exists()) {
+		if (!this.file.exists()) {
 			try {
 				this.file.createNewFile();
 			} catch (IOException e) {
@@ -45,7 +46,7 @@ public class Library {
 	public void updateLibraryFile() throws FileNotFoundException {
 		PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(this.file));
 		for (AudioFile audioFile : audioFileList) {
-			printWriterOutputFile.println(audioFile.getName() + "#" + audioFile.getAbsolutePath());
+			printWriterOutputFile.println(audioFile.getName() + DELIMITER + audioFile.getAbsolutePath());
 		}
 		printWriterOutputFile.close();
 	}
@@ -56,10 +57,18 @@ public class Library {
 		Scanner fileScanner = new Scanner(this.file);
 		while(fileScanner.hasNext()) {
 			String line = fileScanner.nextLine();
-			String filePath = line.split("@")[1];
+			String filePath = line.split(DELIMITER)[1];
 			this.audioFileList.add(new AudioFile(filePath));
 		}
 		fileScanner.close();
+	}
+
+	public void add(String filePath) throws FileNotFoundException {
+		AudioFile audioFile = new AudioFile(filePath);
+		this.audioFileList.add(audioFile);
+		
+		PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(this.file));
+		printWriterOutputFile.println(audioFile.getName() + DELIMITER + audioFile.getAbsolutePath());
 	}
 
 }

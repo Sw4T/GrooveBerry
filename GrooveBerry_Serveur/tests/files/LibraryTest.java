@@ -88,21 +88,40 @@ public class LibraryTest {
 	
 	@Test
 	public void testMajLibrary() throws FileNotFoundException {
-		ArrayList<AudioFile> audioFileList = new ArrayList<>();
-		audioFileList.add(bob);
-		audioFileList.add(leNeuf);
-		audioFileList.add(test);
-		audioFileList.add(aol);
+		ArrayList<AudioFile> audioFileListTest = new ArrayList<>();
+		audioFileListTest.add(bob);
+		audioFileListTest.add(leNeuf);
+		audioFileListTest.add(test);
+		audioFileListTest.add(aol);
 		
 		this.library = new Library();
 		this.library.updateLibrary();
 		
-		assertEquals(audioFileList, this.library.getAudioFileList());
+		ArrayList<AudioFile> audioFileList  = this.library.getAudioFileList();
+		for (int i = 0; i < audioFileListTest.size(); i++) {
+			assertEquals(audioFileListTest.get(i).getName(), audioFileList.get(i).getName());
+			assertEquals(audioFileListTest.get(i).getAbsolutePath(), audioFileList.get(i).getAbsolutePath());
+		}
 	}
 	
 	@Test
-	public void testFileLibrary() {
+	public void testAddMusicFileToLibrary() throws FileNotFoundException {
+		this.library = new Library();
 		
+		this.library.add("audio/01 Clandestino.mp3");
+		this.library.updateLibraryFile();
+		
+		ArrayList<AudioFile> audioFileList  = this.library.getAudioFileList();
+		assertEquals("01 Clandestino.mp3", audioFileList.get(0).getName());
+		assertEquals("H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\01 Clandestino.mp3", audioFileList.get(0).getAbsolutePath());
+		
+		File libraryFile = new File("res/library.txt");
+		Scanner fileScanner = new Scanner(libraryFile);
+		String libraryFirstLineContent = fileScanner.nextLine();
+		
+		assertEquals("01 Clandestino.mp3#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\01 Clandestino.mp3", libraryFirstLineContent);
+		
+		fileScanner.close();
 	}
 	
 	@Test

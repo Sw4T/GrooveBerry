@@ -327,17 +327,13 @@ public class ReadingQueueTest {
 		assertEquals(2, this.readingQueue.getCurrentTrackPosition());
 	}
 	
-	@Test //TODO 
+	@Test 
 	public void testPlaying() throws InterruptedException {
 		this.readingQueue = new ReadingQueue();
 		this.readingQueue.addLast(test);
 		this.readingQueue.addLast(bob);
 		this.readingQueue.addLast(leNeuf);
 		this.readingQueue.addLast(test);
-		
-		for (AudioFile audioFile : this.readingQueue.getAudioFileList()) {
-			System.out.println(audioFile.hashCode());
-		}
 		
 		this.readingQueue.getCurrentTrack().play();
 		Thread.sleep(5000);
@@ -351,5 +347,82 @@ public class ReadingQueueTest {
 	
 	}
 	
-
+	@Test 
+	public void testPlayingNextPrev() throws InterruptedException {
+		this.readingQueue = new ReadingQueue();
+		this.readingQueue.addLast(aol);
+		this.readingQueue.addLast(bob);
+		this.readingQueue.addLast(leNeuf);
+		this.readingQueue.addLast(test);
+		
+		this.readingQueue.getCurrentTrack().play();
+		Thread.sleep(1000);
+		this.readingQueue.next();
+		
+		
+		assertEquals(bob, this.readingQueue.getCurrentTrack());
+		assertEquals(1, this.readingQueue.getCurrentTrackPosition());
+		assertEquals(true, this.readingQueue.getCurrentTrack().isPlaying());
+		assertEquals(false, this.readingQueue.getCurrentTrack().isPaused());
+		this.readingQueue.prev();
+		assertEquals(aol, this.readingQueue.getCurrentTrack());
+		assertEquals(0, this.readingQueue.getCurrentTrackPosition());
+		assertEquals(true, this.readingQueue.getCurrentTrack().isPlaying());
+		assertEquals(false, this.readingQueue.getCurrentTrack().isPaused());
+	}
+	
+	@Test 
+	public void testNextPrevPause() throws InterruptedException {
+		this.readingQueue = new ReadingQueue();
+		this.readingQueue.addLast(aol);
+		this.readingQueue.addLast(bob);
+		this.readingQueue.addLast(leNeuf);
+		this.readingQueue.addLast(test);
+		
+		this.readingQueue.getCurrentTrack().play();
+		Thread.sleep(1000);
+		this.readingQueue.getCurrentTrack().pause();
+		this.readingQueue.next();
+		
+		
+		assertEquals(bob, this.readingQueue.getCurrentTrack());
+		assertEquals(1, this.readingQueue.getCurrentTrackPosition());
+		assertEquals(true, this.readingQueue.getCurrentTrack().isPlaying());
+		assertEquals(false, this.readingQueue.getCurrentTrack().isPaused());
+		this.readingQueue.getCurrentTrack().pause();
+		this.readingQueue.prev();
+		assertEquals(aol, this.readingQueue.getCurrentTrack());
+		assertEquals(0, this.readingQueue.getCurrentTrackPosition());
+		assertEquals(true, this.readingQueue.getCurrentTrack().isPlaying());
+		assertEquals(false, this.readingQueue.getCurrentTrack().isPaused());
+	}
+	
+	@Test 
+	public void testNextPrevMute() throws InterruptedException {
+		this.readingQueue = new ReadingQueue();
+		this.readingQueue.addLast(aol);
+		this.readingQueue.addLast(bob);
+		this.readingQueue.addLast(leNeuf);
+		this.readingQueue.addLast(test);
+		
+		this.readingQueue.getCurrentTrack().play();
+		Thread.sleep(1000);
+		this.readingQueue.getCurrentTrack().mute();
+		this.readingQueue.next();
+		
+		
+		assertEquals(bob, this.readingQueue.getCurrentTrack());
+		assertEquals(1, this.readingQueue.getCurrentTrackPosition());
+		assertEquals(true, this.readingQueue.getCurrentTrack().isPlaying());
+		assertEquals(true, this.readingQueue.getCurrentTrack().isMuted());
+		this.readingQueue.prev();
+		
+		assertEquals(aol, this.readingQueue.getCurrentTrack());
+		assertEquals(0, this.readingQueue.getCurrentTrackPosition());
+		assertEquals(true, this.readingQueue.getCurrentTrack().isPlaying());
+		assertEquals(true, this.readingQueue.getCurrentTrack().isMuted());
+		this.readingQueue.getCurrentTrack().mute();
+		assertEquals(false, this.readingQueue.getCurrentTrack().isMuted());
+	}
+	
 }
