@@ -1,5 +1,6 @@
 package files;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class ReadingQueue implements AudioListener {
@@ -22,6 +23,13 @@ public class ReadingQueue implements AudioListener {
 		this.currentTrackIndex = 0;
 	}
 	
+	public ReadingQueue(ArrayList<AudioFile> audioFileList) {
+		this.queue = new LinkedList<>();
+		for (AudioFile audioFile : audioFileList) {
+			this.addLast(audioFile);
+		}
+	}
+
 	public boolean isEmpty() {
 		return this.queue.isEmpty();
 	}
@@ -85,7 +93,6 @@ public class ReadingQueue implements AudioListener {
 		}
 	}
 	
-	// TODO
 	public void prev() {
 		int trackIndex = getCurrentTrackPosition();
 		if (trackIndex - 1 >= 0) {
@@ -101,8 +108,8 @@ public class ReadingQueue implements AudioListener {
 		return this.currentTrackIndex;
 	}
 
-	public LinkedList<AudioFile> getAudioFileList() {
-		return new LinkedList<>(this.queue);
+	public ArrayList<AudioFile> getAudioFileList() {
+		return new ArrayList<>(this.queue);
 	}
 
 	public AudioFile getCurrentTrack() {
@@ -122,7 +129,8 @@ public class ReadingQueue implements AudioListener {
 	public void stopOfPlay() {
 		
 	}
-
+	
+	//TODO 
 	public void setCurrentTrack(AudioFile track) {
 		this.currentTrack = track;		
 	}
