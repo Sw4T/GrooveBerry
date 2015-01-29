@@ -36,7 +36,7 @@ public class ConnectActivity extends ActionBarActivity implements OnClickListene
 		setContentView(R.layout.activity_connect);
 		
 		//this.serverIpAddress = "192.168.1.12";
-		this.connection = new Connection ("192.168.1.12");
+		this.connection = new Connection ("192.168.1.10");
 		this.musicList = new MusicList();
 		
 		this.wifiConnect = (ImageButton) findViewById(R.id.wifiConnectButton);
@@ -44,6 +44,9 @@ public class ConnectActivity extends ActionBarActivity implements OnClickListene
 		this.wifiConnect.setBackgroundColor(Color.TRANSPARENT);
 		this.wifiDisconnect.setBackgroundColor(Color.TRANSPARENT);
 		this.connectionStatus = (TextView) findViewById(R.id.connectionStatus);
+		
+		this.wifiConnect.setEnabled(true);
+		this.wifiDisconnect.setEnabled(false);
 		
 		this.wifiConnect.setOnClickListener(this);
 		this.wifiDisconnect.setOnClickListener(this);
@@ -73,7 +76,6 @@ public class ConnectActivity extends ActionBarActivity implements OnClickListene
 			intent = new Intent(this,PlayActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			startActivity(intent);
-			//finish();
 			
 		}
 		return super.onOptionsItemSelected(item);
@@ -83,30 +85,21 @@ public class ConnectActivity extends ActionBarActivity implements OnClickListene
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.wifiConnectButton :
-//			if (!connected) {
-//                if (!serverIpAddress.equals("")) {
-//                	this.cThread = new Thread(new ClientThread());
-//                    this.cThread.start();
-//                    
-//                    this.connectionStatus.setText("Connected to "+this.serverIpAddress);
-//                }
-			
 			if (!this.connection.getConnected() && !this.connection.getServerIpAddress().equals("")) {
 				ConnectActivity.cThread = new Thread(new ClientThread());
 				ConnectActivity.cThread.start();
 				this.connectionStatus.setText("Connected to "+this.connection.getServerIpAddress());
+				this.wifiConnect.setEnabled(false);
+				this.wifiDisconnect.setEnabled(true);
 			}
 			break;
 		case R.id.wifiDisconnectButton :
-//				if (connected) {
-//					printer.println("exit");
-//					this.connected = false;
-//					this.connectionStatus.setText("Disconnected");
-//				}
 			if (this.connection.getConnected()) {
 				this.connection.getPrinter().println("exit");
-				this.connection.setConnected(true);
+				this.connection.setConnected(false);
 				this.connectionStatus.setText("Disconnected");
+				this.wifiConnect.setEnabled(true);
+				this.wifiDisconnect.setEnabled(false);
 			}
 				
 			break;

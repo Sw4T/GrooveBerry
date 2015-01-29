@@ -2,9 +2,9 @@ package network;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import files.AudioFile;
 import files.ReadingQueue;
@@ -12,19 +12,31 @@ import files.ReadingQueue;
 public class Server {
 
 	public static final int SERVER_PORT = 12345;
-	private ServerSocket serveur;
-	private Socket socketCliente;
-	private BufferedReader bufferRead;
+	private static final int NB_MAX_CLIENTS = 5;
+	private ServerSocket server; //Classe gérant les connexions entrantes
+	private ArrayList<Client> listClients; //Liste de clients se connectant au serveur
+	private ReadingQueue readingQueue; //Liste de lecture
+	private BufferedReader bufferRead; //Seulement pour test
+	private Client currentClient;
 	
 	public Server() throws IOException {
-		serveur = new ServerSocket(SERVER_PORT);
+		server = new ServerSocket(SERVER_PORT);
+		listClients = new ArrayList<Client>(NB_MAX_CLIENTS);
+		readingQueue = new ReadingQueue();
+		init_reading_queue();
 	}
 	
 	//Attente d'une connexion cliente et création du buffer de lecture
-	public void waitConnection() throws IOException {
-		socketCliente = serveur.accept();
-		System.out.println("Client " + socketCliente.getInetAddress() + " has connected !");
-		bufferRead = new BufferedReader(new InputStreamReader(socketCliente.getInputStream()));
+	public void waitConnection() throws IOException, InterruptedException {
+		while (true) {
+			Socket socket = server.accept();
+			System.out.println("Client " + socket.getInetAddress() + " has connected !");
+			Client newClient = new Client(socket);
+			listClients.add(newClient);
+			
+			sendReadingQueueToRemote(newClient); //Envoi de la liste de lecture du serveur
+			getTreatmentFromRemote(newClient); //Récupération du traitement
+		}
 	}
 	
 	//Utilisation d'un nouveau thread pour permettre d'effectuer les tests en parallèle
@@ -33,10 +45,13 @@ public class Server {
 			@Override
 			public void run() {
 				try {
-					socketCliente = serveur.accept();
-					System.out.println("Client " + socketCliente.getInetAddress() + " has connected !");
-					BufferedReader buffer = new BufferedReader(new InputStreamReader(socketCliente.getInputStream()));
-					setBufferReader(buffer);
+					Socket socket = server.accept();
+					System.out.println("Client " + socket.getInetAddress() + " has connected !");
+					Client newClient = new Client(socket);
+					listClients.add(newClient);
+					currentClient = newClient;
+					//setBufferReader(buffer);
+					while (true);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -44,25 +59,39 @@ public class Server {
 		}).start();
 	}
 	
-	//Reçoit des chaines de caractères venant du client, tant que "exit" n'a pas été reçu
-	public void getTreatmentFromRemote() throws IOException, InterruptedException 
+	public void init_reading_queue() {
+		readingQueue.addLast(new AudioFile("audio/04 Hey Joe.mp3"));
+		readingQueue.addLast(new AudioFile("audio/05 Mentira.mp3"));
+		readingQueue.addLast(new AudioFile("audio/Bob Marley - Jammin.mp3"));
+		readingQueue.addLast(new AudioFile("audio/free.wav"));
+		readingQueue.addLast(new AudioFile("audio/aol.wav"));
+		readingQueue.addLast(new AudioFile("audio/banane2.wav"));
+	}
+	
+	public synchronized void sendReadingQueueToRemote(Client c) 
 	{
-		if (bufferRead == null)
-			return;
-		String audioFileName = bufferRead.readLine(); //Lecture du fichier audio allant être utilisé
+		c.sendString("#RQ"); //Constante pour reading queue
+		String rep = c.readString();
+		if (rep.equals("#OK")) {
+			System.out.println("Client OK pour l'envoi de la reading queue");
+			ArrayList<String> readingList = new ArrayList<String>();
+			for (AudioFile file : readingQueue.getAudioFileList()) 
+				readingList.add(file.getName());
+			if (c.sendSerializable(readingList))
+				System.out.println("Envoi de la reading queue OK...");
+		} else
+			System.out.println("Erreur lors de l'envoi de la reading queue");
+	}
+	
+	//Reçoit des chaines de caractères venant du client, tant que "exit" n'a pas été reçu
+	public synchronized void getTreatmentFromRemote(Client c) throws IOException, InterruptedException 
+	{
 		String constant;
-		System.out.println("File used : " + audioFileName);
-		
-		AudioFile audioFileToPlay = new AudioFile(audioFileName);
-		ReadingQueue readingQueueTest = new ReadingQueue(audioFileToPlay);
-		readingQueueTest.addLast(new AudioFile("audio/conneriesd1formaticiens.wav"));
-		readingQueueTest.addLast(new AudioFile("audio/9.wav"));
-		readingQueueTest.addLast(new AudioFile("audio/aol.wav"));
 		do {
-			constant = bufferRead.readLine();
-			execute(readingQueueTest, constant);
+			constant = c.readString();
+			execute(readingQueue, constant);
 		} while (!constant.equals("exit"));
-		System.out.println("Serveur d�connect� !");
+		System.out.println("Fin du traitement client " + c.getSocket());
 	}
 	
 	public void execute(AudioFile file, String constant) throws IOException 
@@ -106,11 +135,11 @@ public class Server {
 		return null;
 	}
 	
-	public Socket getSocket () {
-		return this.socketCliente;
-	}
-	
 	public void setBufferReader(BufferedReader br) {
 		bufferRead = br;
+	}
+	
+	public Client getCurrentClient() {
+		return this.currentClient;
 	}
 }

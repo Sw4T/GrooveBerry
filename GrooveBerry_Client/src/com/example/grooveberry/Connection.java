@@ -8,9 +8,8 @@ import java.net.Socket;
 public class Connection {
 	
 	private static PrintWriter printer;
-	//private static String filePlaying = "audio/Bob Marley - Jammin.mp3";
 	private String serverIpAddress = "";
-	private boolean connected;
+	private static boolean connected;
 	private Socket socket;
 	
 	
@@ -22,19 +21,19 @@ public class Connection {
 	public void connectToServer() throws IOException {
 		InetAddress serverAddr = InetAddress.getByName(serverIpAddress);
         this.socket = new Socket(serverAddr, 12345);
-        connected = true;
+        Connection.connected = true;
 	}
 	
 	public void setPrinter (PrintWriter printer) {
 		Connection.printer = printer;
 	}
 
-	public boolean getConnected () {
-		return this.connected;
+	public static boolean getConnected () {
+		return Connection.connected;
 	}
 	
 	public void setConnected (boolean b) {
-		this.connected = b;
+		Connection.connected = b;
 	}
 	
 	public static PrintWriter getPrinter() {
