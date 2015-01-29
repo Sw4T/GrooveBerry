@@ -30,13 +30,14 @@
 
     <ImageView
         android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_alignLeft="@+id/textView2"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
+        android:layout_alignRight="@+id/nextButton"
         android:layout_marginTop="72dp"
-        android:src="@drawable/ic_launcher" 
-        android:contentDescription="@string/grooveBerryLogoDesc"/>
+        android:contentDescription="@string/grooveBerryLogoDesc"
+        android:src="@drawable/ic_launcher2" />
 
     <ImageButton
         android:id="@+id/nextButton"
