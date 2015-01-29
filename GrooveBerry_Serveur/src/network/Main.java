@@ -9,11 +9,9 @@ public class Main {
 		try {
 			Server serveur = new Server();
 			serveur.waitConnection();
-			serveur.getTreatmentFromRemote();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
