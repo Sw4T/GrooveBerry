@@ -198,6 +198,10 @@ public class AudioFile implements Runnable
 		return this.file.getAbsolutePath();
 	}
 	
+	public String getPath() {
+		return this.file.getPath();
+	}
+	
 	/**
 	* Retrieves the audio stream information and starts the stream. When the stream ends, this method
 	* checks to see if it should loop and start again.

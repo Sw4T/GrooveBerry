@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Library {
-	public static final String DEFAULT_PATHNAME = "res/library";
+	public static final String DEFAULT_PATHNAME = "res/library.txt";
 	ArrayList<AudioFile> audioFileList;
 	File file;
 
