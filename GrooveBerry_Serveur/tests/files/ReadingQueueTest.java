@@ -2,6 +2,8 @@ package files;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +27,11 @@ public class ReadingQueueTest {
 	@After
 	public void tearDown() throws Exception {
 		this.readingQueue = null;
+		
+		this.bob = null;
+		this.test = null;
+		this.leNeuf = null;
+		this.aol = null;
 	}
 
 	@Test
@@ -34,11 +41,23 @@ public class ReadingQueueTest {
 	}
 	
 	@Test
+	public void testAReadingQueueWithAudioFileList() {
+		ArrayList<AudioFile> audioFileList = new ArrayList<>();
+		audioFileList.add(bob);
+		audioFileList.add(leNeuf);
+		audioFileList.add(test);
+		audioFileList.add(aol);
+		
+		this.readingQueue = new ReadingQueue(audioFileList);
+		assertEquals(audioFileList, this.readingQueue.getAudioFileList());
+	}
+	
+	@Test
 	public void testCreateAOneTrackReadingQueue() {
 		this.readingQueue = new ReadingQueue(bob);		
 		assertEquals(false, this.readingQueue.isEmpty());
 		
-		AudioFile firstAudioFile = this.readingQueue.getAudioFileList().getFirst();
+		AudioFile firstAudioFile = this.readingQueue.getAudioFileList().get(0);
 		assertEquals(bob, firstAudioFile);
 		assertEquals(0, this.readingQueue.getCurrentTrackPosition());
 	}
@@ -61,7 +80,7 @@ public class ReadingQueueTest {
 		this.readingQueue.addLast(bob);
 		assertEquals(false, this.readingQueue.isEmpty());
 		
-		AudioFile lastAudioFile = this.readingQueue.getAudioFileList().getLast();
+		AudioFile lastAudioFile = this.readingQueue.getAudioFileList().get(this.readingQueue.getAudioFileList().size()-1);
 		assertEquals(bob, lastAudioFile);
 		assertEquals(bob, this.readingQueue.getCurrentTrack());
 		assertEquals(0, this.readingQueue.getCurrentTrackPosition());
@@ -72,15 +91,15 @@ public class ReadingQueueTest {
 		this.readingQueue = new ReadingQueue();
 		
 		this.readingQueue.addLast(bob);
-		AudioFile lastAudioFile = this.readingQueue.getAudioFileList().getLast();
+		AudioFile lastAudioFile = this.readingQueue.getAudioFileList().get(this.readingQueue.getAudioFileList().size()-1);
 		assertEquals(bob, lastAudioFile);
 		
 		this.readingQueue.addLast(test);
-		lastAudioFile = this.readingQueue.getAudioFileList().getLast();
+		lastAudioFile = this.readingQueue.getAudioFileList().get(this.readingQueue.getAudioFileList().size()-1);
 		assertEquals(test, lastAudioFile);
 		
 		this.readingQueue.addLast(leNeuf);
-		lastAudioFile = this.readingQueue.getAudioFileList().getLast();
+		lastAudioFile = this.readingQueue.getAudioFileList().get(this.readingQueue.getAudioFileList().size()-1);
 		assertEquals(leNeuf, lastAudioFile);
 		assertEquals(0, this.readingQueue.getCurrentTrackPosition());
 		
@@ -107,7 +126,7 @@ public class ReadingQueueTest {
 		this.readingQueue.addLast(bob);	
 		this.readingQueue.addAt(0, test);
 		
-		AudioFile firstAudioFile = this.readingQueue.getAudioFileList().getFirst();
+		AudioFile firstAudioFile = this.readingQueue.getAudioFileList().get(0);
 		assertEquals(test, firstAudioFile);
 		
 		assertEquals(bob, this.readingQueue.getCurrentTrack());
@@ -137,7 +156,7 @@ public class ReadingQueueTest {
 		assertEquals(test, this.readingQueue.getCurrentTrack());
 		assertEquals(0, this.readingQueue.getCurrentTrackPosition());
 		
-		AudioFile fistAudioFile = this.readingQueue.getAudioFileList().getFirst();
+		AudioFile fistAudioFile = this.readingQueue.getAudioFileList().get(0);
 		assertEquals(test, fistAudioFile);
 	}
 
@@ -321,16 +340,16 @@ public class ReadingQueueTest {
 		}
 		
 		this.readingQueue.getCurrentTrack().play();
-		Thread.sleep(10000);
+		Thread.sleep(5000);
 		this.readingQueue.next();
 		
-		Thread.sleep(15000);
+		Thread.sleep(5000);
 		
 		assertEquals(test, this.readingQueue.getCurrentTrack());
 		assertEquals(3, this.readingQueue.getCurrentTrackPosition());
 	
 	
-	} 
+	}
 	
 
 }
