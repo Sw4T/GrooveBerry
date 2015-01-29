@@ -27,6 +27,11 @@ public class ReadingQueueTest {
 	@After
 	public void tearDown() throws Exception {
 		this.readingQueue = null;
+		
+		this.bob = null;
+		this.test = null;
+		this.leNeuf = null;
+		this.aol = null;
 	}
 
 	@Test
