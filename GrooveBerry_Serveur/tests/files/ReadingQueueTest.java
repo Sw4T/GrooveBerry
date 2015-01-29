@@ -335,10 +335,6 @@ public class ReadingQueueTest {
 		this.readingQueue.addLast(leNeuf);
 		this.readingQueue.addLast(test);
 		
-		for (AudioFile audioFile : this.readingQueue.getAudioFileList()) {
-			System.out.println(audioFile.hashCode());
-		}
-		
 		this.readingQueue.getCurrentTrack().play();
 		Thread.sleep(5000);
 		this.readingQueue.next();
