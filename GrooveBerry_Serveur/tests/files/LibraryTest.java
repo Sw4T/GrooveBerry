@@ -64,7 +64,7 @@ public class LibraryTest {
 		audioFileList.add(aol);
 		
 		this.library = new Library(audioFileList);
-		this.library.setLibraryFilePathName("res/library.txt");
+		this.library.setTrackStorageFilePathName("res/library.txt");
 		this.library.updateLibraryFile();
 		
 		String libraryTestFileContent = "", libraryFileContent = "";

@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public abstract class TrackStorage {
 
@@ -31,6 +32,12 @@ public abstract class TrackStorage {
 		this.audioFileList = audioFileList;
 	}
 	
+	//TODO 
+	public ArrayList<AudioFile> getAudioFileList() {
+		//return new ArrayList<>(this.audioFileList);
+		return this.audioFileList;
+	}
+		
 	public boolean isEmpty() {
 		return this.audioFileList.isEmpty();
 	}
@@ -46,6 +53,18 @@ public abstract class TrackStorage {
 		PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(this.file),true);
 		printWriterOutputFile.println(audioFile.getName() + DELIMITER + audioFile.getAbsolutePath());
 		printWriterOutputFile.close();
+	}
+	
+	// TODO Optimize update
+	public void updateLibrary() throws FileNotFoundException {;
+		this.audioFileList.clear();
+		Scanner fileScanner = new Scanner(this.file);
+		while(fileScanner.hasNextLine()) {
+			String line = fileScanner.nextLine();
+			String filePath = line.split(DELIMITER)[1];
+			this.audioFileList.add(new AudioFile(filePath));
+		}
+		fileScanner.close();
 	}
 	
 	

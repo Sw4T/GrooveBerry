@@ -150,7 +150,6 @@ public class ReadingQueue implements AudioListener {
 		
 	}
 	
-	//TODO 
 	public void setCurrentTrack(AudioFile track) {
 		this.currentTrack = track;		
 	}
