@@ -16,8 +16,8 @@ public class Client {
 	public Client(Socket newSocket) {
 		try {
 			this.socket = newSocket;
-			this.in = new ObjectInputStream(socket.getInputStream());
 			this.out = new ObjectOutputStream(socket.getOutputStream());
+			this.in = new ObjectInputStream(socket.getInputStream());
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
@@ -28,6 +28,7 @@ public class Client {
 			try {
 				out.writeObject(toSend);
 				out.flush();
+				out.reset();
 				return true;
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -41,6 +42,7 @@ public class Client {
 			try {
 				out.writeUTF(toSend);
 				out.flush();
+				out.reset();
 				return true;
 			} catch (IOException e) {
 				e.printStackTrace();
