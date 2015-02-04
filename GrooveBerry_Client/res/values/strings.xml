@@ -7,8 +7,11 @@
     <string name="action_exit">Exit</string>
     <string name="playbutton">Play</string>
     <string name="stopbutton">Stop</string>
+    <string name="notconnectedwarning">Warning : not connected !</string>
     <string name="playstatus">Tap "Play" to launch your music !"</string>
-    <string name="musicname">Music Name // 00:00:00</string>
+    <string name="musicname">Music Name</string>
+    <string name="musictimer">00:00:00</string>
+    <string name="warningLogoDesc">Warning Logo</string>
     <string name="grooveBerryLogoDesc">GrooveBerry</string>
     <string name="pauseButtonDesc">Pause Button</string>
     <string name="playButtonDesc">Play Button</string>

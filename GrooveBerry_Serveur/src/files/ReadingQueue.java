@@ -5,13 +5,13 @@ import java.util.LinkedList;
 
 public class ReadingQueue implements AudioListener {
 	private	AudioFile currentTrack;
-	private int currentTrackIndex = -1;
+	private int currentTrackIndex;
 	
 	private LinkedList<AudioFile> queue;
 	
 	public ReadingQueue() {
 		this.queue = new LinkedList<>();
-
+		this.currentTrackIndex = -1;
 	}
 	
 	public ReadingQueue(AudioFile track) {
@@ -80,36 +80,54 @@ public class ReadingQueue implements AudioListener {
 	public void next() {
 		int trackIndex = getCurrentTrackPosition();
 		if (trackIndex + 1 < this.queue.size()) {
-			if (this.currentTrack.isPlaying()) {
-				this.currentTrack.stop();
-				next();
-				this.currentTrack.play();
-			}
-			else {
-				this.currentTrack = this.queue.get(trackIndex + 1);
-				this.currentTrackIndex = trackIndex + 1;
-				this.currentTrack.addListener(this);
-			} 
+			changeTrack(true,trackIndex);
 		}
 	}
 	
 	public void prev() {
 		int trackIndex = getCurrentTrackPosition();
 		if (trackIndex - 1 >= 0) {
-			this.currentTrack.stop();
-			this.currentTrack = this.queue.get(trackIndex - 1);
-			this.currentTrackIndex = trackIndex - 1;
-			this.currentTrack.addListener(this);
-			this.currentTrack.play();
+			changeTrack(false, trackIndex);
 		}
 	}
+	
+	private void changeTrack(boolean forward, int trackIndex){
+		boolean muted = false;
+		if (this.currentTrack.isPlaying()) {
+			if (this.currentTrack.isPaused()) {
+				this.currentTrack.pause();
+			}
+			if (this.currentTrack.isMuted()) {
+				muted = true;
+				this.currentTrack.mute();
+			}
+			this.currentTrack.stop();
+		}
+		
+		if(forward){
+			this.currentTrack = this.queue.get(trackIndex + 1);
+			this.currentTrackIndex = trackIndex + 1;
+		}
+		else{
+			this.currentTrack = this.queue.get(trackIndex - 1);
+			this.currentTrackIndex = trackIndex - 1;
+		}
+		this.currentTrack.addListener(this);
+		if (muted) {
+			this.currentTrack.mute();
+		}
+		this.currentTrack.play();
+	}
+	
+	
+	
 	
 	public int getCurrentTrackPosition() {
 		return this.currentTrackIndex;
 	}
 
-	public ArrayList<AudioFile> getAudioFileList() {
-		return new ArrayList<>(this.queue);
+	public LinkedList<AudioFile> getAudioFileList() {
+		return this.queue;
 	}
 
 	public AudioFile getCurrentTrack() {
@@ -121,7 +139,6 @@ public class ReadingQueue implements AudioListener {
 		int trackIndex = getCurrentTrackPosition();
 		if (trackIndex + 1 < this.queue.size()) {
 			next();
-			this.currentTrack.play();
 		}
 	}
 	

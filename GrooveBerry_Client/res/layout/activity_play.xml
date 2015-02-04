@@ -32,9 +32,8 @@
         android:id="@+id/imageView1"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_alignLeft="@+id/textView2"
         android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/nextButton"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="72dp"
         android:contentDescription="@string/grooveBerryLogoDesc"
         android:src="@drawable/ic_launcher2" />
@@ -79,5 +78,35 @@
         android:layout_marginLeft="50dp"
         android:src="@drawable/ic_tab_previous_selected"
         android:contentDescription="@string/previousButtonDesc" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        android:text="@string/musictimer"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="27dp"
+        android:text="@string/notconnectedwarning"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView4"
+        android:layout_toLeftOf="@+id/textView4"
+        android:layout_toStartOf="@+id/textView4"
+        android:contentDescription="@string/warningLogoDesc"
+        android:src="@drawable/ic_tab_name_unselected" />
 
 </RelativeLayout>

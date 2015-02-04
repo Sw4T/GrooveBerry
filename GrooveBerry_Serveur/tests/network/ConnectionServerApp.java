@@ -31,7 +31,7 @@ public class ConnectionServerApp {
 	}
 
 	@Test
-	public void test_connection_ok() 
+	public void test_connection_ok()
 	{
 		assertEquals(true, client_app.getSocket().isConnected());
 		assertEquals(true, client_app.getSocket().isBound());
