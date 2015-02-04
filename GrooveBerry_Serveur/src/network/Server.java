@@ -1,6 +1,5 @@
 package network;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -16,7 +15,6 @@ public class Server {
 	private ServerSocket server; //Classe gérant les connexions entrantes
 	private ArrayList<Client> listClients; //Liste de clients se connectant au serveur
 	private ReadingQueue readingQueue; //Liste de lecture
-	private BufferedReader bufferRead; //Seulement pour test
 	private Client currentClient;
 	
 	public Server() throws IOException {
@@ -26,7 +24,7 @@ public class Server {
 		init_reading_queue();
 	}
 	
-	//Attente d'une connexion cliente et création du buffer de lecture
+	//Attente d'une connexion cliente et traitement de test
 	public void waitConnection() throws IOException, InterruptedException {
 		while (true) {
 			Socket socket = server.accept();
@@ -44,17 +42,15 @@ public class Server {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				try {
-					Socket socket = server.accept();
-					System.out.println("Client " + socket.getInetAddress() + " has connected !");
-					Client newClient = new Client(socket);
-					listClients.add(newClient);
-					currentClient = newClient;
-					while (true)
-						Thread.sleep(1000);
-				} catch (IOException | InterruptedException e) {
-					e.printStackTrace();
-				}
+					while (true) {
+						try {
+							Socket socket = server.accept();
+							System.out.println("Client " + socket.getInetAddress() + " has connected !");
+							currentClient = new Client(socket);
+						} catch (IOException e) {
+							e.printStackTrace();
+						} 
+					}
 			}
 		}).start();
 	}
@@ -124,19 +120,6 @@ public class Server {
 			default : 
 		}
 		System.out.println("Received " + constant + " from the client, processing...");
-	}
-	
-	public String getStringFromRemote() {
-		if (bufferRead == null)
-			return null;
-		try {
-			return (bufferRead.readLine());
-		} catch (IOException e) { e.printStackTrace(); }
-		return null;
-	}
-	
-	public void setBufferReader(BufferedReader br) {
-		bufferRead = br;
 	}
 	
 	public Client getCurrentClient() {
