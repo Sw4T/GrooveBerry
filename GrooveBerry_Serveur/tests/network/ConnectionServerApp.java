@@ -11,28 +11,35 @@ import org.junit.Test;
 public class ConnectionServerApp {
 
 	static Server server;
-	static Client client;
+	static Socket socket;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		server = new Server();
 		server.waitConnectionForTest();
-		client = new Client(new Socket("localhost", Server.SERVER_PORT));
+		socket = new Socket("localhost", Server.SERVER_PORT);
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		client = null;
+		socket = null;
 		server = null;
 	}
 
 	@Test
-	public void test_connection_ok() 
+	public void test_connection_ok()
 	{
-		assertEquals(true, client.getSocket().isConnected());
-		assertEquals(true, client.getSocket().isBound());
-		/*assertEquals(true, server.getSocket().isConnected());
-		assertEquals(true, server.getSocket().isBound());*/
+		assertEquals(true, socket.isConnected());
+		assertEquals(true, socket.isBound());
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		if (server.getCurrentClient() == null)
+			System.out.println("current client null");
+		assertEquals(true, server.getCurrentClient().getSocket().isConnected());
+		assertEquals(true, server.getCurrentClient().getSocket().isBound());
 	}
 	
 	/*@Test

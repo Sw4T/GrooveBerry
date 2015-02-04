@@ -50,9 +50,9 @@ public class Server {
 					Client newClient = new Client(socket);
 					listClients.add(newClient);
 					currentClient = newClient;
-					//setBufferReader(buffer);
-					while (true);
-				} catch (IOException e) {
+					while (true)
+						Thread.sleep(1000);
+				} catch (IOException | InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
