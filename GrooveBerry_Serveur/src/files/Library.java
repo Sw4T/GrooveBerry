@@ -56,13 +56,16 @@ public class Library {
 	
 	// TODO Optimize update
 	public void updateLibrary() throws FileNotFoundException {
-		this.audioFileList.clear();
+		//this.audioFileList.clear();
 		Scanner fileScanner = new Scanner(this.file);
 		while(fileScanner.hasNextLine()) {
 			String line = fileScanner.nextLine();
 			if (!line.equals("")) {
 				String filePath = line.split(DELIMITER)[1];
-				this.audioFileList.add(new AudioFile(filePath));
+				AudioFile audioFile = new AudioFile(filePath);
+				if (audioFile.isLoaded() && !this.audioFileList.contains(audioFile)) {
+					this.audioFileList.add(new AudioFile(filePath));
+				}
 			}
 		}
 		fileScanner.close();
@@ -73,16 +76,10 @@ public class Library {
 		AudioFile audioFile = new AudioFile(filePath);
 		this.audioFileList.add(audioFile);
 		
-		PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(this.file, true), true);
-		printWriterOutputFile.println(audioFile.getName() + DELIMITER + audioFile.getAbsolutePath());
+		updateLibraryFile();
+	}
+	
+	public void remove(){
 		
-		printWriterOutputFile.close();
 	}
-	
-	public void remove(){}
-	
-	public boolean isExist(AudioFile audioFile){
-		return this.audioFileList.contains(audioFile);
-	}
-	
 }

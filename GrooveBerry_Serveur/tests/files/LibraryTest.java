@@ -108,6 +108,31 @@ public class LibraryTest {
 		
 	}
 	
+	@Test
+	public void testUpdateLibraryBaseOnFileWithError() throws FileNotFoundException {
+		ArrayList<AudioFile> audioFileListTest = new ArrayList<>();
+		audioFileListTest.add(bob);
+		audioFileListTest.add(leNeuf);
+		audioFileListTest.add(aol);
+		
+		PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(this.file, true));
+		printWriterOutputFile.println("Bob Marley - Jammin.mp3#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\Bob Marley - Jammin.mp3");
+		printWriterOutputFile.println("9.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\9.wav");
+		printWriterOutputFile.println("teGGGt.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\teGGGst.wav");
+		printWriterOutputFile.println("aol.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\aol.wav");
+		
+		printWriterOutputFile.close();
+		
+		this.library.updateLibrary();
+		ArrayList<AudioFile> audioFileList  = this.library.getAudioFileList();
+		assertEquals(audioFileListTest.size(), audioFileList.size());
+		for (int i = 0; i < audioFileListTest.size(); i++) {
+			assertEquals(audioFileListTest.get(i).getName(), audioFileList.get(i).getName());
+			assertEquals(audioFileListTest.get(i).getAbsolutePath(), audioFileList.get(i).getAbsolutePath());
+		}
+		
+	}
+	
 	//
 	// Test testAddMusicFileToLibrary() et testMajFileLibrary() fonctionnel avec les chemins windows
 	//
@@ -117,8 +142,7 @@ public class LibraryTest {
 		this.library = new Library();
 		
 		this.library.add("audio/01 Clandestino.mp3");
-		this.library.updateLibraryFile();
-		this.library.updateLibraryFile();
+		this.library.add("audio/01 Clandestino.mp3");
 		
 		ArrayList<AudioFile> audioFileList  = this.library.getAudioFileList();
 		assertEquals("01 Clandestino.mp3", audioFileList.get(0).getName());
