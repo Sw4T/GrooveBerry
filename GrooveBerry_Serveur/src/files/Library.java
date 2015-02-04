@@ -60,9 +60,10 @@ public class Library {
 		Scanner fileScanner = new Scanner(this.file);
 		while(fileScanner.hasNextLine()) {
 			String line = fileScanner.nextLine();
-			String filePath = line.split(DELIMITER)[1];
-			this.audioFileList.add(new AudioFile(filePath));
-			System.out.println("GG");
+			if (!line.equals("")) {
+				String filePath = line.split(DELIMITER)[1];
+				this.audioFileList.add(new AudioFile(filePath));
+			}
 		}
 		fileScanner.close();
 	}

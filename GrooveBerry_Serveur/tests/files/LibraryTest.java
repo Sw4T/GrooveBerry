@@ -3,7 +3,6 @@ package files;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -49,6 +48,7 @@ public class LibraryTest {
 		this.file.delete();
 		this.file = null;
 	}
+	
 
 	@Test
 	public void testDefaultConstructorCreateAEmptyLibrary() {
@@ -79,14 +79,33 @@ public class LibraryTest {
 			assertEquals(audioFileListTest.get(i).getName(), audioFileList.get(i).getName());
 			assertEquals(audioFileListTest.get(i).getAbsolutePath(), audioFileList.get(i).getAbsolutePath());
 		}
-	}
+	} 
 
 	@Test
-	public void testCreateALibraryWithAudioFile() {
-		ArrayList<AudioFile> audioFileList = new ArrayList<AudioFile>();
-		this.library = new Library(audioFileList);
+	public void testUpdateLibraryBaseOnFile() throws FileNotFoundException {
+		ArrayList<AudioFile> audioFileListTest = new ArrayList<>();
+		audioFileListTest.add(bob);
+		audioFileListTest.add(leNeuf);
+		audioFileListTest.add(test);
+		audioFileListTest.add(aol);
 		
-		assertEquals(audioFileList, this.library.getAudioFileList());
+		PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(this.file, true));
+		printWriterOutputFile.println("Bob Marley - Jammin.mp3#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\Bob Marley - Jammin.mp3");
+		printWriterOutputFile.println("9.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\9.wav");
+		printWriterOutputFile.println("test.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\test.wav");
+		printWriterOutputFile.print("aol.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\aol.wav");
+		
+		printWriterOutputFile.close();
+		
+		this.library.updateLibrary();
+		ArrayList<AudioFile> audioFileList  = this.library.getAudioFileList();
+		assertEquals(audioFileListTest.size(), audioFileList.size());
+		for (int i = 0; i < audioFileListTest.size(); i++) {
+			assertEquals(audioFileListTest.get(i).getName(), audioFileList.get(i).getName());
+			assertEquals(audioFileListTest.get(i).getAbsolutePath(), audioFileList.get(i).getAbsolutePath());
+		}
+		
+		
 	}
 	
 	//
