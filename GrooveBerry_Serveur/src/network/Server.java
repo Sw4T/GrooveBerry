@@ -15,7 +15,7 @@ public class Server {
 	private ServerSocket server; //Classe gérant les connexions entrantes
 	private ArrayList<Client> listClients; //Liste de clients se connectant au serveur
 	private ReadingQueue readingQueue; //Liste de lecture
-	private Client currentClient;
+	private Client currentClient; //Pour effectuer les tests
 	
 	public Server() throws IOException {
 		server = new ServerSocket(SERVER_PORT);
@@ -27,13 +27,15 @@ public class Server {
 	//Attente d'une connexion cliente et traitement de test
 	public void waitConnection() throws IOException, InterruptedException {
 		while (true) {
-			Socket socket = server.accept();
-			System.out.println("Client " + socket.getInetAddress() + " has connected !");
-			Client newClient = new Client(socket);
-			listClients.add(newClient);
-			
-			sendReadingQueueToRemote(newClient); //Envoi de la liste de lecture du serveur
-			getTreatmentFromRemote(newClient); //Récupération du traitement
+			if (listClients.size() != NB_MAX_CLIENTS) {
+				Socket socket = server.accept();
+				System.out.println("Client " + socket.getInetAddress() + " has connected !");
+				final Client newClient = new Client(socket, this);
+				updateClientList(newClient);
+				
+				sendReadingQueueToRemote(newClient); //Envoi de la liste de lecture du serveur
+				new Thread(newClient).start();
+			} 
 		}
 	}
 	
@@ -79,33 +81,7 @@ public class Server {
 			System.out.println("Erreur lors de l'envoi de la reading queue");
 	}
 	
-	//Reçoit des chaines de caractères venant du client, tant que "exit" n'a pas été reçu
-	public synchronized void getTreatmentFromRemote(Client c) throws IOException, InterruptedException 
-	{
-		String constant;
-		do {
-			constant = c.readString();
-			execute(readingQueue, constant);
-		} while (!constant.equals("exit"));
-		System.out.println("Fin du traitement client " + c.getSocket());
-	}
-	
-	public void execute(AudioFile file, String constant) throws IOException 
-	{
-		switch (constant)
-		{
-			case "play" : file.play(); break;
-			case "pause" : file.pause(); break;
-			case "mute" : file.mute(); break;
-			case "restart" : file.restart(); break;
-			case "stop" : file.stop(); break;
-			case "loop" : file.loop(); break;
-			default : 
-		}
-		System.out.println("Received " + constant + " from the client, processing...");
-	}
-	
-	public void execute(ReadingQueue readingQueue, String constant) throws IOException 
+	public void execute(String constant) 
 	{
 		switch (constant)
 		{
@@ -120,6 +96,27 @@ public class Server {
 			default : 
 		}
 		System.out.println("Received " + constant + " from the client, processing...");
+	}
+	
+	public void updateClientList(Client newClient) {
+		if (listClients.size() == 0)
+			listClients.add(newClient);
+		else {
+			for (Client c : listClients) {
+				if (newClient.equals(c))
+					System.out.println("Same client asking for new connection, rejected...");
+				else
+					listClients.add(newClient);
+			}
+		}
+	}
+	
+	public void disconnectClient(Client client) {
+		if (listClients.contains(client)) {
+			System.out.println("Client existant " + client.getSocket() + " déconnecté");
+			listClients.remove(client);
+		} else
+			System.out.println(client.getSocket());
 	}
 	
 	public Client getCurrentClient() {
