@@ -39,7 +39,7 @@ public class ClientTest {
 		try {
 			//Connexion au serveur
 			socket = new Socket("localhost", Server.SERVER_PORT);
-			if (socket.isConnected())
+			if (socket.isConnected() && socket.isBound())
 				System.out.println("Client : Je me suis bien connecté au serveur ! youhou!");
 			
 			//Déclaration des buffers entrées/sorties et réception de la liste
