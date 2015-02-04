@@ -12,6 +12,8 @@ public class Library {
 	public static final String DEFAULT_PATHNAME = "res/library.txt";
 	public static final String DELIMITER = "#";
 	
+	//private ArrayList<Playlist>
+	
 	private ArrayList<AudioFile> audioFileList;
 	private File file;
 
@@ -28,7 +30,8 @@ public class Library {
 	}
 	
 	public Library(ArrayList<AudioFile> audioFileList) {
-		this.audioFileList = audioFileList;
+		this();
+		this.audioFileList = new ArrayList<>(audioFileList);
 	}
 
 	public boolean isEmpty() {
@@ -36,15 +39,15 @@ public class Library {
 	}
 
 	public ArrayList<AudioFile> getAudioFileList() {
-		return new ArrayList<>(this.audioFileList);
+		return this.audioFileList;
 	}
 
-	public void setLibraryFilePathName(String pathname) {
-		this.file = new File(pathname);	
+	public void setLibraryFilePathName(String filePath) {
+		this.file = new File(filePath);	
 	}
 
 	public void updateLibraryFile() throws FileNotFoundException {
-		PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(this.file));
+		PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(this.file, true), false);
 		for (AudioFile audioFile : audioFileList) {
 			printWriterOutputFile.println(audioFile.getName() + DELIMITER + audioFile.getAbsolutePath());
 		}
@@ -52,23 +55,33 @@ public class Library {
 	}
 	
 	// TODO Optimize update
-	public void updateLibrary() throws FileNotFoundException {;
+	public void updateLibrary() throws FileNotFoundException {
 		this.audioFileList.clear();
 		Scanner fileScanner = new Scanner(this.file);
-		while(fileScanner.hasNext()) {
+		while(fileScanner.hasNextLine()) {
 			String line = fileScanner.nextLine();
 			String filePath = line.split(DELIMITER)[1];
 			this.audioFileList.add(new AudioFile(filePath));
+			System.out.println("GG");
 		}
 		fileScanner.close();
 	}
-
+	
+	// TODO with update
 	public void add(String filePath) throws FileNotFoundException {
 		AudioFile audioFile = new AudioFile(filePath);
 		this.audioFileList.add(audioFile);
 		
-		PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(this.file));
+		PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(this.file, true), true);
 		printWriterOutputFile.println(audioFile.getName() + DELIMITER + audioFile.getAbsolutePath());
+		
+		printWriterOutputFile.close();
 	}
-
+	
+	public void remove(){}
+	
+	public boolean isExist(AudioFile audioFile){
+		return this.audioFileList.contains(audioFile);
+	}
+	
 }

@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -21,6 +22,8 @@ public class LibraryTest {
 	private AudioFile test;
 	private AudioFile leNeuf;
 	private AudioFile aol;
+	
+	private File file;
 
 	@Before
 	public void setUp() throws Exception {
@@ -30,6 +33,8 @@ public class LibraryTest {
 		this.test = new AudioFile("audio/test.wav");
 		this.leNeuf = new AudioFile("audio/9.wav");
 		this.aol = new AudioFile("audio/aol.wav");
+		
+		this.file = new File("res/library.txt");
 	}
 
 	@After
@@ -40,10 +45,13 @@ public class LibraryTest {
 		this.test = null;
 		this.leNeuf = null;
 		this.aol = null;
+		
+		this.file.delete();
+		this.file = null;
 	}
 
 	@Test
-	public void testDefaultConstructorCreateAnEmptyLibrary() {
+	public void testDefaultConstructorCreateAEmptyLibrary() {
 		this.library = new Library();
 		
 		assertTrue(this.library.isEmpty());
@@ -53,6 +61,57 @@ public class LibraryTest {
 	public void testFileLibraryExistInSystem() {
 		File file = new File("res/library.txt");
 		assertTrue(file.exists());
+	}
+
+	@Test
+	public void testConstructorCreateALibraryWithAudioFileList() throws FileNotFoundException {
+		ArrayList<AudioFile> audioFileListTest = new ArrayList<>();
+		audioFileListTest.add(bob);
+		audioFileListTest.add(leNeuf);
+		audioFileListTest.add(test);
+		audioFileListTest.add(aol);
+		
+		this.library = new Library(audioFileListTest);
+		
+		ArrayList<AudioFile> audioFileList  = this.library.getAudioFileList();
+		assertEquals(audioFileList.size(), audioFileListTest.size());
+		for (int i = 0; i < audioFileList.size(); i++) {
+			assertEquals(audioFileListTest.get(i).getName(), audioFileList.get(i).getName());
+			assertEquals(audioFileListTest.get(i).getAbsolutePath(), audioFileList.get(i).getAbsolutePath());
+		}
+	}
+
+	@Test
+	public void testCreateALibraryWithAudioFile() {
+		ArrayList<AudioFile> audioFileList = new ArrayList<AudioFile>();
+		this.library = new Library(audioFileList);
+		
+		assertEquals(audioFileList, this.library.getAudioFileList());
+	}
+	
+	//
+	// Test testAddMusicFileToLibrary() et testMajFileLibrary() fonctionnel avec les chemins windows
+	//
+	
+	@Test
+	public void testAddMusicFileToLibrary() throws FileNotFoundException {
+		this.library = new Library();
+		
+		this.library.add("audio/01 Clandestino.mp3");
+		this.library.updateLibraryFile();
+		this.library.updateLibraryFile();
+		
+		ArrayList<AudioFile> audioFileList  = this.library.getAudioFileList();
+		assertEquals("01 Clandestino.mp3", audioFileList.get(0).getName());
+		assertEquals("H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\01 Clandestino.mp3", audioFileList.get(0).getAbsolutePath());
+		
+		File libraryFile = new File("res/library.txt");
+		Scanner fileScanner = new Scanner(libraryFile);
+		String libraryFirstLineContent = fileScanner.nextLine();
+		
+		assertEquals("01 Clandestino.mp3#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\01 Clandestino.mp3", libraryFirstLineContent);
+		
+		fileScanner.close();
 	}
 	
 	@Test
@@ -84,52 +143,6 @@ public class LibraryTest {
 		
 		assertEquals(libraryTestFileContent, libraryFileContent);
 		fileScanner.close();
-	}
-	
-	@Test
-	public void testMajLibrary() throws FileNotFoundException {
-		ArrayList<AudioFile> audioFileListTest = new ArrayList<>();
-		audioFileListTest.add(bob);
-		audioFileListTest.add(leNeuf);
-		audioFileListTest.add(test);
-		audioFileListTest.add(aol);
-		
-		this.library = new Library();
-		this.library.updateLibrary();
-		
-		ArrayList<AudioFile> audioFileList  = this.library.getAudioFileList();
-		for (int i = 0; i < audioFileListTest.size(); i++) {
-			assertEquals(audioFileListTest.get(i).getName(), audioFileList.get(i).getName());
-			assertEquals(audioFileListTest.get(i).getAbsolutePath(), audioFileList.get(i).getAbsolutePath());
-		}
-	}
-	
-	@Test
-	public void testAddMusicFileToLibrary() throws FileNotFoundException {
-		this.library = new Library();
-		
-		this.library.add("audio/01 Clandestino.mp3");
-		this.library.updateLibraryFile();
-		
-		ArrayList<AudioFile> audioFileList  = this.library.getAudioFileList();
-		assertEquals("01 Clandestino.mp3", audioFileList.get(0).getName());
-		assertEquals("H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\01 Clandestino.mp3", audioFileList.get(0).getAbsolutePath());
-		
-		File libraryFile = new File("res/library.txt");
-		Scanner fileScanner = new Scanner(libraryFile);
-		String libraryFirstLineContent = fileScanner.nextLine();
-		
-		assertEquals("01 Clandestino.mp3#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\01 Clandestino.mp3", libraryFirstLineContent);
-		
-		fileScanner.close();
-	}
-	
-	@Test
-	public void testCreateALibraryWithAudioFile() {
-		ArrayList<AudioFile> audioFileList = new ArrayList<AudioFile>();
-		this.library = new Library(audioFileList);
-		
-		assertEquals(audioFileList, this.library.getAudioFileList());
-	}
+	} 
 
 }

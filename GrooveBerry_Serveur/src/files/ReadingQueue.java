@@ -126,8 +126,8 @@ public class ReadingQueue implements AudioListener {
 		return this.currentTrackIndex;
 	}
 
-	public ArrayList<AudioFile> getAudioFileList() {
-		return new ArrayList<>(this.queue);
+	public LinkedList<AudioFile> getAudioFileList() {
+		return this.queue;
 	}
 
 	public AudioFile getCurrentTrack() {
