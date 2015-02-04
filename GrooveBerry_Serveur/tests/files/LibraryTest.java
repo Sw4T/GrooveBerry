@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -133,6 +132,28 @@ public class LibraryTest {
 		
 	}
 	
+	@Test
+	public void testRemoveFileInLibrary() throws FileNotFoundException {
+		this.library.add("audio/Bob Marley - Jammin.mp3");
+		this.library.add("audio/test.wav");
+		this.library.add("audio/9.wav");
+		
+		this.library.remove("audio/test.wav");
+		
+		ArrayList<AudioFile> audioFileListTest = new ArrayList<>();
+		audioFileListTest.add(bob);
+		audioFileListTest.add(leNeuf);
+		
+		ArrayList<AudioFile> audioFileList  = this.library.getAudioFileList();
+		assertEquals(2, audioFileList.size());
+		for (int i = 0; i < audioFileListTest.size(); i++) {
+			assertEquals(audioFileListTest.get(i).getName(), audioFileList.get(i).getName());
+			assertEquals(audioFileListTest.get(i).getAbsolutePath(), audioFileList.get(i).getAbsolutePath());
+		}
+		
+		
+	}
+	
 	//
 	// Test testAddMusicFileToLibrary() et testMajFileLibrary() fonctionnel avec les chemins windows
 	//
@@ -166,8 +187,7 @@ public class LibraryTest {
 		audioFileList.add(aol);
 		
 		this.library = new Library(audioFileList);
-		this.library.setTrackStorageFilePathName("res/library.txt");
-		this.library.updateLibraryFile();
+
 		
 		String libraryTestFileContent = "", libraryFileContent = "";
 		
