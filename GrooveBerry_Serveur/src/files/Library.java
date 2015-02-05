@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Library {
+public class Library extends TrackStorage {
 	public static final String DEFAULT_PATHNAME = "res/library.txt";
 	public static final String DELIMITER = "#";
 	
@@ -18,15 +18,7 @@ public class Library {
 	private File file;
 
 	public Library() {
-		this.audioFileList = new ArrayList<>();
-		this.file = new File(DEFAULT_PATHNAME);
-		if (!this.file.exists()) {
-			try {
-				this.file.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		super(DEFAULT_PATHNAME);
 	}
 	
 	public Library(ArrayList<AudioFile> audioFileList) {
