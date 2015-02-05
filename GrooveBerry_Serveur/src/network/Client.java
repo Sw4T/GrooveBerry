@@ -11,6 +11,7 @@ public class Client implements Runnable {
 
 	private Socket socket;
 	private String clientName;
+	//private Reception in;
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
 	private AtomicBoolean connect; 

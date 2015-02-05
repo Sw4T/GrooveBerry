@@ -81,7 +81,7 @@ public class Server {
 			System.out.println("Erreur lors de l'envoi de la reading queue");
 	}
 	
-	public void execute(String constant) 
+	public synchronized void execute(String constant) 
 	{
 		switch (constant)
 		{
