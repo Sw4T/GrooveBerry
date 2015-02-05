@@ -80,14 +80,15 @@ public class LibraryTest {
 		
 		this.library = new Library(audioFileListTest);
 		
+		String userName = System.getProperty("user.name");
 		String line = this.fileScanner.nextLine();
-		assertEquals("Bob Marley - Jammin.mp3#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\Bob Marley - Jammin.mp3", line);
+		assertEquals("Bob Marley - Jammin.mp3#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/Bob Marley - Jammin.mp3", line);
 		line = this.fileScanner.nextLine();
-		assertEquals("9.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\9.wav", line);
+		assertEquals("9.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/9.wav", line);
 		line = this.fileScanner.nextLine();
-		assertEquals("test.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\test.wav", line);
+		assertEquals("test.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/test.wav", line);
 		line = this.fileScanner.nextLine();
-		assertEquals("aol.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\aol.wav", line);
+		assertEquals("aol.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/aol.wav", line);
 		
 		ArrayList<AudioFile> audioFileList  = this.library.getAudioFileList();
 		assertEquals(audioFileList.size(), audioFileListTest.size());
@@ -105,18 +106,18 @@ public class LibraryTest {
 		audioFileListTest.add(leNeuf);
 		audioFileListTest.add(test);
 		
-		this.library.add("audio\\Bob Marley - Jammin.mp3");
-		this.library.add("audio\\9.wav");
-		this.library.add("audio\\test.wav");
-		this.library.add("audio\\Bob Marley - Jammin.mp3");
+		this.library.add("audio/Bob Marley - Jammin.mp3");
+		this.library.add("audio/9.wav");
+		this.library.add("audio/test.wav");
+		this.library.add("audio/Bob Marley - Jammin.mp3");
 		
+		String userName = System.getProperty("user.name");
 		String line = this.fileScanner.nextLine();
-		assertEquals("Bob Marley - Jammin.mp3#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\Bob Marley - Jammin.mp3", line);
+		assertEquals("Bob Marley - Jammin.mp3#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/Bob Marley - Jammin.mp3", line);
 		line = this.fileScanner.nextLine();
-		assertEquals("9.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\9.wav", line);
+		assertEquals("9.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/9.wav", line);
 		line = this.fileScanner.nextLine();
-		assertEquals("test.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\test.wav", line);
-		this.fileScanner.close();
+		assertEquals("test.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/test.wav", line);
 		
 		ArrayList<AudioFile> audioFileList  = this.library.getAudioFileList();
 		assertEquals(audioFileListTest.size(), audioFileList.size());
@@ -136,22 +137,23 @@ public class LibraryTest {
 		audioFileListTest.add(aol);
 		
 		PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(this.file, true));
-		printWriterOutputFile.println("Bob Marley - Jammin.mp3#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\Bob Marley - Jammin.mp3");
-		printWriterOutputFile.println("9.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\9.wav");
-		printWriterOutputFile.println("test.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\test.wav");
-		printWriterOutputFile.print("aol.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\aol.wav");
+		String userName = System.getProperty("user.name");
+		printWriterOutputFile.println("Bob Marley - Jammin.mp3#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/Bob Marley - Jammin.mp3");
+		printWriterOutputFile.println("9.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/9.wav");
+		printWriterOutputFile.println("test.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/test.wav");
+		printWriterOutputFile.print("aol.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/aol.wav");
 		printWriterOutputFile.close();
 		
 		this.library.updateLibrary();
 		
 		String line = this.fileScanner.nextLine();
-		assertEquals("Bob Marley - Jammin.mp3#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\Bob Marley - Jammin.mp3", line);
+		assertEquals("Bob Marley - Jammin.mp3#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/Bob Marley - Jammin.mp3", line);
 		line = this.fileScanner.nextLine();
-		assertEquals("9.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\9.wav", line);
+		assertEquals("9.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/9.wav", line);
 		line = this.fileScanner.nextLine();
-		assertEquals("test.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\test.wav", line);
+		assertEquals("test.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/test.wav", line);
 		line = this.fileScanner.nextLine();
-		assertEquals("aol.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\aol.wav", line);
+		assertEquals("aol.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/aol.wav", line);
 		
 		ArrayList<AudioFile> audioFileList  = this.library.getAudioFileList();
 		assertEquals(audioFileListTest.size(), audioFileList.size());
@@ -171,22 +173,21 @@ public class LibraryTest {
 		audioFileListTest.add(aol);
 		
 		PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(this.file, true));
-		printWriterOutputFile.println("Bob Marley - Jammin.mp3#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\Bob Marley - Jammin.mp3");
-		printWriterOutputFile.println("9.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\9.wav");
-		printWriterOutputFile.println("teGGGt.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\teGGGst.wav");
-		printWriterOutputFile.println("aol.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\aol.wav");
-		
+		String userName = System.getProperty("user.name");
+		printWriterOutputFile.println("Bob Marley - Jammin.mp3#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/Bob Marley - Jammin.mp3");
+		printWriterOutputFile.println("9.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/9.wav");
+		printWriterOutputFile.println("teGGGst.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/teGGGst.wav");
+		printWriterOutputFile.print("aol.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/aol.wav");
 		printWriterOutputFile.close();
 		
 		this.library.updateLibrary();
 		
 		String line = this.fileScanner.nextLine();
-		assertEquals("Bob Marley - Jammin.mp3#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\Bob Marley - Jammin.mp3", line);
+		assertEquals("Bob Marley - Jammin.mp3#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/Bob Marley - Jammin.mp3", line);
 		line = this.fileScanner.nextLine();
-		assertEquals("9.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\9.wav", line);
+		assertEquals("9.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/9.wav", line);
 		line = this.fileScanner.nextLine();
-		assertEquals("aol.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\aol.wav", line);
-		this.fileScanner.close();
+		assertEquals("aol.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/aol.wav", line);
 		
 		ArrayList<AudioFile> audioFileList  = this.library.getAudioFileList();
 		assertEquals(audioFileListTest.size(), audioFileList.size());
@@ -199,11 +200,11 @@ public class LibraryTest {
 	
 	@Test
 	public void testRemoveFileInLibrary() throws FileNotFoundException {
-		this.library.add("audio\\Bob Marley - Jammin.mp3");
-		this.library.add("audio\\test.wav");
-		this.library.add("audio\\9.wav");
+		this.library.add("audio/Bob Marley - Jammin.mp3");
+		this.library.add("audio/test.wav");
+		this.library.add("audio/9.wav");
 		
-		this.library.remove("audio\\test.wav");
+		this.library.remove("audio/test.wav");
 		
 		ArrayList<AudioFile> audioFileListTest = new ArrayList<>();
 		audioFileListTest.add(bob);
@@ -232,11 +233,12 @@ public class LibraryTest {
 		
 		ArrayList<AudioFile> audioFileList  = this.library.getAudioFileList();
 		assertEquals("01 Clandestino.mp3", audioFileList.get(0).getName());
-		assertEquals("H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\01 Clandestino.mp3", audioFileList.get(0).getAbsolutePath());
+		String userName = System.getProperty("user.name");
+		assertEquals("/home/"+ userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/01 Clandestino.mp3", audioFileList.get(0).getAbsolutePath());
 		
 		String libraryFirstLineContent = this.fileScanner.nextLine();
 		
-		assertEquals("01 Clandestino.mp3#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\01 Clandestino.mp3", libraryFirstLineContent);
+		assertEquals("01 Clandestino.mp3#/home/"+ userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/01 Clandestino.mp3", libraryFirstLineContent);
 		
 		fileScanner.close();
 	}
@@ -250,10 +252,18 @@ public class LibraryTest {
 		audioFileList.add(aol);
 		
 		this.library = new Library(audioFileList);
+		
+		File libraryTestFile = new File("res/libraryTest.txt");
+		PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(libraryTestFile, true));
+		String userName = System.getProperty("user.name");
+		printWriterOutputFile.println("Bob Marley - Jammin.mp3#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/Bob Marley - Jammin.mp3");
+		printWriterOutputFile.println("9.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/9.wav");
+		printWriterOutputFile.println("test.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/test.wav");
+		printWriterOutputFile.print("aol.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/aol.wav");
+		printWriterOutputFile.close();
 
 		
 		String libraryTestFileContent = "";		
-		File libraryTestFile = new File("res/libraryTest.txt");
 		Scanner fileTestScanner = new Scanner(libraryTestFile);
 		while(fileTestScanner.hasNext()) {
 			libraryTestFileContent += fileTestScanner.next();
@@ -266,6 +276,8 @@ public class LibraryTest {
 		}
 		
 		assertEquals(libraryTestFileContent, libraryFileContent);
+		
+		libraryTestFile.delete();
 	} 
 
 }
