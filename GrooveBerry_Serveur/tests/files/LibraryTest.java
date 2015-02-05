@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -23,6 +24,8 @@ public class LibraryTest {
 	
 	private File file;
 
+	private Scanner fileScanner;
+
 	@Before
 	public void setUp() throws Exception {
 		this.library = new Library();
@@ -33,6 +36,8 @@ public class LibraryTest {
 		this.aol = new AudioFile("audio/aol.wav");
 		
 		this.file = new File("res/library.txt");
+		
+		this.fileScanner = new Scanner(this.file);
 	}
 
 	@After
@@ -44,7 +49,10 @@ public class LibraryTest {
 		this.leNeuf = null;
 		this.aol = null;
 		
-		this.file.delete();
+		this.fileScanner.close();
+		this.fileScanner = null;
+		
+		System.out.println(this.file.delete() + " " + this.file.exists());
 		this.file = null;
 	}
 	
@@ -72,16 +80,55 @@ public class LibraryTest {
 		
 		this.library = new Library(audioFileListTest);
 		
+		String line = this.fileScanner.nextLine();
+		assertEquals("Bob Marley - Jammin.mp3#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\Bob Marley - Jammin.mp3", line);
+		line = this.fileScanner.nextLine();
+		assertEquals("9.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\9.wav", line);
+		line = this.fileScanner.nextLine();
+		assertEquals("test.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\test.wav", line);
+		line = this.fileScanner.nextLine();
+		assertEquals("aol.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\aol.wav", line);
+		
 		ArrayList<AudioFile> audioFileList  = this.library.getAudioFileList();
 		assertEquals(audioFileList.size(), audioFileListTest.size());
 		for (int i = 0; i < audioFileList.size(); i++) {
 			assertEquals(audioFileListTest.get(i).getName(), audioFileList.get(i).getName());
 			assertEquals(audioFileListTest.get(i).getAbsolutePath(), audioFileList.get(i).getAbsolutePath());
 		}
-	} 
+	}
+	
+	@Test
+	public void testAddDuplicationIntoLibrary() throws FileNotFoundException
+	{
+		ArrayList<AudioFile> audioFileListTest = new ArrayList<>();
+		audioFileListTest.add(bob);
+		audioFileListTest.add(leNeuf);
+		audioFileListTest.add(test);
+		
+		this.library.add("audio\\Bob Marley - Jammin.mp3");
+		this.library.add("audio\\9.wav");
+		this.library.add("audio\\test.wav");
+		this.library.add("audio\\Bob Marley - Jammin.mp3");
+		
+		String line = this.fileScanner.nextLine();
+		assertEquals("Bob Marley - Jammin.mp3#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\Bob Marley - Jammin.mp3", line);
+		line = this.fileScanner.nextLine();
+		assertEquals("9.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\9.wav", line);
+		line = this.fileScanner.nextLine();
+		assertEquals("test.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\test.wav", line);
+		this.fileScanner.close();
+		
+		ArrayList<AudioFile> audioFileList  = this.library.getAudioFileList();
+		assertEquals(audioFileListTest.size(), audioFileList.size());
+		for (int i = 0; i < audioFileList.size(); i++) {
+			assertEquals(audioFileListTest.get(i).getName(), audioFileList.get(i).getName());
+			assertEquals(audioFileListTest.get(i).getAbsolutePath(), audioFileList.get(i).getAbsolutePath());
+		}
+		
+	}
 
 	@Test
-	public void testUpdateLibraryBaseOnFile() throws FileNotFoundException {
+	public void testUpdateLibraryBaseOnFile() throws IOException {
 		ArrayList<AudioFile> audioFileListTest = new ArrayList<>();
 		audioFileListTest.add(bob);
 		audioFileListTest.add(leNeuf);
@@ -93,10 +140,19 @@ public class LibraryTest {
 		printWriterOutputFile.println("9.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\9.wav");
 		printWriterOutputFile.println("test.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\test.wav");
 		printWriterOutputFile.print("aol.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\aol.wav");
-		
 		printWriterOutputFile.close();
 		
 		this.library.updateLibrary();
+		
+		String line = this.fileScanner.nextLine();
+		assertEquals("Bob Marley - Jammin.mp3#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\Bob Marley - Jammin.mp3", line);
+		line = this.fileScanner.nextLine();
+		assertEquals("9.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\9.wav", line);
+		line = this.fileScanner.nextLine();
+		assertEquals("test.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\test.wav", line);
+		line = this.fileScanner.nextLine();
+		assertEquals("aol.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\aol.wav", line);
+		
 		ArrayList<AudioFile> audioFileList  = this.library.getAudioFileList();
 		assertEquals(audioFileListTest.size(), audioFileList.size());
 		for (int i = 0; i < audioFileListTest.size(); i++) {
@@ -108,7 +164,7 @@ public class LibraryTest {
 	}
 	
 	@Test
-	public void testUpdateLibraryBaseOnFileWithError() throws FileNotFoundException {
+	public void testUpdateLibraryBaseOnFileWithError() throws IOException {
 		ArrayList<AudioFile> audioFileListTest = new ArrayList<>();
 		audioFileListTest.add(bob);
 		audioFileListTest.add(leNeuf);
@@ -123,6 +179,15 @@ public class LibraryTest {
 		printWriterOutputFile.close();
 		
 		this.library.updateLibrary();
+		
+		String line = this.fileScanner.nextLine();
+		assertEquals("Bob Marley - Jammin.mp3#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\Bob Marley - Jammin.mp3", line);
+		line = this.fileScanner.nextLine();
+		assertEquals("9.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\9.wav", line);
+		line = this.fileScanner.nextLine();
+		assertEquals("aol.wav#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\aol.wav", line);
+		this.fileScanner.close();
+		
 		ArrayList<AudioFile> audioFileList  = this.library.getAudioFileList();
 		assertEquals(audioFileListTest.size(), audioFileList.size());
 		for (int i = 0; i < audioFileListTest.size(); i++) {
@@ -134,11 +199,11 @@ public class LibraryTest {
 	
 	@Test
 	public void testRemoveFileInLibrary() throws FileNotFoundException {
-		this.library.add("audio/Bob Marley - Jammin.mp3");
-		this.library.add("audio/test.wav");
-		this.library.add("audio/9.wav");
+		this.library.add("audio\\Bob Marley - Jammin.mp3");
+		this.library.add("audio\\test.wav");
+		this.library.add("audio\\9.wav");
 		
-		this.library.remove("audio/test.wav");
+		this.library.remove("audio\\test.wav");
 		
 		ArrayList<AudioFile> audioFileListTest = new ArrayList<>();
 		audioFileListTest.add(bob);
@@ -169,9 +234,7 @@ public class LibraryTest {
 		assertEquals("01 Clandestino.mp3", audioFileList.get(0).getName());
 		assertEquals("H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\01 Clandestino.mp3", audioFileList.get(0).getAbsolutePath());
 		
-		File libraryFile = new File("res/library.txt");
-		Scanner fileScanner = new Scanner(libraryFile);
-		String libraryFirstLineContent = fileScanner.nextLine();
+		String libraryFirstLineContent = this.fileScanner.nextLine();
 		
 		assertEquals("01 Clandestino.mp3#H:\\git\\GrooveBerry\\GrooveBerry_Serveur\\audio\\01 Clandestino.mp3", libraryFirstLineContent);
 		
@@ -189,23 +252,20 @@ public class LibraryTest {
 		this.library = new Library(audioFileList);
 
 		
-		String libraryTestFileContent = "", libraryFileContent = "";
-		
+		String libraryTestFileContent = "";		
 		File libraryTestFile = new File("res/libraryTest.txt");
-		Scanner fileScanner = new Scanner(libraryTestFile);
-		while(fileScanner.hasNext()) {
-			libraryTestFileContent += fileScanner.next();
+		Scanner fileTestScanner = new Scanner(libraryTestFile);
+		while(fileTestScanner.hasNext()) {
+			libraryTestFileContent += fileTestScanner.next();
 		}
+		fileTestScanner.close();
 		
-		File libraryFile = new File("res/library.txt");
-		fileScanner.close();
-		fileScanner = new Scanner(libraryFile);
-		while(fileScanner.hasNext()) {
-			libraryFileContent += fileScanner.next();
+		String libraryFileContent = "";	
+		while(this.fileScanner.hasNext()) {
+			libraryFileContent += this.fileScanner.next();
 		}
 		
 		assertEquals(libraryTestFileContent, libraryFileContent);
-		fileScanner.close();
 	} 
 
 }

@@ -3,6 +3,7 @@ package files;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilePermission;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -40,35 +41,52 @@ public abstract class TrackStorage {
 		return this.audioFileList;
 	}
 	
-	//TODO Optimize
 	protected void updateLibraryFile() throws FileNotFoundException {
-		PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(this.file, true), false);
+		PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(this.file, false), true);
 		for (AudioFile audioFile : audioFileList) {
 			printWriterOutputFile.println(audioFile.getName() + DELIMITER + audioFile.getAbsolutePath());
 		}
 		printWriterOutputFile.close();
 	}
 	
-	public void updateLibrary() throws FileNotFoundException {
-		//this.audioFileList.clear();
+	protected boolean contains(String filePath) {
+		boolean contain = false;
+		for (AudioFile audioFile : audioFileList) {
+			if (audioFile.getAbsolutePath().equals(filePath) || audioFile.getPath().equals(filePath)) {
+				contain = true;
+				break;
+			}
+		}
+		return contain;
+	}
+	
+	public void updateLibrary() throws IOException {
+		ArrayList<String> linesToDelete = new ArrayList<>();
 		Scanner fileScanner = new Scanner(this.file);
 		while(fileScanner.hasNextLine()) {
 			String line = fileScanner.nextLine();
 			if (!line.equals("")) {
 				String filePath = line.split(DELIMITER)[1];
-				AudioFile audioFile = new AudioFile(filePath);
-				if (audioFile.isLoaded() && !this.audioFileList.contains(audioFile)) {
-					this.audioFileList.add(new AudioFile(filePath));
+				if (!this.contains(filePath)) { 
+					try {
+						this.add(filePath);
+					} catch (FileNotFoundException e) {
+						
+					}
 				}
 			}
 		}
 		fileScanner.close();
 	}
-	
+
 	public void add(String filePath) throws FileNotFoundException {
 		AudioFile audioFile = new AudioFile(filePath);
-		this.audioFileList.add(audioFile);
-		updateLibraryFile();
+		if (audioFile.isLoaded()) {
+			this.audioFileList.add(audioFile);
+			updateLibraryFile();
+		} else {
+			throw new FileNotFoundException();
+		}
 	}
 	
 	public void remove(String filePath) throws FileNotFoundException {

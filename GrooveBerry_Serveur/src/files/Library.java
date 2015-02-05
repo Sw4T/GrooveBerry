@@ -17,5 +17,12 @@ public class Library extends TrackStorage {
 		this.updateLibraryFile();
 	}
 
-	//TODO overwrite add() to kill doublons
+	@Override
+	public void add(String filePath) throws FileNotFoundException {
+		if (!this.contains(filePath)) {
+			super.add(filePath);
+		}
+	}
+
+	
 }
