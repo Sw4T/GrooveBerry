@@ -101,7 +101,7 @@ public class ClientTest {
 		return toReturn;
 	}
 	
-	public static void showMenu() 
+	public static void showMenu()
 	{
 		System.out.println("1. Play");
 		System.out.println("2. Pause/Unpause");
