@@ -3,6 +3,7 @@ package files;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilePermission;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -32,40 +33,70 @@ public abstract class TrackStorage {
 		this.audioFileList = audioFileList;
 	}
 	
-	//TODO 
-	public ArrayList<AudioFile> getAudioFileList() {
-		//return new ArrayList<>(this.audioFileList);
-		return this.audioFileList;
-	}
-		
 	public boolean isEmpty() {
 		return this.audioFileList.isEmpty();
 	}
-	
-	public void setTrackStorageFilePathName(String pathname) {
-		this.file = new File(pathname);	
+
+	public ArrayList<AudioFile> getAudioFileList() {
+		return this.audioFileList;
 	}
 	
-	public void add(String filePath) throws FileNotFoundException {
-		AudioFile audioFile = new AudioFile(filePath);
-		this.audioFileList.add(audioFile);
-		
-		PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(this.file),true);
-		printWriterOutputFile.println(audioFile.getName() + DELIMITER + audioFile.getAbsolutePath());
+	protected void updateLibraryFile() throws FileNotFoundException {
+		PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(this.file, false), true);
+		for (AudioFile audioFile : audioFileList) {
+			printWriterOutputFile.println(audioFile.getName() + DELIMITER + audioFile.getAbsolutePath());
+		}
 		printWriterOutputFile.close();
 	}
 	
-	// TODO Optimize update
-	public void updateLibrary() throws FileNotFoundException {;
-		this.audioFileList.clear();
+	protected boolean contains(String filePath) {
+		boolean contain = false;
+		for (AudioFile audioFile : audioFileList) {
+			if (audioFile.getAbsolutePath().equals(filePath) || audioFile.getPath().equals(filePath)) {
+				contain = true;
+				break;
+			}
+		}
+		return contain;
+	}
+	
+	public void updateLibrary() throws IOException {
+		ArrayList<String> linesToDelete = new ArrayList<>();
 		Scanner fileScanner = new Scanner(this.file);
 		while(fileScanner.hasNextLine()) {
 			String line = fileScanner.nextLine();
-			String filePath = line.split(DELIMITER)[1];
-			this.audioFileList.add(new AudioFile(filePath));
+			if (!line.equals("")) {
+				String filePath = line.split(DELIMITER)[1];
+				if (!this.contains(filePath)) { 
+					try {
+						this.add(filePath);
+					} catch (FileNotFoundException e) {
+						
+					}
+				}
+			}
 		}
 		fileScanner.close();
 	}
+
+	public void add(String filePath) throws FileNotFoundException {
+		AudioFile audioFile = new AudioFile(filePath);
+		if (audioFile.isLoaded()) {
+			this.audioFileList.add(audioFile);
+			updateLibraryFile();
+		} else {
+			throw new FileNotFoundException();
+		}
+	}
 	
-	
+	public void remove(String filePath) throws FileNotFoundException {
+		AudioFile compareFile = new AudioFile(filePath);
+		for (int i = 0; i < this.audioFileList.size(); i++) {
+			if (this.audioFileList.get(i).getPath().equalsIgnoreCase(compareFile.getPath())) {
+				this.audioFileList.remove(i);
+			}		
+		}
+		updateLibraryFile();
+	}
+
 }
