@@ -11,7 +11,8 @@ public class Client implements Runnable {
 
 	private Socket socket;
 	private String clientName;
-	private Reception in;
+	//private Reception in;
+	private ObjectInputStream in;
 	private ObjectOutputStream out;
 	private AtomicBoolean connect; 
 	private Server server;
@@ -20,7 +21,7 @@ public class Client implements Runnable {
 		try {
 			this.socket = newSocket;
 			this.out = new ObjectOutputStream(socket.getOutputStream());
-			this.in = new Reception(socket.getInputStream());
+			this.in = new ObjectInputStream(socket.getInputStream());
 			this.connect = new AtomicBoolean(true);
 		} catch (IOException ex) {
 			ex.printStackTrace();
