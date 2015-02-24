@@ -90,10 +90,47 @@ public class ReadingQueue implements AudioListener {
 			changeTrack(false, trackIndex);
 		}
 	}
+
+	public int getCurrentTrackPosition() {
+		return this.currentTrackIndex;
+	}
+
+	public LinkedList<AudioFile> getAudioFileList() {
+		return this.queue;
+	}
+
+	public AudioFile getCurrentTrack() {
+		return this.currentTrack;
+	}	
+
+	public void setCurrentTrack(AudioFile track) {
+		this.currentTrack = track;		
+	}
+
+	public void addList(ArrayList<AudioFile> playlist) {
+		this.queue.addAll(playlist);
+	}
 	
-	private void changeTrack(boolean forward, int trackIndex){
-		boolean muted = false;
-		boolean looped = false;
+	public void addListAt(int index, ArrayList<AudioFile> playlist) {
+		this.queue.addAll(index, playlist);
+	}
+
+	@Override
+	public void endOfPlay() {
+		int trackIndex = getCurrentTrackPosition();
+		if (trackIndex + 1 < this.queue.size()) {
+			next();
+		}
+	}
+
+	@Override
+	public void stopOfPlay() {
+		
+	}
+
+	private void getTrackState(boolean muted, boolean looped) {
+		muted = false;
+		looped = false;
 		if (this.currentTrack.isPlaying()) {
 			if (this.currentTrack.isPaused()) {
 				this.currentTrack.pause();
@@ -108,64 +145,30 @@ public class ReadingQueue implements AudioListener {
 			}
 			this.currentTrack.stop();
 		}
+	}
+
+	private void changeTrack(boolean forward, int trackIndex){
+		boolean muted = false;
+		boolean looped = false;
+		
+		getTrackState(muted, looped);
 		
 		if(forward){
 			this.currentTrack = this.queue.get(trackIndex + 1);
 			this.currentTrackIndex = trackIndex + 1;
-		}
-		else{
+		} else {
 			this.currentTrack = this.queue.get(trackIndex - 1);
 			this.currentTrackIndex = trackIndex - 1;
 		}
 		this.currentTrack.addListener(this);
+		
 		if (muted) {
 			this.currentTrack.mute();
 		}
 		if(looped){
 			this.currentTrack.loop();
 		}
+		
 		this.currentTrack.play();
 	}
-	
-	
-	
-	
-	public int getCurrentTrackPosition() {
-		return this.currentTrackIndex;
-	}
-
-	public LinkedList<AudioFile> getAudioFileList() {
-		return this.queue;
-	}
-
-	public AudioFile getCurrentTrack() {
-		return this.currentTrack;
-	}	
-
-	@Override
-	public void endOfPlay() {
-		int trackIndex = getCurrentTrackPosition();
-		if (trackIndex + 1 < this.queue.size()) {
-			next();
-		}
-	}
-	
-	@Override
-	public void stopOfPlay() {
-		
-	}
-	
-	public void setCurrentTrack(AudioFile track) {
-		this.currentTrack = track;		
-	}
-
-	public void addList(ArrayList<AudioFile> playlist) {
-		this.queue.addAll(playlist);
-	}
-	
-	public void addListAt(int index, ArrayList<AudioFile> playlist) {
-		this.queue.addAll(index, playlist);
-	}
-
-
 }
