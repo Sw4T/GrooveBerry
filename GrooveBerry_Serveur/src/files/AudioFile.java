@@ -1,6 +1,7 @@
 package files;
 
 import java.io.File;
+import java.io.Serializable;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -9,8 +10,10 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.SourceDataLine;
 
-public class AudioFile implements Runnable
+public class AudioFile implements Runnable, Serializable
 {
+
+	private static final long serialVersionUID = -726613633651477466L;
 	private File file;
 	private boolean running, mute, pause, loop, restart;
 	private final int byteChunkSize = 4096;//number of bytes to read at one time

@@ -1,9 +1,12 @@
 package files;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class ReadingQueue implements AudioListener {
+public class ReadingQueue implements AudioListener, Serializable {
+
+	private static final long serialVersionUID = -1233259350112363601L;
 	private	AudioFile currentTrack;
 	private int currentTrackIndex;
 	
@@ -158,7 +161,7 @@ public class ReadingQueue implements AudioListener {
 	public void setCurrentTrack(AudioFile track) {
 		this.currentTrack = track;		
 	}
-
+	
 	public void addList(ArrayList<AudioFile> playlist) {
 		this.queue.addAll(playlist);
 	}
@@ -166,6 +169,5 @@ public class ReadingQueue implements AudioListener {
 	public void addListAt(int index, ArrayList<AudioFile> playlist) {
 		this.queue.addAll(index, playlist);
 	}
-
 
 }

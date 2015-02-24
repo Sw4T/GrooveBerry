@@ -7,14 +7,15 @@ import java.io.Serializable;
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import protocol.NotifierReadingQueue;
+
 public class Client implements Runnable {
 
-	private Socket socket;
-	private String clientName;
-	//private Reception in;
-	private ObjectInputStream in;
+	private Socket socket; //Socket utilisé pour communiquer avec le client
+	private String clientName; //Pseudo du client
+	private ObjectInputStream in; 
 	private ObjectOutputStream out;
-	private AtomicBoolean connect; 
+	protected AtomicBoolean connect; //Booléen assurant que le client est connecté
 	private Server server;
 	
 	public Client(Socket newSocket) {
@@ -36,9 +37,20 @@ public class Client implements Runnable {
 	@Override
 	public void run() {
 		while (connect.get()) {
-			getTreatmentFromRemote();
-			connect.set(false);
-			server.disconnectClient(this);
+			try {
+				Object obj = in.readObject();
+				server.execute((String) obj);
+				Object [] objs = new Object[1];
+				objs[0] = Server.readingQueue;
+				NotifierReadingQueue notify = new NotifierReadingQueue(objs);
+				new Thread(notify).start();
+			} catch (ClassNotFoundException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//getTreatmentFromRemote();
+			/*connect.set(false);
+			server.disconnectClient(this);*/
 		}
 	}
 	
