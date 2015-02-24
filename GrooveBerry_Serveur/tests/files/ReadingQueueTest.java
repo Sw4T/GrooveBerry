@@ -134,6 +134,55 @@ public class ReadingQueueTest {
 	}
 	
 	@Test
+	public void testAddListInEmptyReadingQueue(){
+		this.readingQueue = new ReadingQueue();
+		ArrayList<AudioFile> playlist = new ArrayList<AudioFile>();
+		playlist.add(leNeuf);
+		playlist.add(test);
+		playlist.add(aol);
+		playlist.add(bob);
+		this.readingQueue.addList(playlist);
+		
+		assertEquals(leNeuf,this.readingQueue.getAudioFileList().get(0));
+		assertEquals(test,this.readingQueue.getAudioFileList().get(1));
+		assertEquals(aol,this.readingQueue.getAudioFileList().get(2));
+		assertEquals(bob,this.readingQueue.getAudioFileList().get(3));
+		
+	}
+	
+	@Test
+	public void testAddListAtEndOfReadingQueue(){
+		this.readingQueue = new ReadingQueue();
+		ArrayList<AudioFile> playlist = new ArrayList<AudioFile>();
+		playlist.add(test);
+		playlist.add(aol);
+		playlist.add(bob);
+		this.readingQueue.addLast(leNeuf);
+		this.readingQueue.addList(playlist);
+		
+		assertEquals(leNeuf,this.readingQueue.getAudioFileList().get(0));
+		assertEquals(test,this.readingQueue.getAudioFileList().get(1));
+		assertEquals(aol,this.readingQueue.getAudioFileList().get(2));
+		assertEquals(bob,this.readingQueue.getAudioFileList().get(3));
+	}
+	
+	@Test
+	public void testAddListAtMiddleOfReadingQueue(){
+		this.readingQueue = new ReadingQueue();
+		ArrayList<AudioFile> playlist = new ArrayList<AudioFile>();
+		playlist.add(aol);
+		playlist.add(bob);
+		this.readingQueue.addLast(leNeuf);
+		this.readingQueue.addLast(test);
+		this.readingQueue.addListAt(1, playlist);
+		
+		assertEquals(leNeuf,this.readingQueue.getAudioFileList().get(0));
+		assertEquals(aol,this.readingQueue.getAudioFileList().get(1));
+		assertEquals(bob,this.readingQueue.getAudioFileList().get(2));
+		assertEquals(test,this.readingQueue.getAudioFileList().get(3));
+	}
+	
+	@Test
 	public void testAddAtCentralPositionTrackInReadingQueue() {
 		this.readingQueue = new ReadingQueue();
 		
@@ -217,7 +266,6 @@ public class ReadingQueueTest {
 	@Test
 	public void testRemoveLastCurrentTrack() {
 		this.readingQueue = new ReadingQueue();
-		
 		this.readingQueue.addLast(bob);
 		this.readingQueue.addLast(test);
 		this.readingQueue.addLast(leNeuf);
@@ -455,4 +503,5 @@ public class ReadingQueueTest {
 		
 		
 	}
+
 }

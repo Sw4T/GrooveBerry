@@ -159,6 +159,13 @@ public class ReadingQueue implements AudioListener {
 		this.currentTrack = track;		
 	}
 
+	public void addList(ArrayList<AudioFile> playlist) {
+		this.queue.addAll(playlist);
+	}
+	
+	public void addListAt(int index, ArrayList<AudioFile> playlist) {
+		this.queue.addAll(index, playlist);
+	}
 
 
 }
