@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">GrooveBerry</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_exit">Exit</string>
+    <string name="playbutton">Play</string>
+    <string name="stopbutton">Stop</string>
+    <string name="notconnectedwarning">Warning : not connected !</string>
+    <string name="playstatus">Tap "Play" to launch your music !"</string>
+    <string name="musicname">Music Name</string>
+    <string name="musictimer">00:00:00</string>
+    <string name="warningLogoDesc">Warning Logo</string>
+    <string name="grooveBerryLogoDesc">GrooveBerry</string>
+    <string name="pauseButtonDesc">Pause Button</string>
+    <string name="playButtonDesc">Play Button</string>
+    <string name="previousButtonDesc">Previous Button</string>
+    <string name="nextButtonDesc">Next Button</string>
+    <string name="title_activity_menu">Main menu</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="title_activity_connect">Connect to GrooveBerry Server</string>
+    <string name="wifiConnectButtonDesc">Connect to wifi button</string>
+    <string name="wifiDisconnectButtonDesc">Disconnect wifi button</string>
+    <string name="action_connect">Connect</string>
+    <string name="action_disconnect">Disconnect</string>
+    <string name="action_play">Play</string>
+    <string name="connectionStatus">Waiting for connection</string>
+    <string name="service_name">Connection service</string>
+    <string name="title_activity_music_list">MusicListActivity</string>
+    
+</resources>
