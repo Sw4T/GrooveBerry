@@ -1,4 +1,0 @@
-Bob Marley - Jammin.mp3#H:\git\GrooveBerry\GrooveBerry_Serveur\audio\Bob Marley - Jammin.mp3
-9.wav#H:\git\GrooveBerry\GrooveBerry_Serveur\audio\9.wav
-test.wav#H:\git\GrooveBerry\GrooveBerry_Serveur\audio\test.wav
-aol.wav#H:\git\GrooveBerry\GrooveBerry_Serveur\audio\aol.wav

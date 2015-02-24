@@ -16,7 +16,4 @@ public class Playlist extends TrackStorage {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
-	
 }

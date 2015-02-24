@@ -2,6 +2,8 @@ package files;
 
 import static org.junit.Assert.*;
 
+import javax.sound.sampled.FloatControl;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,11 +13,11 @@ import files.AudioFile;
 public class AudioFileTest {
 
 	private AudioFile audioFile;
-	private static final String fileTest = "audio/test.wav";
+	private static final String FILE_TEST = "audio/test.wav";
 	
 	@Before
 	public void setUp() throws Exception {
-		audioFile = new AudioFile(fileTest); //Durée de moins de 5 secondes
+		audioFile = new AudioFile(FILE_TEST); //Durée de moins de 5 secondes
 	}
 
 	@After
@@ -27,7 +29,7 @@ public class AudioFileTest {
 	public void test_load() {
 		audioFile = new AudioFile();
 		assertEquals(false, audioFile.isLoaded());
-		audioFile.loadFile(fileTest);
+		audioFile.loadFile(FILE_TEST);
 		assertEquals(true, audioFile.isLoaded());
 	}
 	
@@ -59,4 +61,13 @@ public class AudioFileTest {
 		Thread.sleep(5000);
 		assertEquals(true, audioFile.isPlaying());
 	}
+	//TODO
+	/*@Test
+	public void testVolumeUp(){
+		audioFile.play();
+		assertEquals(true, audioFile.isPlaying());
+		float volume = audioFile.getVolume().getValue();
+		audioFile.volumeUp();
+		assertEquals(volume + 10,audioFile.getVolume().getValue(),0);
+	}*/
 }

@@ -221,7 +221,7 @@ public class LibraryTest {
 	}
 	
 	//
-	// Test testAddMusicFileToLibrary() et testMajFileLibrary() fonctionnel avec les chemins windows
+	// Test testMajFileLibrary() fonctionnel avec les chemins windows
 	//
 	
 	@Test

@@ -96,6 +96,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 	
 	private void changeTrack(boolean forward, int trackIndex){
 		boolean muted = false;
+		boolean looped = false;
 		if (this.currentTrack.isPlaying()) {
 			if (this.currentTrack.isPaused()) {
 				this.currentTrack.pause();
@@ -103,6 +104,10 @@ public class ReadingQueue implements AudioListener, Serializable {
 			if (this.currentTrack.isMuted()) {
 				muted = true;
 				this.currentTrack.mute();
+			}
+			if(this.currentTrack.isLooping()){
+				looped = true;
+				this.currentTrack.loop();
 			}
 			this.currentTrack.stop();
 		}
@@ -118,6 +123,9 @@ public class ReadingQueue implements AudioListener, Serializable {
 		this.currentTrack.addListener(this);
 		if (muted) {
 			this.currentTrack.mute();
+		}
+		if(looped){
+			this.currentTrack.loop();
 		}
 		this.currentTrack.play();
 	}
@@ -152,6 +160,14 @@ public class ReadingQueue implements AudioListener, Serializable {
 	
 	public void setCurrentTrack(AudioFile track) {
 		this.currentTrack = track;		
+	}
+	
+	public void addList(ArrayList<AudioFile> playlist) {
+		this.queue.addAll(playlist);
+	}
+	
+	public void addListAt(int index, ArrayList<AudioFile> playlist) {
+		this.queue.addAll(index, playlist);
 	}
 
 }
