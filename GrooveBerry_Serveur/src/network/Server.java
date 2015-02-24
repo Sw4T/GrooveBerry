@@ -122,4 +122,12 @@ public class Server {
 	public Client getCurrentClient() {
 		return this.currentClient;
 	}
+	
+	public ArrayList<Client> getClientsList() {
+		return this.listClients;
+	}
+	
+	public ReadingQueue getReadingQueue() {
+		return this.readingQueue;
+	}
 }
