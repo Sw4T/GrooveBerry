@@ -18,16 +18,16 @@
     <string name="previousButtonDesc">Previous Button</string>
     <string name="nextButtonDesc">Next Button</string>
     <string name="title_activity_menu">Main menu</string>
-    <string name="title_section1">Launch your music</string>
-    <string name="title_section2">Connection</string>
-    <string name="title_section3">Section 3</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="title_activity_connect">Connect to GrooveBerry Server</string>
     <string name="wifiConnectButtonDesc">Connect to wifi button</string>
     <string name="wifiDisconnectButtonDesc">Disconnect wifi button</string>
     <string name="action_connect">Connect</string>
+    <string name="action_disconnect">Disconnect</string>
     <string name="action_play">Play</string>
     <string name="connectionStatus">Waiting for connection</string>
-
+    <string name="service_name">Connection service</string>
+    <string name="title_activity_music_list">MusicListActivity</string>
+    
 </resources>
