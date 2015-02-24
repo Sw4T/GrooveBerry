@@ -503,5 +503,31 @@ public class ReadingQueueTest {
 		
 		
 	}
+	
+	@Test 
+	public void testNextPrevRandom() throws InterruptedException {
+		this.readingQueue = new ReadingQueue();
+		this.readingQueue.addLast(aol);
+		this.readingQueue.addLast(bob);
+		this.readingQueue.addLast(leNeuf);
+		this.readingQueue.addLast(test);
+		
+		this.readingQueue.getCurrentTrack().play();
+		this.readingQueue.getCurrentTrack().random();
+		assertEquals(aol, this.readingQueue.getCurrentTrack());
+		assertEquals(0, this.readingQueue.getCurrentTrackPosition());
+		assertEquals(true, this.readingQueue.getCurrentTrack().isPlaying());
+		assertEquals(true, this.readingQueue.getCurrentTrack().isRandomised());
+		this.readingQueue.next();
+		assertEquals(true, this.readingQueue.getCurrentTrack().isRandomised());
+		this.readingQueue.getCurrentTrack().random();
+		assertEquals(false, this.readingQueue.getCurrentTrack().isRandomised());
+		this.readingQueue.prev();
+		
+		assertEquals(true, this.readingQueue.getCurrentTrack().isPlaying());
+		assertEquals(false, this.readingQueue.getCurrentTrack().isRandomised());
+		
+		
+	}
 
 }
