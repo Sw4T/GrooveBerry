@@ -191,6 +191,8 @@ public class ReadingQueueTest {
 	
 	@Test
 	public void testRemoveLastCurrentTrack() {
+
+		this.readingQueue = new ReadingQueue();
 		this.readingQueue.addLast(bob);
 		this.readingQueue.addLast(test);
 		this.readingQueue.addLast(leNeuf);

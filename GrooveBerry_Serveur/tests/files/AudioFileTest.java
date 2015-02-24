@@ -2,6 +2,8 @@ package files;
 
 import static org.junit.Assert.*;
 
+import javax.sound.sampled.FloatControl;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,4 +61,13 @@ public class AudioFileTest {
 		Thread.sleep(5000);
 		assertEquals(true, audioFile.isPlaying());
 	}
+	//TODO
+	/*@Test
+	public void testVolumeUp(){
+		audioFile.play();
+		assertEquals(true, audioFile.isPlaying());
+		float volume = audioFile.getVolume().getValue();
+		audioFile.volumeUp();
+		assertEquals(volume + 10,audioFile.getVolume().getValue(),0);
+	}*/
 }

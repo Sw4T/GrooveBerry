@@ -6,6 +6,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.SourceDataLine;
 
 public class AudioFile implements Runnable
@@ -16,7 +17,9 @@ public class AudioFile implements Runnable
 	private byte[] muteData;
 	private AudioListener listenerEvent;
 	private boolean isStopped;
+	//private FloatControl volume;
 
+	
 	public AudioFile() 
 	{
 		file = null;
@@ -34,7 +37,19 @@ public class AudioFile implements Runnable
 		this();
 		loadFile(filePath);
 	}
-
+	/*
+	public void volumeUp(){
+		if(volume.getValue()+10 < volume.getMaximum()){
+			volume.setValue(+10.0f);
+		}
+	}
+	
+	public void volumeDown(){
+		if(volume.getValue()-10 > volume.getMinimum()){
+			volume.setValue(-10.0f);
+		}
+	}
+	*/
 	/**
 	* Creates a file object. If the file path exists on the system, the given file is an mp3, and
 	* a song is not currently playing in this instance of the program, true is returned.
@@ -213,6 +228,10 @@ public class AudioFile implements Runnable
 				AudioInputStream in = AudioSystem.getAudioInputStream(file);
 				AudioInputStream din = null;
 				AudioFormat baseFormat = in.getFormat();
+				/*this.volume = (FloatControl) this.getLine(baseFormat).getControl(FloatControl.Type.MASTER_GAIN);
+				if(this.volume != null){
+					this.volume.setValue(0);
+				}*/
 				AudioFormat decodedFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
 															baseFormat.getSampleRate(),
 															16,
@@ -317,4 +336,8 @@ public class AudioFile implements Runnable
 		}
 		return x;
 	}
+
+	/*public FloatControl getVolume() {
+		return this.volume;
+	}*/
 }
