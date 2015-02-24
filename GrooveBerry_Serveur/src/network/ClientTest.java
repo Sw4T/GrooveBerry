@@ -66,7 +66,7 @@ public class ClientTest {
 					treatment = "";
 				}
 				if (!treatment.equals("")) {
-					out.writeUTF(treatment);
+					out.writeObject(treatment);
 					out.flush();
 				}
 			} while (entreeUser != 7);
