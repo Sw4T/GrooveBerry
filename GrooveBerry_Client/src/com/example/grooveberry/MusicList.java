@@ -4,50 +4,55 @@ import java.util.ArrayList;
 
 public class MusicList {
 
-	private static ArrayList<String> listOfMusic;
-	private static int musicNb;
+
+	private ArrayList<String> listOfMusic;
+	private int musicNb;
+	private String nextMusicName = "";
 	
-	public MusicList () {
-		//Récupérer la liste des fichiers présents dans audio/ 
-		//sur le serveur
-//		MusicList.listOfMusic[0] = "audio/Bob Marley - Jammin.mp3";
-//		MusicList.listOfMusic[1] = "audio/Lalal_tamère_Bastien.mp3";
-//		MusicList.listOfMusic[2] = null;
-		MusicList.listOfMusic = new ArrayList<String> ();
-		MusicList.listOfMusic.add("audio/Bob Marley - Jammin.mp3");
-		MusicList.listOfMusic.add("audio/Lalal_tamère_Bastien.mp3");
-		MusicList.musicNb = 0;
+	public MusicList (ArrayList<String> list) {
+		listOfMusic = list;
+		musicNb = 0;
 	}
 	
-	public static String getFilePlaying() {
-		return MusicList.listOfMusic.get(musicNb);
+	public String getFilePlaying() {
+		return listOfMusic.get(musicNb);
 	}
 	
 	public ArrayList<String> getListOfMusic () {
-		return MusicList.listOfMusic;
+		return listOfMusic;
 	}
 	
-	public static int getMusicNb () {
-		return MusicList.musicNb;
+	public int getMusicNb () {
+		return musicNb;
 	}
 	
-	public static void nextMusic () {
-		MusicList.musicNb++;
+	public void nextMusic () {
+		musicNb++;
 	}
 	
-	public static void previousMusic () {
-		MusicList.musicNb--;
+	public void previousMusic () {
+		musicNb--;
 	}
 	
-	public static int countMusicInList () {
+	public int countMusicInList () {
 		int i = 0;
 		
-		for (String s : MusicList.listOfMusic) {
+		for (String s : listOfMusic) {
 			if (s == null) {
 				return i;
 			}
 			i++;
 		}
 		return i-1;
+	}
+	
+	public String[] convertToStringTab() {
+		String[] list = this.listOfMusic.toArray(new String[this.listOfMusic.size()]);
+		
+		return list;
+	}
+	
+	public void setNextMusicName (String name) {
+		this.nextMusicName = name;
 	}
 }
