@@ -62,7 +62,7 @@ public class LibraryTest {
 	
 
 	@Test
-	public void testDefaultConstructorCreateAEmptyLibrary() {
+	public void testDefaultConstructorCreateAEmptyLibrary() throws IOException {
 		this.library = new Library();
 		
 		assertTrue(this.library.isEmpty());
@@ -75,7 +75,7 @@ public class LibraryTest {
 	}
 
 	@Test
-	public void testConstructorCreateALibraryWithAudioFileList() throws FileNotFoundException {
+	public void testConstructorCreateALibraryWithAudioFileList() throws IOException {
 		ArrayList<AudioFile> audioFileListTest = new ArrayList<>();
 		audioFileListTest.add(bob);
 		audioFileListTest.add(leNeuf);
@@ -229,7 +229,7 @@ public class LibraryTest {
 	//
 	
 	@Test
-	public void testAddMusicFileToLibrary() throws FileNotFoundException {
+	public void testAddMusicFileToLibrary() throws IOException {
 		this.library = new Library();
 		
 		this.library.add("audio/01 Clandestino.mp3");
@@ -248,7 +248,7 @@ public class LibraryTest {
 	}
 	
 	@Test
-	public void testMajFileLibrary() throws FileNotFoundException {
+	public void testMajFileLibrary() throws IOException {
 		ArrayList<AudioFile> audioFileList = new ArrayList<>();
 		audioFileList.add(bob);
 		audioFileList.add(leNeuf);

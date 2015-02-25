@@ -15,7 +15,7 @@ public abstract class TrackStorage {
 	protected ArrayList<AudioFile> audioFileList;
 	protected File file;
 	
-	public TrackStorage(String filePath) {
+	public TrackStorage(String filePath) throws IOException {
 		this.audioFileList = new ArrayList<>();
 		this.file = new File(filePath);
 		if (!this.file.exists()) {
@@ -24,10 +24,12 @@ public abstract class TrackStorage {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		} else {
+			updateLibrary();
 		}
 	}
 	
-	public TrackStorage(ArrayList<AudioFile> audioFileList, String filePath) {
+	public TrackStorage(ArrayList<AudioFile> audioFileList, String filePath) throws IOException {
 		this(filePath);
 		this.audioFileList = audioFileList;
 	}
