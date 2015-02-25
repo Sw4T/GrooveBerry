@@ -11,10 +11,10 @@ import files.ReadingQueue;
 public class Server {
 
 	public static final int SERVER_PORT = 12345;
+	public static ArrayList<Client> listClients; //Liste de clients se connectant au serveur
+	public static ReadingQueue readingQueue; //Liste de lecture
 	private static final int NB_MAX_CLIENTS = 5;
 	private ServerSocket server; //Classe gérant les connexions entrantes
-	private ArrayList<Client> listClients; //Liste de clients se connectant au serveur
-	private ReadingQueue readingQueue; //Liste de lecture
 	private Client currentClient; //Pour effectuer les tests
 	
 	public Server() throws IOException {
@@ -31,7 +31,8 @@ public class Server {
 				Socket socket = server.accept();
 				System.out.println("Client " + socket.getInetAddress() + " has connected !");
 				final Client newClient = new Client(socket, this);
-				updateClientList(newClient);
+				//updateClientList(newClient);
+				listClients.add(newClient); //TODO Clients illimités pour test
 				
 				sendReadingQueueToRemote(newClient); //Envoi de la liste de lecture du serveur
 				new Thread(newClient).start();

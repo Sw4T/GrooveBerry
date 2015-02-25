@@ -3,31 +3,15 @@ package network;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class ClientTest {
+import protocol.Protocol;
+import files.ReadingQueue;
 
-	private Socket socket;
-	private PrintWriter printer;
-	
-	public void connectionServer() {
-		try {
-			this.socket = new Socket("localhost", Server.SERVER_PORT);
-			this.printer = new PrintWriter(socket.getOutputStream(), true);
-		} catch (IOException e) {
-			e.printStackTrace();
-			this.socket = null;
-		}
-	}
-	
-	public void sendString(String str) {
-		if (this.printer != null)
-			printer.println(str);
-	}
+public class ClientTest2 {
 	
 	//Main du client Android ici simulé 
 	@SuppressWarnings("unchecked")
@@ -56,6 +40,7 @@ public class ClientTest {
 			} else
 				System.out.println("Erreurs de synchronisation serveur !");
 			
+			threadReceive(in);
 			//Envoi de chaines définissant des constantes au serveur
 			do {
 				showMenu();
@@ -69,6 +54,7 @@ public class ClientTest {
 					out.writeObject(treatment);
 					out.flush();
 				}
+				//receiveRQ(in);
 			} while (entreeUser != 7);
 			
 			//Fermeture de la connexion avec le serveur
@@ -81,6 +67,29 @@ public class ClientTest {
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		} 
+	}
+	
+	public static synchronized void threadReceive(final ObjectInputStream is) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					while (true)
+						receiveRQ(is);
+				} catch (ClassNotFoundException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+	
+	public static void receiveRQ(ObjectInputStream is) throws ClassNotFoundException, IOException {
+		//Reception de la nouvelle liste
+		Protocol prot = (Protocol) is.readObject();
+		ReadingQueue rq = (ReadingQueue) is.readObject();
+		System.out.println("********RECEIVED*******\nprotocole : " + prot);
+		System.out.println("current track : " + rq.getCurrentTrack().getName());	
 	}
 	
 	public static String convertIntToMusicConst(int input) 
@@ -96,13 +105,12 @@ public class ClientTest {
 			case 7 : toReturn = "exit"; break;
 			case 8 : toReturn = "next"; break;
 			case 9 : toReturn = "prev"; break;
-			case 10 : toReturn = "random"; break; 
 			default : toReturn = "";
 		}
 		return toReturn;
 	}
 	
-	public static void showMenu()
+	public static void showMenu() 
 	{
 		System.out.println("1. Play");
 		System.out.println("2. Pause/Unpause");
@@ -113,7 +121,6 @@ public class ClientTest {
 		System.out.println("7. Exit");
 		System.out.println("8. Next");
 		System.out.println("9. Prev");
-		System.out.println("10. Random");
 	}
 	
 	public static void showReadingQueue(ArrayList<String> list) 
@@ -122,9 +129,5 @@ public class ClientTest {
 		for (int i = 1; i <= list.size(); i++) {
 			System.out.println("\t" + i + ". " + list.get(i - 1));
 		}
-	}
-	
-	public Socket getSocket() {
-		return this.socket;
 	}
 }
