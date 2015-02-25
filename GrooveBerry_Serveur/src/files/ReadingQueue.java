@@ -3,6 +3,8 @@ package files;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import javax.swing.text.StyledEditorKit.BoldAction;
+
 public class ReadingQueue implements AudioListener {
 	private	AudioFile currentTrack;
 	private int currentTrackIndex;
@@ -128,9 +130,10 @@ public class ReadingQueue implements AudioListener {
 		
 	}
 
-	private void getTrackState(boolean muted, boolean looped) {
-		muted = false;
-		looped = false;
+	private void changeTrack(boolean forward, int trackIndex){
+		boolean muted = false;
+		boolean looped = false;
+		
 		if (this.currentTrack.isPlaying()) {
 			if (this.currentTrack.isPaused()) {
 				this.currentTrack.pause();
@@ -145,13 +148,6 @@ public class ReadingQueue implements AudioListener {
 			}
 			this.currentTrack.stop();
 		}
-	}
-
-	private void changeTrack(boolean forward, int trackIndex){
-		boolean muted = false;
-		boolean looped = false;
-		
-		getTrackState(muted, looped);
 		
 		if(forward){
 			this.currentTrack = this.queue.get(trackIndex + 1);

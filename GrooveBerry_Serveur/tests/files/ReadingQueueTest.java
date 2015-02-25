@@ -41,7 +41,9 @@ public class ReadingQueueTest {
 		this.test = null;
 		this.leNeuf = null;
 		this.aol = null;
+		
 		this.audioFileList = null;
+		
 		this.readingQueue = null;
 		this.readingQueueTest = null;
 	}
