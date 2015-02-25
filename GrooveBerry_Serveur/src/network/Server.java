@@ -94,6 +94,7 @@ public class Server {
 			case "loop" : readingQueue.getCurrentTrack().loop(); break;
 			case "next" : readingQueue.next(); break;
 			case "prev" : readingQueue.prev(); break;
+			case "random" : readingQueue.getCurrentTrack().random(); break;
 			default :
 		}
 		System.out.println("Received " + constant + " from the client, processing...");

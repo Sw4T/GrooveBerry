@@ -3,10 +3,12 @@ package files;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Random;
+
 
 public class ReadingQueue implements AudioListener, Serializable {
-
 	private static final long serialVersionUID = -1233259350112363601L;
+	
 	private	AudioFile currentTrack;
 	private int currentTrackIndex;
 	
@@ -82,7 +84,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 
 	public void next() {
 		int trackIndex = getCurrentTrackPosition();
-		if (trackIndex + 1 < this.queue.size()) {
+		if (trackIndex + 1 < this.queue.size() || this.currentTrack.isRandomised()) {
 			changeTrack(true,trackIndex);
 		}
 	}
@@ -93,10 +95,12 @@ public class ReadingQueue implements AudioListener, Serializable {
 			changeTrack(false, trackIndex);
 		}
 	}
-	
+
 	private void changeTrack(boolean forward, int trackIndex){
 		boolean muted = false;
 		boolean looped = false;
+		boolean randomised = false;
+		
 		if (this.currentTrack.isPlaying()) {
 			if (this.currentTrack.isPaused()) {
 				this.currentTrack.pause();
@@ -109,29 +113,45 @@ public class ReadingQueue implements AudioListener, Serializable {
 				looped = true;
 				this.currentTrack.loop();
 			}
+			
 			this.currentTrack.stop();
 		}
 		
+		if(this.currentTrack.isRandomised()){
+			randomised = true;
+			this.currentTrack.random();
+		}
 		if(forward){
-			this.currentTrack = this.queue.get(trackIndex + 1);
-			this.currentTrackIndex = trackIndex + 1;
+			if(randomised){
+				Random rand = new Random();
+				int randInt = rand.nextInt(queue.size() - 1);
+				this.currentTrack = this.queue.get(randInt);
+				this.currentTrackIndex = randInt;
+			}
+			else{
+				this.currentTrack = this.queue.get(trackIndex + 1);
+				this.currentTrackIndex = trackIndex + 1;
+			}	
 		}
 		else{
 			this.currentTrack = this.queue.get(trackIndex - 1);
 			this.currentTrackIndex = trackIndex - 1;
 		}
+		
 		this.currentTrack.addListener(this);
+		
 		if (muted) {
 			this.currentTrack.mute();
 		}
+		this.currentTrack.play();
+		
 		if(looped){
 			this.currentTrack.loop();
 		}
-		this.currentTrack.play();
-	}
-	
-	
-	
+		if(randomised){
+			this.currentTrack.random();
+		}
+	}	
 	
 	public int getCurrentTrackPosition() {
 		return this.currentTrackIndex;
@@ -147,8 +167,9 @@ public class ReadingQueue implements AudioListener, Serializable {
 
 	@Override
 	public void endOfPlay() {
+		
 		int trackIndex = getCurrentTrackPosition();
-		if (trackIndex + 1 < this.queue.size()) {
+		if ((trackIndex + 1 < this.queue.size()) || this.currentTrack.isRandomised()) {
 			next();
 		}
 	}
@@ -169,5 +190,4 @@ public class ReadingQueue implements AudioListener, Serializable {
 	public void addListAt(int index, ArrayList<AudioFile> playlist) {
 		this.queue.addAll(index, playlist);
 	}
-
 }

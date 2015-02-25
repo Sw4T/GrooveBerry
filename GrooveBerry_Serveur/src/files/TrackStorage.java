@@ -3,7 +3,6 @@ package files;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FilePermission;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -61,7 +60,6 @@ public abstract class TrackStorage {
 	}
 	
 	public void updateLibrary() throws IOException {
-		ArrayList<String> linesToDelete = new ArrayList<>();
 		Scanner fileScanner = new Scanner(this.file);
 		while(fileScanner.hasNextLine()) {
 			String line = fileScanner.nextLine();

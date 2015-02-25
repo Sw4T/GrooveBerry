@@ -41,7 +41,9 @@ public class ReadingQueueTest {
 		this.test = null;
 		this.leNeuf = null;
 		this.aol = null;
+		
 		this.audioFileList = null;
+		
 		this.readingQueue = null;
 		this.readingQueueTest = null;
 	}
@@ -191,8 +193,6 @@ public class ReadingQueueTest {
 	
 	@Test
 	public void testRemoveLastCurrentTrack() {
-
-		this.readingQueue = new ReadingQueue();
 		this.readingQueue.addLast(bob);
 		this.readingQueue.addLast(test);
 		this.readingQueue.addLast(leNeuf);
@@ -368,4 +368,61 @@ public class ReadingQueueTest {
 		assertEquals(false, this.readingQueueTest.getCurrentTrack().isMuted());
 	}
 	
+	@Test
+	public void testNextPrevLoop() throws InterruptedException {
+		this.readingQueue = new ReadingQueue();
+		this.readingQueue.addLast(aol);
+		this.readingQueue.addLast(bob);
+		this.readingQueue.addLast(leNeuf);
+		this.readingQueue.addLast(test);
+		
+		this.readingQueue.getCurrentTrack().play();
+		this.readingQueue.getCurrentTrack().loop();
+		Thread.sleep(5000);
+		this.readingQueue.next();
+		
+		
+		assertEquals(bob, this.readingQueue.getCurrentTrack());
+		assertEquals(1, this.readingQueue.getCurrentTrackPosition());
+		assertEquals(true, this.readingQueue.getCurrentTrack().isPlaying());
+		assertEquals(true, this.readingQueue.getCurrentTrack().isLooping());
+		
+		this.readingQueue.getCurrentTrack().loop();
+		assertEquals(false, this.readingQueue.getCurrentTrack().isLooping());
+		this.readingQueue.prev();
+		
+		assertEquals(aol, this.readingQueue.getCurrentTrack());
+		assertEquals(0, this.readingQueue.getCurrentTrackPosition());
+		assertEquals(true, this.readingQueue.getCurrentTrack().isPlaying());
+		assertEquals(false, this.readingQueue.getCurrentTrack().isLooping());
+		
+		
+	}
+	
+	@Test 
+	public void testNextPrevRandom() throws InterruptedException {
+		this.readingQueue = new ReadingQueue();
+		this.readingQueue.addLast(aol);
+		this.readingQueue.addLast(bob);
+		this.readingQueue.addLast(leNeuf);
+		this.readingQueue.addLast(test);
+		
+		this.readingQueue.getCurrentTrack().play();
+		this.readingQueue.getCurrentTrack().random();
+		assertEquals(aol, this.readingQueue.getCurrentTrack());
+		assertEquals(0, this.readingQueue.getCurrentTrackPosition());
+		assertEquals(true, this.readingQueue.getCurrentTrack().isPlaying());
+		assertEquals(true, this.readingQueue.getCurrentTrack().isRandomised());
+		this.readingQueue.next();
+		assertEquals(true, this.readingQueue.getCurrentTrack().isRandomised());
+		this.readingQueue.getCurrentTrack().random();
+		assertEquals(false, this.readingQueue.getCurrentTrack().isRandomised());
+		this.readingQueue.prev();
+		
+		assertEquals(true, this.readingQueue.getCurrentTrack().isPlaying());
+		assertEquals(false, this.readingQueue.getCurrentTrack().isRandomised());
+		
+		
+	}
 }
+

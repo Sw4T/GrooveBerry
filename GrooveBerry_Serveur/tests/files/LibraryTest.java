@@ -36,6 +36,9 @@ public class LibraryTest {
 		this.aol = new AudioFile("audio/aol.wav");
 		
 		this.file = new File("res/library.txt");
+		if (!this.file.exists()) {
+			this.file.createNewFile();
+		}
 		
 		this.fileScanner = new Scanner(this.file);
 	}
@@ -49,10 +52,11 @@ public class LibraryTest {
 		this.leNeuf = null;
 		this.aol = null;
 		
-		this.fileScanner.close();
 		this.fileScanner = null;
 		
-		System.out.println(this.file.delete() + " " + this.file.exists());
+		if (this.file.exists()) {
+			this.file.delete();
+		}
 		this.file = null;
 	}
 	
