@@ -13,11 +13,11 @@ import files.AudioFile;
 public class AudioFileTest {
 
 	private AudioFile audioFile;
-	private static final String fileTest = "audio/test.wav";
+	private static final String FILE_TEST = "audio/test.wav";
 	
 	@Before
 	public void setUp() throws Exception {
-		audioFile = new AudioFile(fileTest); //Durée de moins de 5 secondes
+		audioFile = new AudioFile(FILE_TEST); //Durée de moins de 5 secondes
 	}
 
 	@After
@@ -29,7 +29,7 @@ public class AudioFileTest {
 	public void test_load() {
 		audioFile = new AudioFile();
 		assertEquals(false, audioFile.isLoaded());
-		audioFile.loadFile(fileTest);
+		audioFile.loadFile(FILE_TEST);
 		assertEquals(true, audioFile.isLoaded());
 	}
 	

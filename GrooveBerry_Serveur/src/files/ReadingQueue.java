@@ -96,9 +96,7 @@ public class ReadingQueue implements AudioListener {
 		boolean muted = false;
 		boolean looped = false;
 		boolean randomised = false;
-		System.out.println(this.currentTrack.isRandomised());
-		System.out.println(this.currentTrack.getName());
-		System.out.println(this.currentTrackIndex);
+		
 		if (this.currentTrack.isPlaying()) {
 			if (this.currentTrack.isPaused()) {
 				this.currentTrack.pause();
@@ -118,9 +116,6 @@ public class ReadingQueue implements AudioListener {
 		if(this.currentTrack.isRandomised()){
 			randomised = true;
 			this.currentTrack.random();
-			System.out.println(this.currentTrack.isRandomised());
-			System.out.println(this.currentTrack.getName());
-			System.out.println(this.currentTrackIndex);
 		}
 		
 		if(forward){
@@ -153,9 +148,6 @@ public class ReadingQueue implements AudioListener {
 		if(randomised){
 			this.currentTrack.random();
 		}
-		System.out.println(this.currentTrack.isRandomised());
-		System.out.println(this.currentTrack.getName());
-		System.out.println(this.currentTrackIndex);
 	}	
 	
 	public int getCurrentTrackPosition() {
