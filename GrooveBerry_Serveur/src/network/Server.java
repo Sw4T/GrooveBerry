@@ -22,7 +22,7 @@ public class Server {
 		server = new ServerSocket(SERVER_PORT);
 		listClients = new ArrayList<Client>(NB_MAX_CLIENTS);
 		readingQueue = new ReadingQueue();
-		init_reading_queue();
+		initReadingQueue();
 	}
 	
 	//Attente d'une connexion cliente et traitement de test
@@ -59,7 +59,7 @@ public class Server {
 		}).start();
 	}
 	
-	public void init_reading_queue() {
+	public void initReadingQueue() {
 		Library library;
 		try {
 			library = new Library();
@@ -67,7 +67,6 @@ public class Server {
 				readingQueue.addLast(audioFile);
 			}
 		} catch (IOException e) {
-			//TODO
 			e.printStackTrace();
 		}
 	}
