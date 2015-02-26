@@ -1,6 +1,5 @@
 package network;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -8,7 +7,6 @@ import java.util.ArrayList;
 
 import files.AudioFile;
 import files.Library;
-import files.Playlist;
 import files.ReadingQueue;
 
 public class Server {
@@ -80,10 +78,7 @@ public class Server {
 		String rep = c.readString();
 		if (rep.equals("#OK")) {
 			System.out.println("Client OK pour l'envoi de la reading queue");
-			ArrayList<String> readingList = new ArrayList<String>();
-			for (AudioFile file : readingQueue.getAudioFileList()) 
-				readingList.add(file.getName());
-			if (c.sendSerializable(readingList))
+			if (c.sendSerializable(Server.readingQueue))
 				System.out.println("Envoi de la reading queue OK...");
 		} else
 			System.out.println("Erreur lors de l'envoi de la reading queue");
