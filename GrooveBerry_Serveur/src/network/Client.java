@@ -16,7 +16,7 @@ public class Client implements Runnable {
 	private ObjectInputStream in; 
 	private ObjectOutputStream out;
 	protected AtomicBoolean connect; //Booléen assurant que le client est connecté
-	private Server server;
+	private Server server; //Référence au serveur principal
 	
 	public Client(Socket newSocket) {
 		try {
@@ -34,23 +34,27 @@ public class Client implements Runnable {
 		this.server = server;
 	}
 	
+	/**
+	 * Tourne en boucle tant que la connexion cliente est active.<br>
+	 * Implementations pour le moment : <br>
+	 * 		<b> - ReadingQueue </b>
+	 */
 	@Override
 	public void run() {
-		while (connect.get()) {
+		while (connect.get()) { //Tant que la connexion est active
 			try {
 				Object obj = in.readObject();
-				server.execute((String) obj);
-				Object [] objs = new Object[1];
-				objs[0] = Server.readingQueue;
+				server.execute((String) obj); 
+				Object [] objs = new Object[1]; 
+				objs[0] = Server.readingQueue; 
+				
 				NotifierReadingQueue notify = new NotifierReadingQueue(objs);
-				new Thread(notify).start();
+				new Thread(notify).start(); //Envoi à tous les clients du changement 
 			} catch (ClassNotFoundException | IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				connect.set(false);
+				server.disconnectClient(this);
 			}
-			//getTreatmentFromRemote();
-			/*connect.set(false);
-			server.disconnectClient(this);*/
 		}
 	}
 	
