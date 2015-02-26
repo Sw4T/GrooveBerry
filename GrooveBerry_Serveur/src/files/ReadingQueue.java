@@ -123,7 +123,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 				shiftInt = rand.nextInt(queue.size() - 1);
 			}
 			else{
-				shiftInt =trackIndex + 1;
+				shiftInt = trackIndex + 1;
 			}	
 		}
 		else{
