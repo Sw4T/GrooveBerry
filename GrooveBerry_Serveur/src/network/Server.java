@@ -1,6 +1,5 @@
 package network;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -8,7 +7,6 @@ import java.util.ArrayList;
 
 import files.AudioFile;
 import files.Library;
-import files.Playlist;
 import files.ReadingQueue;
 
 public class Server {
