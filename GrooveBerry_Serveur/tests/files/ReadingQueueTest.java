@@ -193,13 +193,15 @@ public class ReadingQueueTest {
 	
 	@Test
 	public void testRemoveLastCurrentTrack() {
-		this.readingQueue.addLast(bob);
-		this.readingQueue.addLast(test);
 		this.readingQueue.addLast(leNeuf);
+		this.readingQueue.addLast(test);
+		this.readingQueue.addLast(bob);
 		
-		this.readingQueue.setCurrentTrack(leNeuf);
+		this.readingQueue.next();
+		this.readingQueue.next();
 		
 		this.readingQueue.remove(2);
+				
 		assertEquals(null, this.readingQueue.getCurrentTrack());
 		assertEquals(-1, this.readingQueue.getCurrentTrackPosition());
 	}

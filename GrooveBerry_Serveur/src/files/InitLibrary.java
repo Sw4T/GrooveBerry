@@ -1,13 +1,10 @@
-package network;
+package files;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-import files.AudioFile;
-import files.Library;
-
 /*
- * Use ones to initialize library file : res/library.txt
+ * Use once to initialize library file : res/library.txt
  */
 
 public class InitLibrary {

@@ -66,7 +66,7 @@ public abstract class TrackStorage {
 		while(fileScanner.hasNextLine()) {
 			String line = fileScanner.nextLine();
 			if (!line.equals("")) {
-				String filePath = line.split(DELIMITER)[1];
+				String filePath = line.split(DELIMITER)[1]; //TODO Exception
 				if (!this.contains(filePath)) { 
 					try {
 						this.add(filePath);
