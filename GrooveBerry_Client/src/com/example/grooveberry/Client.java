@@ -40,10 +40,11 @@ public class Client {
 		return false;
 	}
 	
-	public boolean sendString(String toSend) {
+	public boolean sendObject(Object toSend) {
 		if (out != null) {
 			try {
-				out.writeUTF(toSend);
+				//out.writeUTF(toSend);
+				out.writeObject(toSend);
 				out.flush();
 				return true;
 			} catch (IOException e) {
@@ -64,11 +65,12 @@ public class Client {
 		return null;
 	}
 	
-	public String readString() {
+	public Object readObject() {
 		if (in != null) {
 			try {
-				return in.readUTF();
-			} catch (IOException e) {
+				//return in.readUTF();
+				return in.readObject();
+			} catch (IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
