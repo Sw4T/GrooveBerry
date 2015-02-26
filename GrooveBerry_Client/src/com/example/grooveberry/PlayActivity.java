@@ -39,7 +39,7 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 	private ImageButton play, pause, previous, next;
 	private TextView musicStatus, musicName, musicTimer, notConnectedWarning;
 	private ImageView warningLogo;
-	private boolean onPause = false, isPlaying=false;
+	private boolean sendPause = false, isPlaying=false;
 	private HashMap <ImageButton, Boolean> buttonState;
 	private Client client;
 	private MusicList musicList;
@@ -62,7 +62,7 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		
 		
 		this.play.setOnClickListener(this);
-		this.pause.setOnClickListener(this);
+		//this.pause.setOnClickListener(this);
 		this.next.setOnClickListener(this);
 		this.previous.setOnClickListener(this);
 		this.mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
@@ -94,12 +94,12 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 
 	public void createViewItems() {
 		this.play = (ImageButton) findViewById(R.id.playButton);
-		this.pause = (ImageButton) findViewById(R.id.pauseButton);
+		//this.pause = (ImageButton) findViewById(R.id.pauseButton);
 		this.next = (ImageButton) findViewById(R.id.nextButton);
 		this.previous = (ImageButton) findViewById(R.id.previousButton);
-		this.musicStatus = (TextView) findViewById(R.id.textView1);
+		//this.musicStatus = (TextView) findViewById(R.id.textView1);
 		this.musicName = (TextView) findViewById(R.id.textView2);
-		this.musicTimer = (TextView) findViewById(R.id.textView3);
+		//this.musicTimer = (TextView) findViewById(R.id.textView3);
 		this.notConnectedWarning = (TextView) findViewById(R.id.textView4);
 		this.warningLogo = (ImageView) findViewById(R.id.imageView2);
 		this.mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -115,10 +115,9 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 			this.notConnectedWarning.setVisibility(View.INVISIBLE);
 			this.warningLogo.setVisibility(View.INVISIBLE);
 			this.play.setEnabled(true);
-			this.pause.setEnabled(true);
+			//this.pause.setEnabled(true);
 			this.previous.setEnabled(true);
 			this.next.setEnabled(true);
-			//this.mMusicTitles = musicList.convertToStringTab();
 			
 			if (this.musicList.getMusicNb() == this.musicList.countMusicInList())
 				this.next.setEnabled(false);
@@ -135,12 +134,12 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 			this.notConnectedWarning.setVisibility(View.VISIBLE);
 			this.warningLogo.setVisibility(View.VISIBLE);
 			this.play.setEnabled(false);
-			this.pause.setEnabled(false);
+			//this.pause.setEnabled(false);
 			this.previous.setEnabled(false);
 			this.next.setEnabled(false);
 			this.musicName.invalidate();
-			this.musicStatus.invalidate();
-			this.musicTimer.invalidate();
+			//this.musicStatus.invalidate();
+			//this.musicTimer.invalidate();
 			PlayActivity.connected = false;
 		}
 	}
@@ -148,7 +147,7 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 	public void saveButtonsState() {
 		this.buttonState = new HashMap <ImageButton, Boolean>();
 		this.buttonState.put(this.play,(Boolean)this.play.isEnabled());
-		this.buttonState.put(this.pause,(Boolean)this.pause.isEnabled());
+		//this.buttonState.put(this.pause,(Boolean)this.pause.isEnabled());
 		this.buttonState.put(this.next,(Boolean)this.next.isEnabled());
 		this.buttonState.put(this.previous,(Boolean)this.previous.isEnabled());
 	}
@@ -255,9 +254,9 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		case R.id.playButton :
 			action_play();
 			break;
-		case R.id.pauseButton :
-			action_pause();
-			break;
+//		case R.id.pauseButton :
+//			action_pause();
+//			break;
 		
 		case R.id.nextButton :
 			action_next();
@@ -276,11 +275,9 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		
 		Log.d("PlayActivity", "PA : prev");
 		this.client.sendString(this.musicList.getFilePlaying());
-			this.musicStatus.setText("Playing : ");
-			this.musicName.setText(this.musicList.getFilePlaying());
-			this.musicName.setTextColor(Color.GREEN);
-			this.play.setEnabled(false);
-			this.pause.setEnabled(true);
+		this.musicName.setText(this.musicList.getFilePlaying());
+		this.play.setImageResource(R.drawable.btn_pause);
+		this.isPlaying = true;
 		
 		
 		if (this.musicList.getMusicNb() < this.musicList.countMusicInList())
@@ -301,11 +298,9 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		this.client.sendString("next");
 		Log.d("PlayActivity", "PA : next");
 		this.client.sendString(this.musicList.getFilePlaying());
-		this.musicStatus.setText("Playing : ");
 		this.musicName.setText(this.musicList.getFilePlaying());
-		this.musicName.setTextColor(Color.GREEN);
-		this.play.setEnabled(false);
-		this.pause.setEnabled(true);
+		this.play.setImageResource(R.drawable.btn_pause);
+		this.isPlaying = true;
 
 		if (this.musicList.getMusicNb() < this.musicList.countMusicInList())
 			this.next.setEnabled(true);
@@ -320,9 +315,10 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 
 	private void action_play() {
 		this.client.sendString(this.musicList.getFilePlaying());
-		if (!this.onPause)
+		if (!this.sendPause)
 		{
 			this.client.sendString("play");
+			this.sendPause = true;
 			Log.d("PlayActivity", "PA : play sent");
 		}
 		else 
@@ -330,23 +326,15 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 			this.client.sendString("pause");
 			Log.d("PlayActivity", "PA : unpause sent");
 		}
-		this.musicStatus.setText("Playing : ");
 		this.musicName.setText(this.musicList.getFilePlaying());
-		this.musicName.setTextColor(Color.GREEN);
-		this.play.setEnabled(false);
-		this.pause.setEnabled(true);
-		this.isPlaying = true;
-	}
-
-	private void action_pause() {
-		this.musicStatus.setText("Music paused.");
-		this.client.sendString("pause");
-		Log.d("PlayActivity", "PA : pause sent");
-		this.musicName.setTextColor(Color.RED);
-		this.play.setEnabled(true);
-		this.pause.setEnabled(false);
-		this.onPause = true;
-		this.isPlaying = false;
+		if (!this.isPlaying) {
+			this.play.setImageResource(R.drawable.btn_pause);
+			this.isPlaying = true;
+		}
+		else {
+			this.play.setImageResource(R.drawable.btn_play);
+			this.isPlaying = false;
+		}
 	}
 	
 	/** Defines callbacks for service binding, passed to bindService() */
