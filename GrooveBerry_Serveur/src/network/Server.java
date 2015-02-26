@@ -73,10 +73,7 @@ public class Server {
 		String rep = c.readString();
 		if (rep.equals("#OK")) {
 			System.out.println("Client OK pour l'envoi de la reading queue");
-			ArrayList<String> readingList = new ArrayList<String>();
-			for (AudioFile file : readingQueue.getAudioFileList()) 
-				readingList.add(file.getName());
-			if (c.sendSerializable(readingList))
+			if (c.sendSerializable(Server.readingQueue))
 				System.out.println("Envoi de la reading queue OK...");
 		} else
 			System.out.println("Erreur lors de l'envoi de la reading queue");
