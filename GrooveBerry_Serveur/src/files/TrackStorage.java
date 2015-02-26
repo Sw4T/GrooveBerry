@@ -8,6 +8,18 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * TrackStorage est une classe abstraite qui spécifie un
+ * conteneur de fichier audio.
+ * <br> Elle genere un fichier de sauvgarde pour concerver l'etat
+ * du conteneur
+ * 
+ * @see AudioFile
+ * 
+ * @author Nicolas Symphorien, Enzo Alunni Bagarelli
+ * @version 1.0
+ */
+
 public abstract class TrackStorage {
 
 	public static final String DELIMITER = "#";
@@ -17,6 +29,7 @@ public abstract class TrackStorage {
 	
 	public TrackStorage(String filePath) throws IOException {
 		this.audioFileList = new ArrayList<>();
+		
 		this.file = new File(filePath);
 		if (!this.file.exists()) {
 			try {
@@ -29,19 +42,45 @@ public abstract class TrackStorage {
 		}
 	}
 	
+	/**
+	 * Construit une classe abstraite de stockage de fichier audio à partir d'une liste de
+	 * fichier audio. <br>
+	 * Cette classe génere un fichier de sauvegarde de la liste des fichiers audio sur le
+	 * disque dur au chemin [filePath].
+	 * @param audioFileList
+	 * 		la liste des fichiers audio
+	 * @param filePath
+	 * 		le chemin du fichier de sauvegarde
+	 * @throws IOException
+	 */
 	public TrackStorage(ArrayList<AudioFile> audioFileList, String filePath) throws IOException {
 		this(filePath);
 		this.audioFileList = audioFileList;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 * 		true si le conteneur est vide, false sinon.
+	 */
 	public boolean isEmpty() {
 		return this.audioFileList.isEmpty();
 	}
-
+	
+	/**
+	 * 
+	 * @return
+	 * 		la liste des fichiers audio sous forme d'ArrayList d'AudioFile.
+	 * @see LikedList, Audiofile
+	 */
 	public ArrayList<AudioFile> getAudioFileList() {
 		return this.audioFileList;
 	}
-	
+	/**
+	 * Met-à-jour le fichier de sauvegarde 
+	 * 
+	 * @throws FileNotFoundException
+	 */
 	protected void updateLibraryFile() throws FileNotFoundException {
 		PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(this.file, false), true);
 		for (AudioFile audioFile : audioFileList) {
@@ -50,6 +89,13 @@ public abstract class TrackStorage {
 		printWriterOutputFile.close();
 	}
 	
+	/**
+	 * 
+	 * @param filePath
+	 * 		le chemin du fichier à vérifier
+	 * @return
+	 * 		true si le fichier est présent dans le conteneur, false sinon.
+	 */
 	protected boolean contains(String filePath) {
 		boolean contain = false;
 		for (AudioFile audioFile : audioFileList) {
@@ -61,6 +107,12 @@ public abstract class TrackStorage {
 		return contain;
 	}
 	
+	/**
+	 * Met-à-jour la liste de fichier en fonction du contenue du fichier
+	 * de sauvegarde.
+	 * 
+	 * @throws IOException
+	 */
 	public void updateLibrary() throws IOException {
 		Scanner fileScanner = new Scanner(this.file);
 		while(fileScanner.hasNextLine()) {
@@ -78,7 +130,14 @@ public abstract class TrackStorage {
 		}
 		fileScanner.close();
 	}
-
+	
+	/**
+	 * Ajoute le fichier au conteneur.
+	 * 
+	 * @param filePath
+	 * 		le chemin du fichier
+	 * @throws FileNotFoundException
+	 */
 	public void add(String filePath) throws FileNotFoundException {
 		AudioFile audioFile = new AudioFile(filePath);
 		if (audioFile.isLoaded()) {
@@ -89,6 +148,13 @@ public abstract class TrackStorage {
 		}
 	}
 	
+	/**
+	 * Supprime le fichier au conteneur.
+	 * 
+	 * @param filePath
+	 * 		le chemin du fichier
+	 * @throws FileNotFoundException
+	 */
 	public void remove(String filePath) throws FileNotFoundException {
 		AudioFile compareFile = new AudioFile(filePath);
 		for (int i = 0; i < this.audioFileList.size(); i++) {

@@ -6,13 +6,17 @@ import java.util.LinkedList;
 import java.util.Random;
 
 /**
- * ReadingQueue permet la gestion d'un fil de lecture.
- * Elle permet une gestion automatisée de 
+ * ReadingQueue permet la gestion d'un fil de lecture
+ * de maniére automatisée en gérant les operations suivante :
+ * <li> Lire le morceaux suivant ;</li>
+ * <li> Lire le morceaux précédent ;</li>
+ * <li> Ajouter des morceaux de musique ;</li>
+ * <li> Supprimer des morceaux de musique.</li>
  * 
  * @see AudioFile, AudioListener
  * 
  * @author Nicolas Symphorien, Enzo Alunni Bagarelli
- * @version 3.0
+ * @version 1.0
  */
 
 public class ReadingQueue implements AudioListener, Serializable {
@@ -57,14 +61,16 @@ public class ReadingQueue implements AudioListener, Serializable {
 	}
 	
 	/**
-	 * @return true si le file de lecture est vide, false sinon.
+	 * @return
+	 * 		true si le file de lecture est vide, false sinon.
 	 */
 	public boolean isEmpty() {
 		return this.queue.isEmpty();
 	}
 	
 	/**
-	 * @return le nombre de morceau dans du fil de lecture.
+	 * @return
+	 * 		le nombre de morceau dans du fil de lecture.
 	 */	
 	public int size() {
 		return this.queue.size();
@@ -73,7 +79,8 @@ public class ReadingQueue implements AudioListener, Serializable {
 	/**
 	 * Ajoute un morceau à la fin du fil de lecture.
 	 * 
-	 * @param track le morceau à ajouter
+	 * @param
+	 * 		track le morceau à ajouter
 	 */
 	public void addLast(AudioFile track){
 		if (this.isEmpty()) {
@@ -88,8 +95,10 @@ public class ReadingQueue implements AudioListener, Serializable {
 	 * Ajoute un morceau à une postion specifique dans le fil
 	 * de lecture.
 	 * 
-	 * @param index la postion où ajouter le morceau
-	 * @param track le morceau à ajouter
+	 * @param index
+	 * 		la postion où ajouter le morceau
+	 * @param track
+	 * 		le morceau à ajouter
 	 */
 	public void addAt(int index, AudioFile track) {
 		if (this.isEmpty()) {
@@ -106,7 +115,8 @@ public class ReadingQueue implements AudioListener, Serializable {
 	/**
 	 * Ajoute l'ensemble d'une playlist à la fin du fil de lecture.
 	 * 
-	 * @param playlist la playlist à ajouter
+	 * @param playlist
+	 * 		la playlist à ajouter
 	 */
 	public void addList(ArrayList<AudioFile> playlist) {
 		this.queue.addAll(playlist);
@@ -116,18 +126,21 @@ public class ReadingQueue implements AudioListener, Serializable {
 	 * Ajoute l'ensemble d'une playlist à une postion specifique dans le fil
 	 * de lecture.
 	 * 
-	 * @param index la postion où ajouter la playlist
-	 * @param playlist la playlist à ajouter
+	 * @param index
+	 * 		la postion où ajouter la playlist
+	 * @param playlist
+	 * 		la playlist à ajouter
 	 */
 	public void addListAt(int index, ArrayList<AudioFile> playlist) {
 		this.queue.addAll(index, playlist);
 	}
 
 	/**
-	 * Supprime un morceau à une postion specifique dans le fil
+	 * Supprime un morceau à une position specifique dans le fil
 	 * de lecture.
 	 * 
-	 * @param index la position où supprimer le morceau
+	 * @param index
+	 * 		la position où supprimer le morceau
 	 */
 	public void remove(int index) {
 		AudioFile removeFile = this.queue.get(index);
@@ -165,7 +178,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 	}
 	
 	/**
-	 * Passe au morceau precédent dans le fil de lecture
+	 * Passe au morceau précédent dans le fil de lecture
 	 */
 	public void prev() {
 		int trackIndex = getCurrentTrackPosition();
@@ -225,7 +238,8 @@ public class ReadingQueue implements AudioListener, Serializable {
 	
 	/**
 	 * 
-	 * @return la position du morceau en cours de lecture
+	 * @return
+	 * 		la position du morceau en cours de lecture
 	 */
 	public int getCurrentTrackPosition() {
 		return this.currentTrackIndex;
@@ -233,7 +247,9 @@ public class ReadingQueue implements AudioListener, Serializable {
 	
 	/**
 	 * Change le morceau en cours de lecture.
-	 * @param index la position du morceau
+	 * 
+	 * @param index
+	 * 		la position du morceau
 	 */
 	public void setCurrentTrackPostion(int index) {
 		this.currentTrackIndex = index;
@@ -242,7 +258,8 @@ public class ReadingQueue implements AudioListener, Serializable {
 
 	/**
 	 * 
-	 * @return la liste des morceaux sous forme de linkedList d'AudioFile
+	 * @return
+	 * 		la liste des morceaux sous forme de linkedList d'AudioFile
 	 * @see LikedList, Audiofile
 	 */
 	public LinkedList<AudioFile> getAudioFileList() {
@@ -251,7 +268,8 @@ public class ReadingQueue implements AudioListener, Serializable {
 
 	/**
 	 * 
-	 * @return le morceau en cours de lecture
+	 * @return
+	 * 		le morceau en cours de lecture
 	 */
 	public AudioFile getCurrentTrack() {
 		return this.currentTrack;
