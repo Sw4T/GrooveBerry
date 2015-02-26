@@ -1,17 +1,18 @@
 package files;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Library extends TrackStorage {
 	public static final String DEFAULT_PATHNAME = "res/library.txt";
 	public static final String DELIMITER = "#";
 
-	public Library() {
+	public Library() throws IOException {
 		super(DEFAULT_PATHNAME);
 	}
 	
-	public Library(ArrayList<AudioFile> audioFileList) throws FileNotFoundException {
+	public Library(ArrayList<AudioFile> audioFileList) throws IOException {
 		this();
 		this.audioFileList = new ArrayList<>(audioFileList);
 		this.updateLibraryFile();

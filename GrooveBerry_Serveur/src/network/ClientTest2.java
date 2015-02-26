@@ -105,6 +105,7 @@ public class ClientTest2 {
 			case 7 : toReturn = "exit"; break;
 			case 8 : toReturn = "next"; break;
 			case 9 : toReturn = "prev"; break;
+			case 10 : toReturn = "random"; break; 
 			default : toReturn = "";
 		}
 		return toReturn;
@@ -121,6 +122,7 @@ public class ClientTest2 {
 		System.out.println("7. Exit");
 		System.out.println("8. Next");
 		System.out.println("9. Prev");
+		System.out.println("10. Random");
 	}
 	
 	public static void showReadingQueue(ArrayList<String> list) 

@@ -1,10 +1,12 @@
 package files;
 
+import java.io.IOException;
+
 public class Playlist extends TrackStorage {
 
 	private String name;
 	
-	public Playlist(String filePath) {
+	public Playlist(String filePath) throws IOException {
 		super(filePath);
 		this.name ="default";
 	}

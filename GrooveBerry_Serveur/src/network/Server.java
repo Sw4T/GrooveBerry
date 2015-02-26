@@ -1,11 +1,14 @@
 package network;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
 import files.AudioFile;
+import files.Library;
+import files.Playlist;
 import files.ReadingQueue;
 
 public class Server {
@@ -59,12 +62,16 @@ public class Server {
 	}
 	
 	public void init_reading_queue() {
-		readingQueue.addLast(new AudioFile("audio/04 Hey Joe.mp3"));
-		readingQueue.addLast(new AudioFile("audio/05 Mentira.mp3"));
-		readingQueue.addLast(new AudioFile("audio/Bob Marley - Jammin.mp3"));
-		readingQueue.addLast(new AudioFile("audio/free.wav"));
-		readingQueue.addLast(new AudioFile("audio/aol.wav"));
-		readingQueue.addLast(new AudioFile("audio/banane2.wav"));
+		Library library;
+		try {
+			library = new Library();
+			for (AudioFile audioFile : library.getAudioFileList()) {
+				readingQueue.addLast(audioFile);
+			}
+		} catch (IOException e) {
+			//TODO
+			e.printStackTrace();
+		}
 	}
 	
 	public synchronized void sendReadingQueueToRemote(Client c) 
@@ -91,6 +98,7 @@ public class Server {
 			case "loop" : readingQueue.getCurrentTrack().loop(); break;
 			case "next" : readingQueue.next(); break;
 			case "prev" : readingQueue.prev(); break;
+			case "random" : readingQueue.getCurrentTrack().random(); break;
 			default :
 		}
 		System.out.println("Received " + constant + " from the client, processing...");

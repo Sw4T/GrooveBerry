@@ -36,6 +36,9 @@ public class LibraryTest {
 		this.aol = new AudioFile("audio/aol.wav");
 		
 		this.file = new File("res/library.txt");
+		if (!this.file.exists()) {
+			this.file.createNewFile();
+		}
 		
 		this.fileScanner = new Scanner(this.file);
 	}
@@ -49,16 +52,17 @@ public class LibraryTest {
 		this.leNeuf = null;
 		this.aol = null;
 		
-		this.fileScanner.close();
 		this.fileScanner = null;
 		
-		System.out.println(this.file.delete() + " " + this.file.exists());
+		if (this.file.exists()) {
+			this.file.delete();
+		}
 		this.file = null;
 	}
 	
 
 	@Test
-	public void testDefaultConstructorCreateAEmptyLibrary() {
+	public void testDefaultConstructorCreateAEmptyLibrary() throws IOException {
 		this.library = new Library();
 		
 		assertTrue(this.library.isEmpty());
@@ -71,7 +75,7 @@ public class LibraryTest {
 	}
 
 	@Test
-	public void testConstructorCreateALibraryWithAudioFileList() throws FileNotFoundException {
+	public void testConstructorCreateALibraryWithAudioFileList() throws IOException {
 		ArrayList<AudioFile> audioFileListTest = new ArrayList<>();
 		audioFileListTest.add(bob);
 		audioFileListTest.add(leNeuf);
@@ -225,7 +229,7 @@ public class LibraryTest {
 	//
 	
 	@Test
-	public void testAddMusicFileToLibrary() throws FileNotFoundException {
+	public void testAddMusicFileToLibrary() throws IOException {
 		this.library = new Library();
 		
 		this.library.add("audio/01 Clandestino.mp3");
@@ -244,7 +248,7 @@ public class LibraryTest {
 	}
 	
 	@Test
-	public void testMajFileLibrary() throws FileNotFoundException {
+	public void testMajFileLibrary() throws IOException {
 		ArrayList<AudioFile> audioFileList = new ArrayList<>();
 		audioFileList.add(bob);
 		audioFileList.add(leNeuf);
