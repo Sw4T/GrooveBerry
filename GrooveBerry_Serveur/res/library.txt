@@ -1,6 +1,6 @@
-04 Hey Joe.mp3#/home/smn0078a/git/GrooveBerry/GrooveBerry_Serveur/audio/04 Hey Joe.mp3
-05 Mentira.mp3#/home/smn0078a/git/GrooveBerry/GrooveBerry_Serveur/audio/05 Mentira.mp3
-Bob Marley - Jammin.mp3#/home/smn0078a/git/GrooveBerry/GrooveBerry_Serveur/audio/Bob Marley - Jammin.mp3
-free.wav#/home/smn0078a/git/GrooveBerry/GrooveBerry_Serveur/audio/free.wav
-aol.wav#/home/smn0078a/git/GrooveBerry/GrooveBerry_Serveur/audio/aol.wav
-banane2.wav#/home/smn0078a/git/GrooveBerry/GrooveBerry_Serveur/audio/banane2.wav
+04 Hey Joe.mp3#/home/nicolas/git/GrooveBerry/GrooveBerry_Serveur/audio/04 Hey Joe.mp3
+05 Mentira.mp3#/home/nicolas/git/GrooveBerry/GrooveBerry_Serveur/audio/05 Mentira.mp3
+Bob Marley - Jammin.mp3#/home/nicolas/git/GrooveBerry/GrooveBerry_Serveur/audio/Bob Marley - Jammin.mp3
+free.wav#/home/nicolas/git/GrooveBerry/GrooveBerry_Serveur/audio/free.wav
+aol.wav#/home/nicolas/git/GrooveBerry/GrooveBerry_Serveur/audio/aol.wav
+banane2.wav#/home/nicolas/git/GrooveBerry/GrooveBerry_Serveur/audio/banane2.wav

@@ -23,7 +23,7 @@ public class Library extends TrackStorage {
 		if (!this.contains(filePath)) {
 			super.add(filePath);
 		} else {
-			System.out.println("Fichier deja present dans la bibliotheque");
+			System.out.println("Fichier deja present dans la bibliotheque"); //avoid track duplication
 		}
 	}
 

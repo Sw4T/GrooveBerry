@@ -14,7 +14,7 @@ public class AudioFile implements Runnable, Serializable
 
 	private static final long serialVersionUID = -726613633651477466L;
 	private File file;
-	private boolean running, mute, pause, loop, restart, random;
+	private boolean running, mute, pause, loop, restart;
 	private final int byteChunkSize = 4096;//number of bytes to read at one time
 	private byte[] muteData;
 	private AudioListener listenerEvent;
@@ -25,7 +25,6 @@ public class AudioFile implements Runnable, Serializable
 	public AudioFile() 
 	{
 		file = null;
-		random = false;
 		running = false;
 		mute = false;
 		pause = false;
@@ -157,16 +156,6 @@ public class AudioFile implements Runnable, Serializable
 		}
 	}
 	
-	public void random()
-	{
-		if (file != null) {
-			if (this.random)
-				this.random = false;
-			else
-				this.random = true;
-		}
-	}
-	
 	/**
 	* Restarts the current song. Always use this method to restart a song and never .stop() followed
 	* by .play(), which is not safe.
@@ -189,9 +178,7 @@ public class AudioFile implements Runnable, Serializable
 	public boolean isMuted() {
 		return mute;
 	}
-	public boolean isRandomised() {
-		return this.random;
-	}
+
 	/**
 	* Returns if the audio is paused or not.
 	* @return Status of pause variable.

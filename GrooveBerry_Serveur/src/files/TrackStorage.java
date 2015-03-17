@@ -46,7 +46,7 @@ public abstract class TrackStorage {
 	 * Construit une classe abstraite de stockage de fichier audio à partir d'une liste de
 	 * fichier audio. <br>
 	 * Cette classe génere un fichier de sauvegarde de la liste des fichiers audio sur le
-	 * disque dur au chemin [filePath].
+	 * disque dur au chemin <b>filePath</b>.
 	 * @param audioFileList
 	 * 		la liste des fichiers audio
 	 * @param filePath
@@ -149,7 +149,7 @@ public abstract class TrackStorage {
 	}
 	
 	/**
-	 * Supprime le fichier au conteneur.
+	 * Supprime le fichier du conteneur.
 	 * 
 	 * @param filePath
 	 * 		le chemin du fichier

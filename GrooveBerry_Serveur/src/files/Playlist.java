@@ -7,8 +7,12 @@ public class Playlist extends TrackStorage {
 	private String name;
 	
 	public Playlist(String filePath) throws IOException {
+		this(filePath, "default");
+	}
+	
+	public Playlist(String filePath, String name) throws IOException {
 		super(filePath);
-		this.name ="default";
+		this.name = name;
 	}
 
 	public String getName() {

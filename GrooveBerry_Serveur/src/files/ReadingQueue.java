@@ -6,12 +6,12 @@ import java.util.LinkedList;
 import java.util.Random;
 
 /**
- * ReadingQueue permet la gestion d'un fil de lecture
- * de maniére automatisée en gérant les operations suivante :
+ * <p>ReadingQueue permet la gestion d'une file de lecture
+ * de maniére automatisée en gérant les operations suivantes :
  * <li> Lire le morceaux suivant ;</li>
  * <li> Lire le morceaux précédent ;</li>
  * <li> Ajouter des morceaux de musique ;</li>
- * <li> Supprimer des morceaux de musique.</li>
+ * <li> Supprimer des morceaux de musique.</li></p>
  * 
  * @see AudioFile, AudioListener
  * 
@@ -24,9 +24,10 @@ public class ReadingQueue implements AudioListener, Serializable {
 	
 	private	AudioFile currentTrack;
 	private int currentTrackIndex;
+	private boolean randomised;
 	
 	private LinkedList<AudioFile> queue;
-	
+
 	/**
 	 * Construit un fil de lecture vide.
 	 *
@@ -172,8 +173,8 @@ public class ReadingQueue implements AudioListener, Serializable {
 	 */
 	public void next() {
 		int trackIndex = getCurrentTrackPosition();
-		if (trackIndex + 1 < this.queue.size() || this.currentTrack.isRandomised()) {
-			changeTrack(true,trackIndex);
+		if (trackIndex + 1 < this.queue.size() || this.isRandomised()) {
+			changeTrack(true);
 		}
 	}
 	
@@ -183,59 +184,25 @@ public class ReadingQueue implements AudioListener, Serializable {
 	public void prev() {
 		int trackIndex = getCurrentTrackPosition();
 		if (trackIndex - 1 >= 0) {
-			changeTrack(false, trackIndex);
+			changeTrack(false);
 		}
 	}
-	
-	//TODO Refactor enzo please !
-	private void changeTrack(boolean forward, int trackIndex){
-		//Booleen de transfert de statut
-		boolean muted, looped, randomised;
-		//Test des statuts de la piste
-		if (this.currentTrack.isPlaying()) {
-			if (this.currentTrack.isPaused()) {
-				this.currentTrack.pause();
-			}
-			this.currentTrack.stop();
-		}
-		if (muted = this.currentTrack.isMuted()) {
-			this.currentTrack.mute();
-		}
-		if (looped = this.currentTrack.isLooping()){
-			this.currentTrack.loop();
-		}
-		if (randomised = this.currentTrack.isRandomised()){
-			this.currentTrack.random();
-		}
-		//Gestion du decalage
-		int shiftInt;
-		if(forward){
-			if(randomised){
-				Random rand = new Random();
-				shiftInt = rand.nextInt(queue.size() - 1);
-			} else {
-				shiftInt = trackIndex + 1;
-			}	
-		} else {
-			shiftInt = trackIndex - 1;
-		}
-		this.currentTrack = this.queue.get(shiftInt);
-		this.currentTrackIndex = shiftInt;
-		this.currentTrack.addListener(this);
-		//Transmission de l'etat à la nouvelle piste
-		if (muted) {
-			this.currentTrack.mute();
-		}
-		this.currentTrack.play();
-		
-		if (looped){
-			this.currentTrack.loop();
-		}
-		if (randomised){
-			this.currentTrack.random();
-		}
-	}	
-	
+	/**
+	 * Active/desactive le passage aléatoire à un morceau
+	 */
+	public void rand() {
+		this.randomised = (this.randomised) ? false : true;
+	}
+
+	/**
+	 * 
+	 * @return
+	 * 		le morceau en cours de lecture
+	 */
+	public AudioFile getCurrentTrack() {
+		return this.currentTrack;
+	}
+
 	/**
 	 * 
 	 * @return
@@ -243,17 +210,6 @@ public class ReadingQueue implements AudioListener, Serializable {
 	 */
 	public int getCurrentTrackPosition() {
 		return this.currentTrackIndex;
-	}
-	
-	/**
-	 * Change le morceau en cours de lecture.
-	 * 
-	 * @param index
-	 * 		la position du morceau
-	 */
-	public void setCurrentTrackPostion(int index) {
-		this.currentTrackIndex = index;
-		
 	}
 
 	/**
@@ -266,20 +222,104 @@ public class ReadingQueue implements AudioListener, Serializable {
 		return this.queue;
 	}
 
-	/**
-	 * 
-	 * @return
-	 * 		le morceau en cours de lecture
-	 */
-	public AudioFile getCurrentTrack() {
-		return this.currentTrack;
-	}	
+	public boolean isRandomised() {
+		return randomised;
+	}
 
+	/**
+	 * Change le morceau en cours de lecture.
+	 * 
+	 * @param index
+	 * 		la position du morceau
+	 */
+	public void setCurrentTrackPostion(int index) {
+		this.currentTrackIndex = index;
+		
+	}
+	
+	/**
+	 * Met fin a la lecture du morceau en cours de lecture en fonction de 
+	 * <code>trackFlags</code>.
+	 * @param trackFlags
+	 * 		Le statut d'un fichier audio.
+	 * 	
+	 * @see AudioFile, TrackFlags
+	 */
+	private void endCurrentTrack(TrackFlags trackFlags) {
+		if (trackFlags.played) {
+			if (trackFlags.paused) {
+				this.currentTrack.pause();
+			}
+			this.currentTrack.stop();
+		}
+		if (trackFlags.muted) {
+			this.currentTrack.mute();
+		}
+		if (trackFlags.looped) {
+			this.currentTrack.loop();
+		}
+	}
+	/**
+	 * Change le morceau selon <code>forward</code>, <code>isRandomised</code> et
+	 * <code>trackFlags</code>.<br/>
+	 * 
+	 * @param forward
+	 * 		Si <code>forward = true</code> alors passe au morceau suivant, sinon passe
+	 * 		au morceau précedent. 
+	 * @param trackFlags
+	 * 		Le statut d'un fichier audio.
+	 * 	
+	 * @see AudioFile, TrackFlags
+	 */
+	private void changeCurrentTrack(boolean forward, TrackFlags trackFlags) {
+		int shiftInt;
+		if (forward) {
+			if (this.isRandomised()) {
+				Random rand = new Random();
+				shiftInt = rand.nextInt(queue.size() - 1);
+			} else {
+				shiftInt = this.currentTrackIndex + 1;
+			}	
+		} else {
+			shiftInt = this.currentTrackIndex - 1;
+		}
+		this.currentTrack = this.queue.get(shiftInt);
+		this.currentTrackIndex = shiftInt;
+		this.currentTrack.addListener(this);
+	}
+	
+	/**
+	 * Change le statut du morceau en cours de lecture en fonction de 
+	 * <code>trackFlags</code>.
+	 * @param trackFlags
+	 * 		Le statut d'un fichier audio.
+	 * 
+	 *  @see AudioFile, TrackFlags
+	 */
+	private void changeCurrentTrackStatus(TrackFlags trackFlags) {
+		if (trackFlags.muted) {
+			this.currentTrack.mute();
+		}
+		if (trackFlags.looped) {
+			this.currentTrack.loop();
+		}
+
+	}
+	
+	private void changeTrack(boolean forward){
+		TrackFlags previousTrackFlags = new TrackFlags(this.currentTrack);
+		
+		endCurrentTrack(previousTrackFlags);
+		changeCurrentTrack(forward, previousTrackFlags);
+		changeCurrentTrackStatus(previousTrackFlags);
+		this.currentTrack.play();
+	}	
+	
 	@Override
 	public void endOfPlay() {
 		
 		int trackIndex = getCurrentTrackPosition();
-		if ((trackIndex + 1 < this.queue.size()) || this.currentTrack.isRandomised()) {
+		if ((trackIndex + 1 < this.queue.size()) || this.isRandomised()) {
 			next();
 		}
 	}
@@ -287,5 +327,19 @@ public class ReadingQueue implements AudioListener, Serializable {
 	@Override
 	public void stopOfPlay() {
 		
+	}
+	
+	private class TrackFlags {
+		public boolean muted;
+		public boolean looped;
+		public boolean played;
+		public boolean paused;
+		
+		public TrackFlags(AudioFile track) {
+			muted = track.isMuted();
+			looped = track.isLooping();
+			played = track.isPlaying();
+			paused = track.isPaused();
+		}
 	}
 }
