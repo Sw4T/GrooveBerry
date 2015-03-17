@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import files.AudioFile;
+import files.AudioFileScanner;
 import files.Library;
 import files.ReadingQueue;
 
@@ -60,9 +61,12 @@ public class Server {
 	}
 	
 	public void initReadingQueue() {
+		AudioFileScanner directoryScanneur = new AudioFileScanner("audio/");
+		
 		Library library;
 		try {
-			library = new Library();
+			library = new Library(directoryScanneur.getAudioFileList());
+			//Lit toute la bibliotheque
 			for (AudioFile audioFile : library.getAudioFileList()) {
 				readingQueue.addLast(audioFile);
 			}
