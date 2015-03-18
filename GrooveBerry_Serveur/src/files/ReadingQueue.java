@@ -6,12 +6,12 @@ import java.util.LinkedList;
 import java.util.Random;
 
 /**
- * <p>ReadingQueue permet la gestion d'une file de lecture
- * de maniére automatisée en gérant les operations suivantes :
- * <li> Lire le morceaux suivant ;</li>
- * <li> Lire le morceaux précédent ;</li>
- * <li> Ajouter des morceaux de musique ;</li>
- * <li> Supprimer des morceaux de musique.</li></p>
+ * <p>La classe <code>ReadingQueue</code> permet la gestion d'un fil de lecture
+ * de maniére automatisée en gérant les operations suivantes :<br/>
+ *  - Lire le morceaux suivant ;<br/>
+ *  - Lire le morceaux précédent ;<br/>
+ *  - Ajouter des morceaux de musique ;<br/>
+ *  - Supprimer des morceaux de musique.</p>
  * 
  * @see AudioFile, AudioListener
  * 
@@ -29,7 +29,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 	private LinkedList<AudioFile> queue;
 
 	/**
-	 * Construit un fil de lecture vide.
+	 * Construire un fil de lecture vide.
 	 *
 	 */
 	public ReadingQueue() {
@@ -38,7 +38,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 	}
 	
 	/**
-	 * Construit un fil de lecture avec un seul morceau de musique.
+	 * Construire un fil de lecture avec un seul morceau de musique.
 	 *
 	 */
 	public ReadingQueue(AudioFile track) {
@@ -51,7 +51,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 	}
 	
 	/**
-	 * Construit un fil de lecture avec une liste de morceau de musique.
+	 * Construire un fil de lecture avec une liste de morceau de musique.
 	 *
 	 */
 	public ReadingQueue(ArrayList<AudioFile> audioFileList) {
@@ -62,23 +62,27 @@ public class ReadingQueue implements AudioListener, Serializable {
 	}
 	
 	/**
+	 * Verifier si le fil de lecture est vide
+	 * 
 	 * @return
-	 * 		true si le file de lecture est vide, false sinon.
+	 * 		<code>true</code> si le fil de lecture est vide, <code>false</code> sinon.
 	 */
 	public boolean isEmpty() {
 		return this.queue.isEmpty();
 	}
 	
 	/**
+	 * Recuperer le nombre de morceaux du fil de lecture.
+	 * 
 	 * @return
-	 * 		le nombre de morceau dans du fil de lecture.
+	 * 		le nombre de morceaux dans du fil de lecture.
 	 */	
 	public int size() {
 		return this.queue.size();
 	}
 	
 	/**
-	 * Ajoute un morceau à la fin du fil de lecture.
+	 * Ajouter un morceau à la fin du fil de lecture.
 	 * 
 	 * @param
 	 * 		track le morceau à ajouter
@@ -93,7 +97,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 	}
 	
 	/** 
-	 * Ajoute un morceau à une postion specifique dans le fil
+	 * Ajouter un morceau à une postion specifique dans le fil
 	 * de lecture.
 	 * 
 	 * @param index
@@ -114,7 +118,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 	}
 	
 	/**
-	 * Ajoute l'ensemble d'une playlist à la fin du fil de lecture.
+	 * Ajouter l'ensemble d'une playlist à la fin du fil de lecture.
 	 * 
 	 * @param playlist
 	 * 		la playlist à ajouter
@@ -124,7 +128,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 	}
 	
 	/** 
-	 * Ajoute l'ensemble d'une playlist à une postion specifique dans le fil
+	 * Ajouter l'ensemble d'une playlist à une postion specifique dans le fil
 	 * de lecture.
 	 * 
 	 * @param index
@@ -137,7 +141,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 	}
 
 	/**
-	 * Supprime un morceau à une position specifique dans le fil
+	 * Supprimer un morceau à une position specifique dans le fil
 	 * de lecture.
 	 * 
 	 * @param index
@@ -160,7 +164,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 	}
 	
 	/**
-	 * Supprime tout les morceaux contenue dans le fil de lecture.
+	 * Supprimer tout les morceaux contenue dans le fil de lecture.
 	 */
 	public void clearQueue() {
 		this.queue.removeAll(this.queue);
@@ -169,7 +173,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 	}
 	
 	/**
-	 * Passe au morceau suivant dans le fil de lecture
+	 * Passer au morceau suivant dans le fil de lecture
 	 */
 	public void next() {
 		int trackIndex = getCurrentTrackPosition();
@@ -179,7 +183,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 	}
 	
 	/**
-	 * Passe au morceau précédent dans le fil de lecture
+	 * Passer au morceau précédent dans le fil de lecture
 	 */
 	public void prev() {
 		int trackIndex = getCurrentTrackPosition();
@@ -188,13 +192,14 @@ public class ReadingQueue implements AudioListener, Serializable {
 		}
 	}
 	/**
-	 * Active/desactive le passage aléatoire à un morceau
+	 * Activer/desactiver le passage aléatoire à un morceau
 	 */
 	public void rand() {
 		this.randomised = (this.randomised) ? false : true;
 	}
 
 	/**
+	 * Recuperer le morceau en cours de lecture.
 	 * 
 	 * @return
 	 * 		le morceau en cours de lecture
@@ -204,6 +209,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 	}
 
 	/**
+	 * Recuperer la position du morceau en cours de lecture.
 	 * 
 	 * @return
 	 * 		la position du morceau en cours de lecture
@@ -213,6 +219,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 	}
 
 	/**
+	 * Recuperer la liste des morceaux.
 	 * 
 	 * @return
 	 * 		la liste des morceaux sous forme de linkedList d'AudioFile
@@ -221,13 +228,18 @@ public class ReadingQueue implements AudioListener, Serializable {
 	public LinkedList<AudioFile> getAudioFileList() {
 		return this.queue;
 	}
-
+	
+	/**
+	 * Verifier si le fil de lecture est randomisé.
+	 * @return
+	 * 		<code>true</code> si le fil de lecture est randomisé, <code>false</code> sinon.
+	 */
 	public boolean isRandomised() {
 		return randomised;
 	}
 
 	/**
-	 * Change le morceau en cours de lecture.
+	 * Changer le morceau en cours de lecture.
 	 * 
 	 * @param index
 	 * 		la position du morceau
@@ -238,12 +250,12 @@ public class ReadingQueue implements AudioListener, Serializable {
 	}
 	
 	/**
-	 * Met fin a la lecture du morceau en cours de lecture en fonction de 
+	 * Mettre fin au morceau en cours de lecture en fonction de 
 	 * <code>trackFlags</code>.
 	 * @param trackFlags
 	 * 		Le statut d'un fichier audio.
 	 * 	
-	 * @see AudioFile, TrackFlags
+	 * @see AudioFile, AudioFile.TrackFlags
 	 */
 	private void endCurrentTrack(TrackFlags trackFlags) {
 		if (trackFlags.played) {
@@ -260,7 +272,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 		}
 	}
 	/**
-	 * Change le morceau selon <code>forward</code>, <code>isRandomised</code> et
+	 * Changer le morceau selon <code>forward</code>, <code>isRandomised</code> et
 	 * <code>trackFlags</code>.<br/>
 	 * 
 	 * @param forward
@@ -269,7 +281,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 	 * @param trackFlags
 	 * 		Le statut d'un fichier audio.
 	 * 	
-	 * @see AudioFile, TrackFlags
+	 * @see AudioFile, AudioFile.TrackFlags
 	 */
 	private void changeCurrentTrack(boolean forward, TrackFlags trackFlags) {
 		int shiftInt;
@@ -289,12 +301,12 @@ public class ReadingQueue implements AudioListener, Serializable {
 	}
 	
 	/**
-	 * Change le statut du morceau en cours de lecture en fonction de 
+	 * Changer le statut du morceau en cours de lecture en fonction de 
 	 * <code>trackFlags</code>.
 	 * @param trackFlags
 	 * 		Le statut d'un fichier audio.
 	 * 
-	 *  @see AudioFile, TrackFlags
+	 * @see AudioFile, AudioFile.TrackFlags
 	 */
 	private void changeCurrentTrackStatus(TrackFlags trackFlags) {
 		if (trackFlags.muted) {
@@ -306,6 +318,13 @@ public class ReadingQueue implements AudioListener, Serializable {
 
 	}
 	
+	/**
+	 * Changer le morceau selon <code>forward</code>.
+	 * 
+	 * @param forward
+	 * 		Si <code>forward = true</code> alors passe au morceau suivant, sinon passe
+	 * 		au morceau précedent. 
+	 */
 	private void changeTrack(boolean forward){
 		TrackFlags previousTrackFlags = new TrackFlags(this.currentTrack);
 		
@@ -313,8 +332,12 @@ public class ReadingQueue implements AudioListener, Serializable {
 		changeCurrentTrack(forward, previousTrackFlags);
 		changeCurrentTrackStatus(previousTrackFlags);
 		this.currentTrack.play();
-	}	
+	}
 	
+	/**
+	 * Evenement qui survient à la fin de la lecture d'un morceau dans
+	 * le fil de lecture.
+	 */
 	@Override
 	public void endOfPlay() {
 		
@@ -324,17 +347,38 @@ public class ReadingQueue implements AudioListener, Serializable {
 		}
 	}
 	
+	/**
+	 * Evenement qui survient à la mise sur stop d'un morceau dans
+	 * le fil de lecture.
+	 */
 	@Override
 	public void stopOfPlay() {
 		
 	}
 	
+	/**
+	 * Structure de données represantant l'etat d'un fichier audio.
+	 * 
+	 * @see AudioFile
+	 * 
+	 * @author Nicolas Symphorien
+	 * @version 1.0
+	 */
 	private class TrackFlags {
 		public boolean muted;
 		public boolean looped;
 		public boolean played;
 		public boolean paused;
 		
+		/**
+		 * Construire une structure de données représantant le fichier audio
+		 * <code>track</code>.
+		 * 
+		 * @param track
+		 * 		le fichier audio a analyser.
+		 * 
+		 * @see AudioFile
+		 */
 		public TrackFlags(AudioFile track) {
 			muted = track.isMuted();
 			looped = track.isLooping();
