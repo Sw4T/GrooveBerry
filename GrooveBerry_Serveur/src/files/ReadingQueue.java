@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 
+import network.Server;
+import protocol.NotifierReadingQueue;
+
 /**
  * <p>La classe <code>ReadingQueue</code> permet la gestion d'un fil de lecture
  * de maniére automatisée en gérant les operations suivantes :<br/>
@@ -347,6 +350,12 @@ public class ReadingQueue implements AudioListener, Serializable {
 		if ((trackIndex + 1 < this.queue.size()) || this.isRandomised()) {
 			next();
 		}
+		
+		Object [] objs = new Object[1]; 
+		objs[0] = Server.readingQueue; 
+		
+		NotifierReadingQueue notify = new NotifierReadingQueue(objs);
+		new Thread(notify).start(); //Envoi à tous les clients du changement
 	}
 	
 	/**
