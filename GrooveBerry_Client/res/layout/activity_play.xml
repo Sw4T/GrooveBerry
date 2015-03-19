@@ -87,7 +87,7 @@
                     android:layout_marginStart="5dp"
                     android:background="@null"
                     android:contentDescription="@string/hello_world"
-                    android:src="@drawable/btn_repeat" />
+                    android:src="@drawable/img_btn_repeat" />
 
                 <!-- Previous Button -->
 
@@ -127,7 +127,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:background="@null"
-                    android:src="@drawable/btn_shuffle" />
+                    android:src="@drawable/img_btn_shuffle" />
             </LinearLayout>
         </LinearLayout>
 

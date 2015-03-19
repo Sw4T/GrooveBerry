@@ -48,8 +48,6 @@ public class LocalService extends Service {
 						this.client.sendObject("#OK");
 						this.mL = (ReadingQueue) client.readSerializable();
 					}
-					// Log.d("LocalService",
-					// "LS : mL = "+mL.getCurrentTrack().getName());
 
 				} catch (Exception e) {
 					Log.d("LS", "LS : 1st catch ");

@@ -36,10 +36,10 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 
 	public static boolean connected;
 
-	private ImageButton play, previous, next;
+	private ImageButton play, previous, next, random, loop;
 	private TextView musicName, notConnectedWarning;
 	private ImageView warningLogo;
-	private boolean sendPause = false;
+	private boolean sendPause = false, isPlaying = false;
 	private HashMap<ImageButton, Boolean> buttonState;
 	private Client client;
 	private ReadingQueue musicList;
@@ -65,6 +65,8 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		this.play.setOnClickListener(this);
 		this.next.setOnClickListener(this);
 		this.previous.setOnClickListener(this);
+		this.random.setOnClickListener(this);
+		this.loop.setOnClickListener(this);
 		this.mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
 		if (this.musicList == null) {
@@ -80,9 +82,9 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		@Override
 		public void onItemClick(AdapterView parent, View view, int position,
 				long id) {
-			Toast.makeText(PlayActivity.this, ((TextView) view).getText(),
-					Toast.LENGTH_LONG).show();
-			String musicChosen = (String) ((TextView) view).getText();
+			client.sendSerializable(position);
+			reloadActivityElements(musicList);
+			Log.d("PA", ""+position);
 			mDrawerLayout.closeDrawer(mDrawerList);
 
 		}
@@ -92,6 +94,8 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		this.play = (ImageButton) findViewById(R.id.playButton);
 		this.next = (ImageButton) findViewById(R.id.nextButton);
 		this.previous = (ImageButton) findViewById(R.id.previousButton);
+		this.random = (ImageButton) findViewById(R.id.btnShuffle);
+		this.loop = (ImageButton) findViewById(R.id.btnRepeat);
 		this.musicName = (TextView) findViewById(R.id.textView2);
 		this.notConnectedWarning = (TextView) findViewById(R.id.textView4);
 		this.warningLogo = (ImageView) findViewById(R.id.imageView2);
@@ -107,10 +111,11 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 			this.notConnectedWarning.setVisibility(View.INVISIBLE);
 			this.warningLogo.setVisibility(View.INVISIBLE);
 			this.play.setEnabled(true);
-			// this.pause.setEnabled(true);
 			this.previous.setEnabled(true);
 			this.next.setEnabled(true);
-
+			this.random.setEnabled(true);
+			this.loop.setEnabled(true);
+			
 			if (this.musicList.getCurrentTrackPosition() == this.musicList
 					.getAudioFileList().size())
 				this.next.setEnabled(false);
@@ -130,6 +135,8 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 			this.play.setEnabled(false);
 			this.previous.setEnabled(false);
 			this.next.setEnabled(false);
+			this.random.setEnabled(false);
+			this.loop.setEnabled(false);
 			this.musicName.invalidate();
 			PlayActivity.connected = false;
 		}
@@ -182,7 +189,8 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 						public void onClick(DialogInterface dialog,
 								int whichButton) {
 							// ip = input.getText().toString();
-							startConnection("192.168.0.12");
+							startConnection("192.168.1.9");
+							reloadActivityElements(musicList);
 							invalidateOptionsMenu();
 
 						}
@@ -257,15 +265,22 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		case R.id.playButton:
 			action_play();
 			break;
-		// case R.id.pauseButton :
-		// action_pause();
-		// break;
-
+			
 		case R.id.nextButton:
 			action_next();
 			break;
+			
 		case R.id.previousButton:
 			action_previous();
+			break;
+			
+		case R.id.btnRepeat:
+			this.client.sendObject("loop");
+			this.reloadActivityElements(this.musicList);
+			break;
+		
+		case R.id.btnShuffle:
+			//TO BE IMPLEMENTED
 			break;
 		}
 
@@ -275,6 +290,7 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		this.client.sendObject("prev");
 		Log.d("PlayActivity", "PA : prev");
 		this.play.setImageResource(R.drawable.btn_pause);
+		this.isPlaying = true;
 		this.reloadActivityElements(this.musicList);
 
 	}
@@ -283,25 +299,22 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		this.client.sendObject("next");
 		Log.d("PlayActivity", "PA : next");
 		this.play.setImageResource(R.drawable.btn_pause);
+		this.isPlaying = true;
 		this.reloadActivityElements(this.musicList);
 
 	}
 
 	private void action_play() {
-		if (!this.sendPause) {
+		if (!this.musicList.getCurrentTrack().isPlaying()) {	
 			this.client.sendObject("play");
-			this.sendPause = true;
+			//this.sendPause = true; 
 			Log.d("PlayActivity", "PA : play sent");
 		} else {
 			this.client.sendObject("pause");
 			Log.d("PlayActivity", "PA : unpause sent");
 		}
-
-		if (!this.musicList.getCurrentTrack().isPlaying()) {
-			this.play.setImageResource(R.drawable.btn_pause);
-		} else {
-			this.play.setImageResource(R.drawable.btn_play);
-		}
+		
+		
 		this.reloadActivityElements(this.musicList);
 
 	}
@@ -321,6 +334,23 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 				this.previous.setEnabled(true);
 			else
 				this.previous.setEnabled(false);
+
+			if (musicList.getCurrentTrack().isPlaying()) {
+				this.play.setImageResource(R.drawable.btn_pause);
+				Log.d("PA", "btn_pause");
+				this.isPlaying = true;
+			}
+			if (musicList.getCurrentTrack().isPaused()) {
+				this.play.setImageResource(R.drawable.btn_play);
+				Log.d("PA", "btn_play");
+				this.isPlaying = false;
+			}
+			if (this.musicList.getCurrentTrack().isLooping()) {
+				this.loop.setImageResource(R.drawable.img_btn_repeat_pressed);
+			}
+			else {
+				this.loop.setImageResource(R.drawable.img_btn_repeat);
+			}
 
 			this.musicName.setText(musicList.getCurrentTrack().getName());
 			Log.d("PA1", musicList.getCurrentTrack().getName());

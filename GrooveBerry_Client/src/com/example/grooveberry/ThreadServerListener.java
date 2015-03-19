@@ -25,7 +25,6 @@ public class ThreadServerListener extends Thread {
 
 		while (PlayActivity.connected) {
 			Protocol p = (Protocol) this.client.readObject();
-			// this.musicList = (ReadingQueue) this.client.readObject();
 			this.readingQueue = (ReadingQueue) this.client.readObject();
 
 			this.mHandler.post(new Runnable() {
@@ -34,7 +33,6 @@ public class ThreadServerListener extends Thread {
 				@Override
 				public void run() {
 					playActivity.reloadActivityElements(readingQueue);
-
 				}
 			});
 
