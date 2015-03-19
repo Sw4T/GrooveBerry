@@ -77,8 +77,8 @@ public class Server {
 	
 	public synchronized void sendReadingQueueToRemote(Client c) 
 	{
-		c.sendString("#RQ"); //Constante pour reading queue
-		String rep = c.readString();
+		c.sendSerializable("#RQ"); //Constante pour reading queue
+		String rep = (String) c.readSerializable();
 		if (rep.equals("#OK")) {
 			System.out.println("Client OK pour l'envoi de la reading queue");
 			if (c.sendSerializable(Server.readingQueue))

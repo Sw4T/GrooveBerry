@@ -18,11 +18,13 @@ public class AudioFileScannerTest {
 		
 		ArrayList<AudioFile> audioFileListTest = new ArrayList<>();
 		audioFileListTest.add(new AudioFile("audioTest/01 Clandestino.mp3"));
-		audioFileListTest.add(new AudioFile("audioTest/9.wav"));
-		audioFileListTest.add(new AudioFile("audioTest/04 Hey Joe.mp3"));
-		audioFileListTest.add(new AudioFile("audioTest/12 Bold as Love.mp3"));
 		audioFileListTest.add(new AudioFile("audioTest/free.wav"));
+		audioFileListTest.add(new AudioFile("audioTest/12 Bold as Love.mp3"));
+		audioFileListTest.add(new AudioFile("audioTest/04 Hey Joe.mp3"));
+		audioFileListTest.add(new AudioFile("audioTest/9.wav"));
+		
 		for (int i = 0 ; i < audioFileListTest.size() ; i++) {
+			System.out.println(audioFileList.get(i).getPath());
 			assertEquals(audioFileListTest.get(i).getPath(), audioFileList.get(i).getPath());
 		}
 		
