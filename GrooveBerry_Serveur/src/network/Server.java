@@ -7,10 +7,11 @@ import java.util.ArrayList;
 
 import files.AudioFile;
 import files.AudioFileScanner;
+import files.AudioListener;
 import files.Library;
 import files.ReadingQueue;
 
-public class Server {
+public class Server implements AudioListener {
 
 	public static final int SERVER_PORT = 12345;
 	public static ArrayList<Client> listClients; //Liste de clients se connectant au serveur
@@ -81,8 +82,10 @@ public class Server {
 		String rep = (String) c.readSerializable();
 		if (rep.equals("#OK")) {
 			System.out.println("Client OK pour l'envoi de la reading queue");
-			if (c.sendSerializable(Server.readingQueue))
+			if (c.sendSerializable(Server.readingQueue)) {
 				System.out.println("Envoi de la reading queue OK...");
+				Server.readingQueue.getCurrentTrack().addListener(this);
+			}
 		} else
 			System.out.println("Erreur lors de l'envoi de la reading queue");
 	}
@@ -136,5 +139,17 @@ public class Server {
 	
 	public Client getCurrentClient() {
 		return this.currentClient;
+	}
+
+	@Override
+	public void endOfPlay() {
+		System.out.println("Server endOfPlay");
+		
+	}
+
+	@Override
+	public void stopOfPlay() {
+		// TODO Auto-generated method stub
+		
 	}
 }
