@@ -11,7 +11,7 @@ import files.AudioListener;
 import files.Library;
 import files.ReadingQueue;
 
-public class Server implements AudioListener {
+public class Server {
 
 	public static final int SERVER_PORT = 12345;
 	public static ArrayList<Client> listClients; //Liste de clients se connectant au serveur
@@ -84,7 +84,6 @@ public class Server implements AudioListener {
 			System.out.println("Client OK pour l'envoi de la reading queue");
 			if (c.sendSerializable(Server.readingQueue)) {
 				System.out.println("Envoi de la reading queue OK...");
-				Server.readingQueue.getCurrentTrack().addListener(this);
 			}
 		} else
 			System.out.println("Erreur lors de l'envoi de la reading queue");
@@ -139,17 +138,5 @@ public class Server implements AudioListener {
 	
 	public Client getCurrentClient() {
 		return this.currentClient;
-	}
-
-	@Override
-	public void endOfPlay() {
-		System.out.println("Server endOfPlay");
-		
-	}
-
-	@Override
-	public void stopOfPlay() {
-		// TODO Auto-generated method stub
-		
 	}
 }

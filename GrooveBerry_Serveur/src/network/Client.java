@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import files.AudioListener;
 import protocol.NotifierReadingQueue;
 
-public class Client implements Runnable, AudioListener {
+public class Client implements Runnable {
 
 	private Socket socket; //Socket utilisé pour communiquer avec le client
 	private String clientName; //Pseudo du client
@@ -48,8 +48,6 @@ public class Client implements Runnable, AudioListener {
 				server.execute(obj); 
 				Object [] objs = new Object[1]; 
 				objs[0] = Server.readingQueue;
-				
-				Server.readingQueue.getCurrentTrack().addListener(this);
 				
 				NotifierReadingQueue notify = new NotifierReadingQueue(objs);
 				new Thread(notify).start(); //Envoi à tous les clients du changement 
@@ -155,19 +153,4 @@ public class Client implements Runnable, AudioListener {
 		return false;
 	}
 
-	@Override
-	public void endOfPlay() {
-		System.out.println("WORK");
-		Object [] objs = new Object[1]; 
-		objs[0] = Server.readingQueue;
-		
-		NotifierReadingQueue notify = new NotifierReadingQueue(objs);
-		new Thread(notify).start(); //Envoi à tous les clients du changement
-	}
-
-	@Override
-	public void stopOfPlay() {
-		// TODO Auto-generated method stub
-		
-	}
 }

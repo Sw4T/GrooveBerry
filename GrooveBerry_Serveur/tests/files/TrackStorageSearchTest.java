@@ -31,8 +31,12 @@ public class TrackStorageSearchTest {
 		this.search = new TrackStorageSearch(this.library);
 		
 		ArrayList<AudioFile> audioFileTest = new ArrayList<>();
+		audioFileTest.add(audioFileList.get(0));
+		audioFileTest.add(audioFileList.get(2));
 		audioFileTest.add(audioFileList.get(3));
-		assertEquals(audioFileTest.get(0), this.search.getTrackByName("Hey Joe").get(0));
+		assertEquals(audioFileTest.get(0), this.search.getTrackByName("mp3").get(0));
+		assertEquals(audioFileTest.get(1), this.search.getTrackByName("mp3").get(1));
+		assertEquals(audioFileTest.get(2), this.search.getTrackByName("mp3").get(2));
 	}
 
 }
