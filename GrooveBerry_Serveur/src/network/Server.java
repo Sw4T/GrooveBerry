@@ -87,20 +87,28 @@ public class Server {
 			System.out.println("Erreur lors de l'envoi de la reading queue");
 	}
 	
-	public synchronized void execute(String constant) 
+	public synchronized void execute(Object constant) 
 	{
-		switch (constant)
-		{
-			case "play" : readingQueue.getCurrentTrack().play(); break;
-			case "pause" : readingQueue.getCurrentTrack().pause(); break;
-			case "mute" : readingQueue.getCurrentTrack().mute(); break;
-			case "restart" : readingQueue.getCurrentTrack().restart(); break;
-			case "stop" : readingQueue.getCurrentTrack().stop(); break;
-			case "loop" : readingQueue.getCurrentTrack().loop(); break;
-			case "next" : readingQueue.next(); break;
-			case "prev" : readingQueue.prev(); break;
-			case "random" : readingQueue.rand(); break;
-			default :
+		if (constant instanceof String) {
+			switch ((String)constant)
+			{
+				case "play" : readingQueue.getCurrentTrack().play(); break;
+				case "pause" : readingQueue.getCurrentTrack().pause(); break;
+				case "mute" : readingQueue.getCurrentTrack().mute(); break;
+				case "restart" : readingQueue.getCurrentTrack().restart(); break;
+				case "stop" : readingQueue.getCurrentTrack().stop(); break;
+				case "loop" : readingQueue.getCurrentTrack().loop(); break;
+				case "next" : readingQueue.next(); break;
+				case "prev" : readingQueue.prev(); break;
+				case "random" : readingQueue.rand(); break;
+				default :
+			}
+			
+			
+		}
+		if (constant instanceof Integer) {
+			readingQueue.setCurrentTrackPostion((Integer) constant);
+			readingQueue.getCurrentTrack().play();
 		}
 		System.out.println("Received " + constant + " from the client, processing...");
 	}

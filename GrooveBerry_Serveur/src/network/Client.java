@@ -44,7 +44,7 @@ public class Client implements Runnable {
 		while (connect.get()) { //Tant que la connexion est active
 			try {
 				Object obj = in.readObject();
-				server.execute((String) obj); 
+				server.execute(obj); 
 				Object [] objs = new Object[1]; 
 				objs[0] = Server.readingQueue; 
 				

@@ -51,6 +51,7 @@ public class ReadingQueueTest {
 	@Test
 	public void testCreateAEmptyReadingQueue() {
 		assertEquals(true, this.readingQueue.isEmpty());
+		assertEquals(0, this.readingQueue.size());
 	}
 	
 	@Test
@@ -474,6 +475,12 @@ public class ReadingQueueTest {
 	assertEquals(aol,this.readingQueue.getAudioFileList().get(1));
 	assertEquals(bob,this.readingQueue.getAudioFileList().get(2));
 	assertEquals(test,this.readingQueue.getAudioFileList().get(3));
+	}
+	
+	@Test
+	public void testChangeCurrentTrack() {
+		this.readingQueueTest.setCurrentTrackPostion(3);
+		assertEquals(this.aol, this.readingQueueTest.getCurrentTrack());
 	}
 }
 
