@@ -248,6 +248,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 		this.currentTrackIndex = index;
 		this.currentTrack.stop();
 		this.currentTrack = this.queue.get(index);
+		this.currentTrack.addListener(this);
 	}
 	
 	/**

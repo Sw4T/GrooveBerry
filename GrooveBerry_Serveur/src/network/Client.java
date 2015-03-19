@@ -7,9 +7,10 @@ import java.io.Serializable;
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import files.AudioListener;
 import protocol.NotifierReadingQueue;
 
-public class Client implements Runnable {
+public class Client implements Runnable, AudioListener {
 
 	private Socket socket; //Socket utilisé pour communiquer avec le client
 	private String clientName; //Pseudo du client
@@ -150,5 +151,20 @@ public class Client implements Runnable {
 		if (((Client) o).getSocket().getInetAddress().getHostAddress().equals(this.socket.getInetAddress().getHostAddress()))
 			return true;
 		return false;
+	}
+
+	@Override
+	public void endOfPlay() {
+		Object [] objs = new Object[1]; 
+		objs[0] = Server.readingQueue; 
+		
+		NotifierReadingQueue notify = new NotifierReadingQueue(objs);
+		new Thread(notify).start(); //Envoi à tous les clients du changement
+	}
+
+	@Override
+	public void stopOfPlay() {
+		// TODO Auto-generated method stub
+		
 	}
 }
