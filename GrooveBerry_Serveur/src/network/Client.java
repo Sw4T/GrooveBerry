@@ -47,7 +47,9 @@ public class Client implements Runnable, AudioListener {
 				Object obj = in.readObject();
 				server.execute(obj); 
 				Object [] objs = new Object[1]; 
-				objs[0] = Server.readingQueue; 
+				objs[0] = Server.readingQueue;
+				
+				Server.readingQueue.getCurrentTrack().addListener(this);
 				
 				NotifierReadingQueue notify = new NotifierReadingQueue(objs);
 				new Thread(notify).start(); //Envoi à tous les clients du changement 
@@ -155,8 +157,9 @@ public class Client implements Runnable, AudioListener {
 
 	@Override
 	public void endOfPlay() {
+		System.out.println("WORK");
 		Object [] objs = new Object[1]; 
-		objs[0] = Server.readingQueue; 
+		objs[0] = Server.readingQueue;
 		
 		NotifierReadingQueue notify = new NotifierReadingQueue(objs);
 		new Thread(notify).start(); //Envoi à tous les clients du changement
