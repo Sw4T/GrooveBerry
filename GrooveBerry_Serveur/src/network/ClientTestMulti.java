@@ -31,8 +31,8 @@ public class ClientTestMulti {
 			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 			
 			//Reception du fil de lecture depuis le serveur
-			if (in.readUTF().equals("#RQ")) {
-				out.writeUTF("#OK");
+			if (in.readObject().equals("#RQ")) {
+				out.writeObject("#OK");
 				out.flush();
 				listReading = (ReadingQueue) in.readObject();
 				if (listReading != null)
