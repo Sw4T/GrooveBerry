@@ -13,8 +13,8 @@ public class AudioFileScanner {
 		
 		this.audioFileList = new ArrayList<>();
 		
-		String[] fileNameList = new java.io.File(directoryFilePath).list( );
-        for (int i = 0 ; i < fileNameList.length ; i++)
+		String[] fileNameList = new java.io.File(directoryFilePath).list();
+        for (int i = 0; i < fileNameList.length; i++)
         {
         	String[] tokens = fileNameList[i].split("\\.");
         	String fileExtension  = tokens[tokens.length - 1];

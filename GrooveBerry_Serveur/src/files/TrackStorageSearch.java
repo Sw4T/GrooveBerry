@@ -16,7 +16,6 @@ public class TrackStorageSearch {
 				result.add(audioFile);
 			}
 		}
-		
 		return result;
 	}	
 

@@ -16,7 +16,13 @@ public class SystemVolumeController {
 	
 	public void setVolumePercentage(int volumePercentage) {
 		this.volumePercentage = volumePercentage;
-
+		if (this.volumePercentage < 0) {
+			this.volumePercentage = 0;
+		} 
+		else if (this.volumePercentage > 100) {
+			this.volumePercentage = 100;
+			
+		}
 		try {
 			 Runtime.getRuntime().exec("amixer sset 'Master' " + this.volumePercentage + "%");
 		} catch (IOException e) {

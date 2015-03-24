@@ -13,8 +13,6 @@ import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 
 
-
-
 public class TagReader {
 	private Tag tag;
 	
