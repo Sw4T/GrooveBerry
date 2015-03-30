@@ -164,4 +164,14 @@ public abstract class TrackStorage {
 		}
 		updateLibraryFile();
 	}
+	
+	public ArrayList<AudioFile> getTrackByName(String searchSequence) {
+		ArrayList<AudioFile> result = new ArrayList<>();
+		for (AudioFile audioFile : this.getAudioFileList()) {
+			if (audioFile.getName().contains(searchSequence)) {
+				result.add(audioFile);
+			}
+		}
+		return result;
+	}	
 }

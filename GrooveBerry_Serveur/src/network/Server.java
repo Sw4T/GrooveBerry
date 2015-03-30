@@ -11,7 +11,7 @@ import files.AudioListener;
 import files.Library;
 import files.ReadingQueue;
 
-public class Server {
+public class Server implements AudioListener {
 
 	public static final int SERVER_PORT = 12345;
 	public static ArrayList<Client> listClients; //Liste de clients se connectant au serveur
@@ -19,6 +19,7 @@ public class Server {
 	private static final int NB_MAX_CLIENTS = 5;
 	private ServerSocket server; //Classe gérant les connexions entrantes
 	private Client currentClient; //Pour effectuer les tests
+	private AudioListener listenerEvent;
 	
 	public Server() throws IOException {
 		server = new ServerSocket(SERVER_PORT);
@@ -94,7 +95,7 @@ public class Server {
 		if (constant instanceof String) {
 			switch ((String)constant)
 			{
-				case "play" : readingQueue.getCurrentTrack().play(); break;
+				case "play" : readingQueue.getCurrentTrack().play();
 				case "pause" : readingQueue.getCurrentTrack().pause(); break;
 				case "mute" : readingQueue.getCurrentTrack().mute(); break;
 				case "restart" : readingQueue.getCurrentTrack().restart(); break;
@@ -138,5 +139,25 @@ public class Server {
 	
 	public Client getCurrentClient() {
 		return this.currentClient;
+	}
+	
+	/**
+	 * Ajoute un listener au fichier audio
+	 * @param listener
+	 */
+	public void addListener(AudioListener listener) {
+	 	this.listenerEvent = listener;
+	}
+
+	@Override
+	public void endOfPlay() {
+		System.out.println("WORK");
+		
+	}
+
+	@Override
+	public void stopOfPlay() {
+		// TODO Auto-generated method stub
+		
 	}
 }
