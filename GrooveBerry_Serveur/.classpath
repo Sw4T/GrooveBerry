@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="libs/mp3spi1.9.5.jar"/>
 	<classpathentry kind="lib" path="libs/tritonus_share.jar"/>
 	<classpathentry kind="lib" path="libs/cpsuite-1.2.6.jar"/>
+	<classpathentry kind="lib" path="libs/jaudiotagger-2.2.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
