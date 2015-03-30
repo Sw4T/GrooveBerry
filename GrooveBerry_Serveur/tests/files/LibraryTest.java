@@ -283,6 +283,32 @@ public class LibraryTest {
 		assertEquals(libraryTestFileContent, libraryFileContent);
 		
 		libraryTestFile.delete();
-	} 
+	}
+	
+	@Test
+	public void testCreateAndSearchHeyJoe() throws IOException {
+		AudioFileScanner libraryScanner = new AudioFileScanner("audioTest/");
+		ArrayList<AudioFile> audioFileList = libraryScanner.getAudioFileList();
+		this.library = new Library(audioFileList);
+		
+		ArrayList<AudioFile> audioFileTest = new ArrayList<>();
+		audioFileTest.add(audioFileList.get(3));
+		assertEquals(audioFileTest.get(0), this.library.getTrackByName("Hey Joe").get(0));
+	}
+	
+	@Test
+	public void testCreateAndSearchMp3() throws IOException {
+		AudioFileScanner libraryScanner = new AudioFileScanner("audioTest/");
+		ArrayList<AudioFile> audioFileList = libraryScanner.getAudioFileList();
+		this.library = new Library(audioFileList);
+		
+		ArrayList<AudioFile> audioFileTest = new ArrayList<>();
+		audioFileTest.add(audioFileList.get(0));
+		audioFileTest.add(audioFileList.get(2));
+		audioFileTest.add(audioFileList.get(3));
+		assertEquals(audioFileTest.get(0), this.library.getTrackByName("mp3").get(0));
+		assertEquals(audioFileTest.get(1), this.library.getTrackByName("mp3").get(1));
+		assertEquals(audioFileTest.get(2), this.library.getTrackByName("mp3").get(2));
+	}
 
 }
