@@ -105,7 +105,9 @@ public class ClientTestMulti {
 			case 7 : toReturn = "exit"; break;
 			case 8 : toReturn = "next"; break;
 			case 9 : toReturn = "prev"; break;
-			case 10 : toReturn = "random"; break; 
+			case 10 : toReturn = "random"; break;
+			case 11 : toReturn = "+"; break;
+			case 12 : toReturn = "-"; break;
 			default : toReturn = "";
 		}
 		return toReturn;

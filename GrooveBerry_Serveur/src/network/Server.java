@@ -10,20 +10,23 @@ import files.AudioFileScanner;
 import files.AudioListener;
 import files.Library;
 import files.ReadingQueue;
+import files.SystemVolumeController;
 
 public class Server {
 
-	public static final int SERVER_PORT = 12345;
+	public static final int SERVER_PORT = 12347;
 	public static ArrayList<Client> listClients; //Liste de clients se connectant au serveur
 	public static ReadingQueue readingQueue; //Liste de lecture
 	private static final int NB_MAX_CLIENTS = 5;
 	private ServerSocket server; //Classe gérant les connexions entrantes
 	private Client currentClient; //Pour effectuer les tests
+	public static SystemVolumeController volCtrl;
 	
 	public Server() throws IOException {
 		server = new ServerSocket(SERVER_PORT);
 		listClients = new ArrayList<Client>(NB_MAX_CLIENTS);
 		readingQueue = new ReadingQueue();
+		volCtrl = new SystemVolumeController();
 		initReadingQueue();
 	}
 	
@@ -103,6 +106,9 @@ public class Server {
 				case "next" : readingQueue.next(); break;
 				case "prev" : readingQueue.prev(); break;
 				case "random" : readingQueue.rand(); break;
+				case "+" : System.out.println("monte le son !!");
+							Server.volCtrl.increaseVolume(); break;
+				case "-" : Server.volCtrl.decreaseVolume(); break;
 				default :
 			}
 			
