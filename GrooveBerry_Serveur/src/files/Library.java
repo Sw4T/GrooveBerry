@@ -22,6 +22,8 @@ public class Library extends TrackStorage {
 	public void add(String filePath) throws FileNotFoundException {
 		if (!this.contains(filePath)) {
 			super.add(filePath);
+		} else {
+			System.out.println("Fichier deja present dans la bibliotheque"); //avoid track duplication
 		}
 	}
 

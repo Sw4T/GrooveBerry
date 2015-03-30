@@ -63,6 +63,7 @@ public class LibraryTest {
 
 	@Test
 	public void testDefaultConstructorCreateAEmptyLibrary() throws IOException {
+		this.file.delete();
 		this.library = new Library();
 		
 		assertTrue(this.library.isEmpty());

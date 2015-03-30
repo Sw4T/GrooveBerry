@@ -1,14 +1,14 @@
 package network;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
 import files.AudioFile;
+import files.AudioFileScanner;
+import files.AudioListener;
 import files.Library;
-import files.Playlist;
 import files.ReadingQueue;
 
 public class Server {
@@ -24,7 +24,7 @@ public class Server {
 		server = new ServerSocket(SERVER_PORT);
 		listClients = new ArrayList<Client>(NB_MAX_CLIENTS);
 		readingQueue = new ReadingQueue();
-		init_reading_queue();
+		initReadingQueue();
 	}
 	
 	//Attente d'une connexion cliente et traitement de test
@@ -61,48 +61,56 @@ public class Server {
 		}).start();
 	}
 	
-	public void init_reading_queue() {
+	public void initReadingQueue() {
+		AudioFileScanner directoryScanneur = new AudioFileScanner("audio/");
+		
 		Library library;
 		try {
-			library = new Library();
+			library = new Library(directoryScanneur.getAudioFileList());
+			//Lit toute la bibliotheque
 			for (AudioFile audioFile : library.getAudioFileList()) {
 				readingQueue.addLast(audioFile);
 			}
 		} catch (IOException e) {
-			//TODO
 			e.printStackTrace();
 		}
 	}
 	
 	public synchronized void sendReadingQueueToRemote(Client c) 
 	{
-		c.sendString("#RQ"); //Constante pour reading queue
-		String rep = c.readString();
+		c.sendSerializable("#RQ"); //Constante pour reading queue
+		String rep = (String) c.readSerializable();
 		if (rep.equals("#OK")) {
 			System.out.println("Client OK pour l'envoi de la reading queue");
-			ArrayList<String> readingList = new ArrayList<String>();
-			for (AudioFile file : readingQueue.getAudioFileList()) 
-				readingList.add(file.getName());
-			if (c.sendSerializable(readingList))
+			if (c.sendSerializable(Server.readingQueue)) {
 				System.out.println("Envoi de la reading queue OK...");
+			}
 		} else
 			System.out.println("Erreur lors de l'envoi de la reading queue");
 	}
 	
-	public synchronized void execute(String constant) 
+	public synchronized void execute(Object constant) 
 	{
-		switch (constant)
-		{
-			case "play" : readingQueue.getCurrentTrack().play(); break;
-			case "pause" : readingQueue.getCurrentTrack().pause(); break;
-			case "mute" : readingQueue.getCurrentTrack().mute(); break;
-			case "restart" : readingQueue.getCurrentTrack().restart(); break;
-			case "stop" : readingQueue.getCurrentTrack().stop(); break;
-			case "loop" : readingQueue.getCurrentTrack().loop(); break;
-			case "next" : readingQueue.next(); break;
-			case "prev" : readingQueue.prev(); break;
-			case "random" : readingQueue.getCurrentTrack().random(); break;
-			default :
+		if (constant instanceof String) {
+			switch ((String)constant)
+			{
+				case "play" : readingQueue.getCurrentTrack().play(); break;
+				case "pause" : readingQueue.getCurrentTrack().pause(); break;
+				case "mute" : readingQueue.getCurrentTrack().mute(); break;
+				case "restart" : readingQueue.getCurrentTrack().restart(); break;
+				case "stop" : readingQueue.getCurrentTrack().stop(); break;
+				case "loop" : readingQueue.getCurrentTrack().loop(); break;
+				case "next" : readingQueue.next(); break;
+				case "prev" : readingQueue.prev(); break;
+				case "random" : readingQueue.rand(); break;
+				default :
+			}
+			
+			
+		}
+		if (constant instanceof Integer) {
+			readingQueue.setCurrentTrackPostion((Integer) constant);
+			readingQueue.getCurrentTrack().play();
 		}
 		System.out.println("Received " + constant + " from the client, processing...");
 	}

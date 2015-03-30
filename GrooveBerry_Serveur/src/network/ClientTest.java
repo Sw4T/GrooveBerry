@@ -5,9 +5,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+
+import files.AudioFile;
+import files.ReadingQueue;
 
 public class ClientTest {
 
@@ -30,12 +32,11 @@ public class ClientTest {
 	}
 	
 	//Main du client Android ici simulé 
-	@SuppressWarnings("unchecked")
 	public static void main (String [] args) {
 		Socket socket = null;
 		Scanner scan = new Scanner(System.in);
 		int entreeUser = 0; String treatment = null;
-		ArrayList<String> listReading;
+		ReadingQueue listReading;
 		try {
 			//Connexion au serveur
 			socket = new Socket("localhost", Server.SERVER_PORT);
@@ -50,7 +51,7 @@ public class ClientTest {
 			if (in.readUTF().equals("#RQ")) {
 				out.writeUTF("#OK");
 				out.flush();
-				listReading = (ArrayList<String>) in.readObject();
+				listReading = (ReadingQueue) in.readObject();
 				if (listReading != null)
 					showReadingQueue(listReading);
 			} else
@@ -116,11 +117,11 @@ public class ClientTest {
 		System.out.println("10. Random");
 	}
 	
-	public static void showReadingQueue(ArrayList<String> list) 
+	public static void showReadingQueue(ReadingQueue list) 
 	{
 		System.out.println("Liste de lecture du serveur : ");
-		for (int i = 1; i <= list.size(); i++) {
-			System.out.println("\t" + i + ". " + list.get(i - 1));
+		for (AudioFile file : list.getAudioFileList()) {
+			System.out.println("\t" + file.getName());
 		}
 	}
 	

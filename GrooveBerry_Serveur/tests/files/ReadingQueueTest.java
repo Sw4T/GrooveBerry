@@ -51,6 +51,7 @@ public class ReadingQueueTest {
 	@Test
 	public void testCreateAEmptyReadingQueue() {
 		assertEquals(true, this.readingQueue.isEmpty());
+		assertEquals(0, this.readingQueue.size());
 	}
 	
 	@Test
@@ -193,13 +194,15 @@ public class ReadingQueueTest {
 	
 	@Test
 	public void testRemoveLastCurrentTrack() {
-		this.readingQueue.addLast(bob);
-		this.readingQueue.addLast(test);
 		this.readingQueue.addLast(leNeuf);
+		this.readingQueue.addLast(test);
+		this.readingQueue.addLast(bob);
 		
-		this.readingQueue.setCurrentTrack(leNeuf);
+		this.readingQueue.next();
+		this.readingQueue.next();
 		
 		this.readingQueue.remove(2);
+				
 		assertEquals(null, this.readingQueue.getCurrentTrack());
 		assertEquals(-1, this.readingQueue.getCurrentTrackPosition());
 	}
@@ -406,19 +409,19 @@ public class ReadingQueueTest {
 		this.readingQueue.addLast(test);
 		
 		this.readingQueue.getCurrentTrack().play();
-		this.readingQueue.getCurrentTrack().random();
+		this.readingQueue.rand();
 		assertEquals(aol, this.readingQueue.getCurrentTrack());
 		assertEquals(0, this.readingQueue.getCurrentTrackPosition());
 		assertEquals(true, this.readingQueue.getCurrentTrack().isPlaying());
-		assertEquals(true, this.readingQueue.getCurrentTrack().isRandomised());
+		assertEquals(true, this.readingQueue.isRandomised());
 		this.readingQueue.next();
-		assertEquals(true, this.readingQueue.getCurrentTrack().isRandomised());
-		this.readingQueue.getCurrentTrack().random();
-		assertEquals(false, this.readingQueue.getCurrentTrack().isRandomised());
+		assertEquals(true, this.readingQueue.isRandomised());
+		this.readingQueue.rand();
+		assertEquals(false, this.readingQueue.isRandomised());
 		this.readingQueue.prev();
 		
 		assertEquals(true, this.readingQueue.getCurrentTrack().isPlaying());
-		assertEquals(false, this.readingQueue.getCurrentTrack().isRandomised());
+		assertEquals(false, this.readingQueue.isRandomised());
 		
 		
 	}
@@ -470,6 +473,12 @@ public class ReadingQueueTest {
 	assertEquals(aol,this.readingQueue.getAudioFileList().get(1));
 	assertEquals(bob,this.readingQueue.getAudioFileList().get(2));
 	assertEquals(test,this.readingQueue.getAudioFileList().get(3));
+	}
+	
+	@Test
+	public void testChangeCurrentTrack() {
+		this.readingQueueTest.setCurrentTrackPostion(3);
+		assertEquals(this.aol, this.readingQueueTest.getCurrentTrack());
 	}
 }
 
