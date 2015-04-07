@@ -19,8 +19,10 @@ public class ConnectionServerApp {
 	public static void setUpBeforeClass() throws Exception {
 		server = new Server();
 		server.waitConnectionForTest();
-		client_app = new Client(new Socket("localhost", Server.SERVER_PORT));
+		client_app = new Client(new Socket("localhost", Server.SERVER_PORT_SIMPLE));
 		client_server = server.getCurrentClient();
+		System.out.println("Initialisation effectuée...");
+		Thread.sleep(100);
 	}
 
 	@AfterClass
