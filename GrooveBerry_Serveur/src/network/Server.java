@@ -7,42 +7,50 @@ import java.util.ArrayList;
 
 import files.AudioFile;
 import files.AudioFileScanner;
-import files.AudioListener;
 import files.Library;
 import files.ReadingQueue;
 import files.SystemVolumeController;
 
 public class Server {
 
-	public static final int SERVER_PORT = 12347;
+	public static final int SERVER_PORT_SIMPLE = 12347; 
+	public static final int SERVER_PORT_OBJECT = 12348;
+	private static final int NB_MAX_CLIENTS = 5; //Nombre de clients supportés au maximum
 	public static ArrayList<Client> listClients; //Liste de clients se connectant au serveur
 	public static ReadingQueue readingQueue; //Liste de lecture
-	private static final int NB_MAX_CLIENTS = 5;
-	private ServerSocket server; //Classe gÃ©rant les connexions entrantes
+	public static SystemVolumeController volControl;
+	
+	private ServerSocket serverSocketSimple; //Classe gÃ©rant les connexions entrantes et l'envoi de chaines 
+	private ServerSocket serverSocketObject; //Classe gérant l'envoi/réception d'objets plus lourds
 	private Client currentClient; //Pour effectuer les tests
-	public static SystemVolumeController volCtrl;
 	
 	public Server() throws IOException {
-		server = new ServerSocket(SERVER_PORT);
+		serverSocketSimple = new ServerSocket(SERVER_PORT_SIMPLE);
+		serverSocketObject = new ServerSocket(SERVER_PORT_OBJECT);
 		listClients = new ArrayList<Client>(NB_MAX_CLIENTS);
 		readingQueue = new ReadingQueue();
-		volCtrl = new SystemVolumeController();
+		volControl = new SystemVolumeController();
 		initReadingQueue();
 	}
 	
 	//Attente d'une connexion cliente et traitement de test
 	public void waitConnection() throws IOException, InterruptedException {
 		while (true) {
-			if (listClients.size() != NB_MAX_CLIENTS) {
-				Socket socket = server.accept();
-				System.out.println("Client " + socket.getInetAddress() + " has connected !");
-				final Client newClient = new Client(socket, this);
+			Socket newSocketSimple = serverSocketSimple.accept();
+			if (listClients.size() != NB_MAX_CLIENTS) 
+			{
+				System.out.println("Client " + newSocketSimple.getInetAddress() + " has connected !");
+				Socket newSocketObject = serverSocketObject.accept();
+				final Client newClient = new Client(newSocketSimple, newSocketObject, this);
+				
 				//updateClientList(newClient);
 				listClients.add(newClient); //TODO Clients illimitÃ©s pour test
-				
 				sendReadingQueueToRemote(newClient); //Envoi de la liste de lecture du serveur
 				new Thread(newClient).start();
-			} 
+			} else {
+				newSocketSimple.close();
+				System.out.println("ERREUR : Trop de connexions sont ouvertes sur le serveur !");
+			}
 		}
 	}
 	
@@ -53,8 +61,8 @@ public class Server {
 			public void run() {
 					while (true) {
 						try {
-							Socket socket = server.accept();
-							System.out.println("Client " + socket.getInetAddress() + " has connected !");
+							Socket socket = serverSocketSimple.accept();
+							System.out.println("SERVEUR : Client " + socket.getInetAddress() + " has connected !");
 							currentClient = new Client(socket);
 						} catch (IOException e) {
 							e.printStackTrace();
@@ -66,7 +74,6 @@ public class Server {
 	
 	public void initReadingQueue() {
 		AudioFileScanner directoryScanneur = new AudioFileScanner("audio/");
-		
 		Library library;
 		try {
 			library = new Library(directoryScanneur.getAudioFileList());
@@ -107,8 +114,8 @@ public class Server {
 				case "prev" : readingQueue.prev(); break;
 				case "random" : readingQueue.rand(); break;
 				case "+" : System.out.println("monte le son !!");
-							Server.volCtrl.increaseVolume(); break;
-				case "-" : Server.volCtrl.decreaseVolume(); break;
+							Server.volControl.increaseVolume(); break;
+				case "-" : Server.volControl.decreaseVolume(); break;
 				default :
 			}
 			
