@@ -14,21 +14,22 @@ import files.ReadingQueue;
 public class ClientTestMulti {
 	
 	//Main du client Android ici simulé 
-	@SuppressWarnings("unchecked")
 	public static void main (String [] args) {
-		Socket socket = null;
+		Socket socketSimple = null, socketObject = null;
 		Scanner scan = new Scanner(System.in);
 		int entreeUser = 0; String treatment = null;
 		ReadingQueue listReading;
 		try {
 			//Connexion au serveur
-			socket = new Socket("localhost", Server.SERVER_PORT);
-			if (socket.isConnected() && socket.isBound())
+			socketSimple = new Socket("localhost", Server.SERVER_PORT_SIMPLE);
+			if (socketSimple.isConnected() && socketSimple.isBound()) {
 				System.out.println("Client : Je me suis bien connecté au serveur ! youhou!");
+				socketObject = new Socket("localhost", Server.SERVER_PORT_OBJECT);
+			}
 			
 			//Déclaration des buffers entrées/sorties et réception de la liste
-			ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+			ObjectOutputStream out = new ObjectOutputStream(socketSimple.getOutputStream());
+			ObjectInputStream in = new ObjectInputStream(socketSimple.getInputStream());
 			
 			//Reception du fil de lecture depuis le serveur
 			if (in.readObject().equals("#RQ")) {
@@ -58,10 +59,11 @@ public class ClientTestMulti {
 			} while (entreeUser != 7);
 			
 			//Fermeture de la connexion avec le serveur
-			if (socket != null) {
+			if (socketSimple != null) {
 				in.close();
 				out.close();
-				socket.close();
+				socketSimple.close();
+				socketObject.close();
 				scan.close();
 			}
 		} catch (IOException | ClassNotFoundException e) {
