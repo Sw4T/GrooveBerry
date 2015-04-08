@@ -43,6 +43,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/player_header_bg"
+            android:orientation="vertical"
             android:gravity="center"
             android:paddingBottom="10dp"
             android:paddingTop="10dp" >
@@ -50,10 +51,46 @@
             <ImageView
                 android:id="@+id/launcher_icon"
                 android:layout_width="wrap_content"
-                android:layout_height="200dp"
+                android:layout_height="170dp"
                 android:contentDescription="@string/hello_world"
                 android:src="@drawable/raspberry_pi_logo" />
+            
+            <LinearLayout
+            android:id="@+id/fileTransfer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp" >
+            
+            <ImageButton 
+                android:id="@+id/upload_button"
+                android:contentDescription="@string/hello_world"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:background="@null"
+                android:src="@drawable/ic_upload_unselected"/>
+            
+            <ImageButton 
+                android:id="@+id/download_button"
+                android:contentDescription="@string/hello_world"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:background="@null"
+                android:src="@drawable/ic_download_unselected"/>
+            
+        	</LinearLayout>
+            
         </LinearLayout>
+        
+        
+        
 
         <!-- Player Footer -->
 
@@ -211,6 +248,7 @@
         android:id="@+id/frame_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
+
     </FrameLayout>
 
     <!-- Listview to display slider menu -->

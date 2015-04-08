@@ -3,6 +3,7 @@ package com.example.grooveberry;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OptionalDataException;
 import java.io.Serializable;
 import java.net.Socket;
 
@@ -65,14 +66,10 @@ public class Client {
 		return null;
 	}
 	
-	public Object readObject() {
+	public Object readObject() throws OptionalDataException, ClassNotFoundException, IOException {
 		if (in != null) {
-			try {
 				//return in.readUTF();
 				return in.readObject();
-			} catch (IOException | ClassNotFoundException e) {
-				e.printStackTrace();
-			}
 		}
 		return null;
 	}

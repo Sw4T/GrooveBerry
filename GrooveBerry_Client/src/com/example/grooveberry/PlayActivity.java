@@ -1,27 +1,38 @@
 package com.example.grooveberry;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -34,12 +45,12 @@ import files.ReadingQueue;
 
 public class PlayActivity extends ActionBarActivity implements OnClickListener {
 
+	private final static String STORETEXT = "storetext.txt";
 	public static boolean connected;
 
-	private ImageButton play, previous, next, random, loop;
+	private ImageButton play, previous, next, random, loop, upload, download;
 	private TextView musicName, notConnectedWarning;
 	private ImageView warningLogo;
-	private boolean sendPause = false, isPlaying = false;
 	private HashMap<ImageButton, Boolean> buttonState;
 	private Client client;
 	private ReadingQueue musicList;
@@ -50,7 +61,7 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 	private Handler mHandler = new Handler();
 	private ThreadServerListener tSL;
 
-	private String[] mMusicTitles = { "Test", "chocolat" };
+	private String[] mMusicTitles;
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private ArrayAdapter<String> mAdapter;
@@ -59,35 +70,39 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_play);
-
 		createViewItems();
+		setAllListeners();
+		disableAllButtons();
 
+	}
+
+	private void setAllListeners() {
 		this.play.setOnClickListener(this);
 		this.next.setOnClickListener(this);
 		this.previous.setOnClickListener(this);
 		this.random.setOnClickListener(this);
 		this.loop.setOnClickListener(this);
+		this.upload.setOnClickListener(this);
+		this.download.setOnClickListener(this);
 		this.mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
 		if (this.musicList == null) {
 			this.musicName.setText("LISTEN! HEY LISTEN!");
 		}
-
-		disableAllButtons();
-
 	}
 
 	private class DrawerItemClickListener implements
 			ListView.OnItemClickListener {
+
 		@Override
 		public void onItemClick(AdapterView parent, View view, int position,
 				long id) {
 			client.sendSerializable(position);
 			reloadActivityElements(musicList);
-			Log.d("PA", ""+position);
+			Log.d("PA", "" + position);
 			mDrawerLayout.closeDrawer(mDrawerList);
-
 		}
+
 	}
 
 	public void createViewItems() {
@@ -101,6 +116,8 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		this.warningLogo = (ImageView) findViewById(R.id.imageView2);
 		this.mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		this.mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
+		this.upload = (ImageButton) findViewById(R.id.upload_button);
+		this.download = (ImageButton) findViewById(R.id.download_button);
 	}
 
 	public void enableAllButtons() {
@@ -115,16 +132,19 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 			this.next.setEnabled(true);
 			this.random.setEnabled(true);
 			this.loop.setEnabled(true);
-			
+			this.download.setEnabled(true);
+			this.upload.setEnabled(true);
+
 			if (this.musicList.getCurrentTrackPosition() == this.musicList
 					.getAudioFileList().size())
 				this.next.setEnabled(false);
 			if (this.musicList.getCurrentTrackPosition() == 0)
 				this.previous.setEnabled(false);
 
-			mAdapter = new ArrayAdapter<String>(this, R.layout.item_list,
+			this.mAdapter = new ArrayAdapter<String>(this, R.layout.item_list,
 					mMusicTitles);
-			mDrawerList.setAdapter(mAdapter);
+			this.mDrawerList.setAdapter(mAdapter);
+
 		}
 	}
 
@@ -138,6 +158,8 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 			this.random.setEnabled(false);
 			this.loop.setEnabled(false);
 			this.musicName.invalidate();
+			this.download.setEnabled(false);
+			this.upload.setEnabled(false);
 			PlayActivity.connected = false;
 		}
 	}
@@ -150,13 +172,16 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 				.put(this.previous, (Boolean) this.previous.isEnabled());
 	}
 
+	@SuppressLint("NewApi")
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
+
 		if (!PlayActivity.connected)
 			getMenuInflater().inflate(R.menu.play, menu);
-		else
+		else {
 			getMenuInflater().inflate(R.menu.playconnected, menu);
+		}
 		return true;
 	}
 
@@ -167,44 +192,78 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-
-		}
 		if (id == R.id.action_connect) {
+			WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+			if (wifi.isWifiEnabled()) {
 
-			Intent service = new Intent(this, LocalService.class);
-			bindService(service, mConnection, Context.BIND_AUTO_CREATE);
+				Intent service = new Intent(this, LocalService.class);
+				bindService(service, mConnection, Context.BIND_AUTO_CREATE);
 
-			alert = new AlertDialog.Builder(this);
+				alert = new AlertDialog.Builder(this);
+				alert.setTitle("Who should I connect ?");
+				alert.setMessage("Enter the server IP : ");
 
-			alert.setTitle("Who should I connect ?");
-			alert.setMessage("Enter the server IP : ");
+				final AutoCompleteTextView input = new AutoCompleteTextView(
+						this);
+				alert.setView(input);
 
-			// Set an EditText view to get user input
-			final EditText input = new EditText(this);
-			alert.setView(input);
+				String[] adresses = readFile().toArray(
+						new String[readFile().size()]);
+				ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+						android.R.layout.simple_list_item_1, adresses);
+				input.setAdapter(adapter);
 
-			alert.setPositiveButton("Ok",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							// ip = input.getText().toString();
-							startConnection("192.168.1.9");
-							reloadActivityElements(musicList);
-							invalidateOptionsMenu();
+				input.setOnTouchListener(new View.OnTouchListener() {
+					@Override
+					public boolean onTouch(View v, MotionEvent event) {
+						input.showDropDown();
+						return false;
+					}
+				});
 
-						}
-					});
+				alert.setPositiveButton("Ok",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int whichButton) {
+								ip = input.getText().toString();
+								if (!ip.equals("")) {
+									startConnection(ip);
+									reloadActivityElements(musicList);
+									invalidateOptionsMenu();
+									try {
+										OutputStreamWriter out = new OutputStreamWriter(
+												openFileOutput(STORETEXT, 0));
+										out.write(ip);
+										out.close();
+									} catch (Throwable t) {
+										System.out.println("Exception: "
+												+ t.toString());
+									}
 
-			alert.setNegativeButton("Cancel",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
+								} else {
+									Toast.makeText(PlayActivity.this,
+											"You must put a valid address !",
+											Toast.LENGTH_LONG).show();
+								}
+							}
+						});
 
-						}
-					});
-			alert.show();
+				alert.setNegativeButton("Cancel",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int whichButton) {
+
+							}
+						});
+
+				alert.show();
+			} else {
+				Toast.makeText(this,
+						"Your wifi is off ! Please start it to connect.",
+						Toast.LENGTH_LONG).show();
+			}
 		}
+
 		if (id == R.id.action_disconnect) {
 			this.tSL.interrupt();
 			this.client.sendObject("exit");
@@ -221,6 +280,7 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 			invalidateOptionsMenu();
 
 		}
+
 		if (id == R.id.action_exit) {
 			finish();
 			System.exit(0);
@@ -228,6 +288,7 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 
 		return super.onOptionsItemSelected(item);
 	}
+	
 
 	private void startConnection(final String ip) {
 		if (mBound) {
@@ -248,14 +309,33 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 			mMusicTitles = musicList.convertToStringTab();
 			waitForServer();
 			enableAllButtons();
+
 		}
 
 	}
 
 	private void waitForServer() {
-		this.tSL = new ThreadServerListener(
-				this.client, mHandler, this);
+		this.tSL = new ThreadServerListener(this.client, mHandler, this);
 		this.tSL.start();
+	}
+
+	public ArrayList<String> readFile() {
+		String str;
+		ArrayList<String> buf = new ArrayList<String>();
+		try {
+			InputStream in = openFileInput(STORETEXT);
+			InputStreamReader tmp = new InputStreamReader(in);
+			BufferedReader reader = new BufferedReader(tmp);
+			if (in != null) {
+				while ((str = reader.readLine()) != null) {
+					buf.add(str);
+				}
+				in.close();
+			}
+		} catch (Throwable t) {
+
+		}
+		return buf;
 	}
 
 	@SuppressLint("NewApi")
@@ -265,24 +345,47 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		case R.id.playButton:
 			action_play();
 			break;
-			
+
 		case R.id.nextButton:
 			action_next();
 			break;
-			
+
 		case R.id.previousButton:
 			action_previous();
 			break;
-			
+
 		case R.id.btnRepeat:
 			this.client.sendObject("loop");
 			this.reloadActivityElements(this.musicList);
 			break;
-		
+
 		case R.id.btnShuffle:
-			//TO BE IMPLEMENTED
+			this.client.sendObject("random");
+			this.reloadActivityElements(this.musicList);
+			break;
+
+		case R.id.upload_button:
+			action_upload();
+			break;
+
+		case R.id.download_button:
+			action_download();
 			break;
 		}
+
+	}
+
+	private void action_download() {
+		this.client.sendObject("download");
+		Log.d("PlayActivity", "PA : download");
+		this.reloadActivityElements(this.musicList);
+
+	}
+
+	private void action_upload() {
+		this.client.sendObject("upload");
+		Log.d("PlayActivity", "PA : upload");
+		this.reloadActivityElements(this.musicList);
 
 	}
 
@@ -290,7 +393,6 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		this.client.sendObject("prev");
 		Log.d("PlayActivity", "PA : prev");
 		this.play.setImageResource(R.drawable.btn_pause);
-		this.isPlaying = true;
 		this.reloadActivityElements(this.musicList);
 
 	}
@@ -299,24 +401,40 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		this.client.sendObject("next");
 		Log.d("PlayActivity", "PA : next");
 		this.play.setImageResource(R.drawable.btn_pause);
-		this.isPlaying = true;
 		this.reloadActivityElements(this.musicList);
 
 	}
 
 	private void action_play() {
-		if (!this.musicList.getCurrentTrack().isPlaying()) {	
+		if (!this.musicList.getCurrentTrack().isPlaying()) {
 			this.client.sendObject("play");
-			//this.sendPause = true; 
 			Log.d("PlayActivity", "PA : play sent");
 		} else {
 			this.client.sendObject("pause");
 			Log.d("PlayActivity", "PA : unpause sent");
 		}
-		
-		
+
 		this.reloadActivityElements(this.musicList);
 
+	}
+
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+
+			this.client.sendObject("+");
+			this.reloadActivityElements(this.musicList);
+		}
+		return true;
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+			this.client.sendObject("-");
+			this.reloadActivityElements(this.musicList);
+		}
+		return true;
 	}
 
 	public void reloadActivityElements(ReadingQueue musicList) {
@@ -338,18 +456,21 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 			if (musicList.getCurrentTrack().isPlaying()) {
 				this.play.setImageResource(R.drawable.btn_pause);
 				Log.d("PA", "btn_pause");
-				this.isPlaying = true;
 			}
 			if (musicList.getCurrentTrack().isPaused()) {
 				this.play.setImageResource(R.drawable.btn_play);
 				Log.d("PA", "btn_play");
-				this.isPlaying = false;
 			}
 			if (this.musicList.getCurrentTrack().isLooping()) {
 				this.loop.setImageResource(R.drawable.img_btn_repeat_pressed);
-			}
-			else {
+			} else {
 				this.loop.setImageResource(R.drawable.img_btn_repeat);
+			}
+			if (this.musicList.isRandomised()) {
+				this.random
+						.setImageResource(R.drawable.img_btn_shuffle_pressed);
+			} else {
+				this.random.setImageResource(R.drawable.img_btn_shuffle);
 			}
 
 			this.musicName.setText(musicList.getCurrentTrack().getName());

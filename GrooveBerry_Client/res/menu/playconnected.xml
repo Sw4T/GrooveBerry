@@ -1,25 +1,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:yourapp="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.grooveberry.PlayActivity" >
 
-    <item
-        android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:icon="@drawable/ic_tab_play_selected"
-        app:showAsAction="never"/>
     
     <item
         android:id="@+id/action_disconnect"
         android:title="@string/action_disconnect"
-        app:showAsAction="never"/>
+        yourapp:showAsAction="never"/>
     
     <item
         android:id="@+id/action_exit"
         android:title="@string/action_exit"
-        app:showAsAction="never"/>
+        yourapp:showAsAction="never"/>
     
-    
-    
-
 </menu>
