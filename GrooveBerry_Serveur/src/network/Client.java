@@ -94,6 +94,11 @@ public class Client implements Runnable {
 		}
 	}
 	
+	public void setBuffers(PrintWriter printer, BufferedReader bufferIn) {
+		this.in = bufferIn;
+		this.out = printer;
+	}
+	
 	public boolean sendSerializable(Serializable toSend) {
 		if (objectOut != null) {
 			try {
