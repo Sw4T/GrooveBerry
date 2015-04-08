@@ -18,7 +18,7 @@ public class ClientTest {
 	
 	public void connectionServer() {
 		try {
-			this.socket = new Socket("localhost", Server.SERVER_PORT);
+			this.socket = new Socket("localhost", Server.SERVER_PORT_SIMPLE);
 			this.printer = new PrintWriter(socket.getOutputStream(), true);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -39,7 +39,7 @@ public class ClientTest {
 		ReadingQueue listReading;
 		try {
 			//Connexion au serveur
-			socket = new Socket("localhost", Server.SERVER_PORT);
+			socket = new Socket("localhost", Server.SERVER_PORT_SIMPLE);
 			if (socket.isConnected() && socket.isBound())
 				System.out.println("Client : Je me suis bien connecté au serveur ! youhou!");
 			

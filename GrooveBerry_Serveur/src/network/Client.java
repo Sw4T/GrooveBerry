@@ -1,38 +1,47 @@
 package network;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import files.AudioListener;
 import protocol.NotifierReadingQueue;
 
 public class Client implements Runnable {
 
-	private Socket socket; //Socket utilisé pour communiquer avec le client
+	private Socket socketSimple; //Socket utilisé pour communiquer avec le client
+	private Socket socketObject; //Socket utilisé pour communiquer avec le client
+	private ObjectInputStream objectIn; 
+	private ObjectOutputStream objectOut;
+	private BufferedReader in;
+	private PrintWriter out;
+	
 	private String clientName; //Pseudo du client
-	private ObjectInputStream in; 
-	private ObjectOutputStream out;
 	protected AtomicBoolean connect; //Booléen assurant que le client est connecté
 	private Server server; //Référence au serveur principal
 	
-	public Client(Socket newSocket) {
+	public Client(Socket socketSimple, Socket socketObject, Server server) {
 		try {
-			this.socket = newSocket;
-			this.out = new ObjectOutputStream(socket.getOutputStream());
-			this.in = new ObjectInputStream(socket.getInputStream());
+			this.socketSimple = socketSimple;
+			this.socketObject = socketObject;
+			this.objectOut = new ObjectOutputStream(socketSimple.getOutputStream());
+			this.objectIn = new ObjectInputStream(socketSimple.getInputStream());
 			this.connect = new AtomicBoolean(true);
+			this.server = server;
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 	}
 	
-	public Client(Socket newSocket, Server server) {
-		this(newSocket);
-		this.server = server;
+	public Client(Socket socketSimple) throws IOException {
+		this.socketSimple = socketSimple;
+		this.objectOut = new ObjectOutputStream(socketSimple.getOutputStream());
+		this.objectIn = new ObjectInputStream(socketSimple.getInputStream());
+		this.connect = new AtomicBoolean(true);
 	}
 	
 	/**
@@ -44,7 +53,7 @@ public class Client implements Runnable {
 	public void run() {
 		while (connect.get()) { //Tant que la connexion est active
 			try {
-				Object obj = in.readObject();
+				Object obj = objectIn.readObject();
 				server.execute(obj);
 				Object [] objs = new Object[1]; 
 				objs[0] = Server.readingQueue;
@@ -52,7 +61,7 @@ public class Client implements Runnable {
 				NotifierReadingQueue notify = new NotifierReadingQueue(objs);
 				new Thread(notify).start(); //Envoi à tous les clients du changement 
 			} catch (ClassNotFoundException | IOException e) {
-				e.printStackTrace();
+				this.close();
 				connect.set(false);
 				server.disconnectClient(this);
 			}
@@ -72,12 +81,25 @@ public class Client implements Runnable {
 		System.out.println("Fin du traitement client " + getSocket());
 	}
 		
+	public void close() {
+		try {
+			this.objectIn.close();
+			this.objectOut.close();
+			this.in.close();
+			this.out.close();
+			this.socketObject.close();
+			this.socketSimple.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public boolean sendSerializable(Serializable toSend) {
-		if (out != null) {
+		if (objectOut != null) {
 			try {
-				out.writeObject(toSend);
-				out.flush();
-				out.reset();
+				objectOut.writeObject(toSend);
+				objectOut.flush();
+				objectOut.reset();
 				return true;
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -87,11 +109,11 @@ public class Client implements Runnable {
 	}
 	
 	public boolean sendString(String toSend) {
-		if (out != null) {
+		if (objectOut != null) {
 			try {
-				out.writeUTF(toSend);
-				out.flush();
-				out.reset();
+				objectOut.writeUTF(toSend);
+				objectOut.flush();
+				objectOut.reset();
 				return true;
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -101,9 +123,9 @@ public class Client implements Runnable {
 	}
 	
 	public Serializable readSerializable() {
-		if (in != null) {
+		if (objectIn != null) {
 			try {
-				return ((Serializable) in.readObject());
+				return ((Serializable) objectIn.readObject());
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}
@@ -112,9 +134,9 @@ public class Client implements Runnable {
 	}
 	
 	public String readString() {
-		if (in != null) {
+		if (objectIn != null) {
 			try {
-				return in.readUTF();
+				return objectIn.readUTF();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -131,15 +153,15 @@ public class Client implements Runnable {
 	}
 
 	public ObjectInputStream getIn() {
-		return in;
+		return objectIn;
 	}
 
 	public ObjectOutputStream getOut() {
-		return out;
+		return objectOut;
 	}
 
 	public Socket getSocket() {
-		return socket;
+		return socketSimple;
 	}
 	
 	@Override
@@ -148,7 +170,7 @@ public class Client implements Runnable {
 			return false;
 		if (!(o instanceof Client))
 			return false;
-		if (((Client) o).getSocket().getInetAddress().getHostAddress().equals(this.socket.getInetAddress().getHostAddress()))
+		if (((Client) o).getSocket().getInetAddress().getHostAddress().equals(this.socketSimple.getInetAddress().getHostAddress()))
 			return true;
 		return false;
 	}

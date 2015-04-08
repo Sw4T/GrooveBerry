@@ -18,7 +18,7 @@ public class InitLibrary {
 		audioFileList.add(new AudioFile("audio/banane2.wav"));
 		
 		try {
-			Library lib = new Library(audioFileList);
+			new Library(audioFileList);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
