@@ -1692,11 +1692,12 @@ containing a value of this type.
         public static final int img_seekbar_bg=0x7f02006c;
         public static final int img_seekbar_progress_blue=0x7f02006d;
         public static final int list_selector=0x7f02006e;
-        public static final int raspberry_pi_logo=0x7f02006f;
-        public static final int seek_handler=0x7f020070;
-        public static final int seekbar_progress=0x7f020071;
-        public static final int seekbar_progress_bg=0x7f020072;
-        public static final int track_info_bg=0x7f020073;
+        public static final int logo_gbpi=0x7f02006f;
+        public static final int raspberry_pi_logo=0x7f020070;
+        public static final int seek_handler=0x7f020071;
+        public static final int seekbar_progress=0x7f020072;
+        public static final int seekbar_progress_bg=0x7f020073;
+        public static final int track_info_bg=0x7f020074;
     }
     public static final class id {
         public static final int action_bar=0x7f0a0031;
@@ -1706,10 +1707,10 @@ containing a value of this type.
         public static final int action_bar_spinner=0x7f0a0002;
         public static final int action_bar_subtitle=0x7f0a001f;
         public static final int action_bar_title=0x7f0a001e;
-        public static final int action_connect=0x7f0a0056;
+        public static final int action_connect=0x7f0a0058;
         public static final int action_context_bar=0x7f0a0032;
-        public static final int action_disconnect=0x7f0a0058;
-        public static final int action_exit=0x7f0a0057;
+        public static final int action_disconnect=0x7f0a005a;
+        public static final int action_exit=0x7f0a0059;
         public static final int action_menu_divider=0x7f0a0005;
         public static final int action_menu_presenter=0x7f0a0006;
         public static final int action_mode_bar=0x7f0a002e;
@@ -1735,16 +1736,18 @@ containing a value of this type.
         public static final int expanded_menu=0x7f0a0028;
         public static final int fileTransfer=0x7f0a0045;
         public static final int frame_container=0x7f0a0054;
+        public static final int frame_container2=0x7f0a0055;
         public static final int home=0x7f0a0000;
         public static final int homeAsUp=0x7f0a000e;
         public static final int icon=0x7f0a0026;
         public static final int ifRoom=0x7f0a0016;
         public static final int image=0x7f0a0023;
         public static final int imageView2=0x7f0a0053;
+        public static final int inputSearch=0x7f0a0056;
         public static final int launcher_icon=0x7f0a0044;
         public static final int listMode=0x7f0a000a;
         public static final int list_item=0x7f0a0025;
-        public static final int list_slidermenu=0x7f0a0055;
+        public static final int list_slidermenu=0x7f0a0057;
         public static final int main_layout=0x7f0a0040;
         public static final int middle=0x7f0a001d;
         public static final int never=0x7f0a0017;
@@ -1839,12 +1842,11 @@ containing a value of this type.
         public static final int abc_search_view=0x7f030015;
         public static final int abc_simple_dropdown_hint=0x7f030016;
         public static final int activity_play=0x7f030017;
-        public static final int activity_search_results=0x7f030018;
-        public static final int bg_player_footer=0x7f030019;
-        public static final int bg_player_header=0x7f03001a;
-        public static final int item_list=0x7f03001b;
-        public static final int rounded_corner=0x7f03001c;
-        public static final int support_simple_spinner_dropdown_item=0x7f03001d;
+        public static final int bg_player_footer=0x7f030018;
+        public static final int bg_player_header=0x7f030019;
+        public static final int item_list=0x7f03001a;
+        public static final int rounded_corner=0x7f03001b;
+        public static final int support_simple_spinner_dropdown_item=0x7f03001c;
     }
     public static final class menu {
         public static final int play=0x7f0d0000;

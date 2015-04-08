@@ -394,4 +394,19 @@ public class ReadingQueue implements AudioListener, Serializable {
 		
 		return liste.toArray(new String[liste.size()]);
 	}
+	
+	public int getIndexByName(String name) {
+		
+		int position = 0;
+		
+		for (AudioFile f : this.getAudioFileList()) {
+			if (f.getName().equals(name)) {
+				return position;
+			}
+			position++;
+		}
+		return 0;
+	}
+	
+	
 }

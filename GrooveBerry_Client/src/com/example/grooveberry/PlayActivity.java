@@ -4,13 +4,10 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,7 +19,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.SearchView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -30,9 +28,12 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -51,7 +52,6 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 	private ImageButton play, previous, next, random, loop, upload, download;
 	private TextView musicName, notConnectedWarning;
 	private ImageView warningLogo;
-	private HashMap<ImageButton, Boolean> buttonState;
 	private Client client;
 	private ReadingQueue musicList;
 	private LocalService mService;
@@ -60,11 +60,11 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 	private AlertDialog.Builder alert;
 	private Handler mHandler = new Handler();
 	private ThreadServerListener tSL;
-
 	private String[] mMusicTitles;
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private ArrayAdapter<String> mAdapter;
+	private EditText inputSearch;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +73,21 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		createViewItems();
 		setAllListeners();
 		disableAllButtons();
+		inputSearch.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void onTextChanged(CharSequence cs, int arg1, int arg2,
+					int arg3) {
+				PlayActivity.this.mAdapter.getFilter().filter(cs);
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1,
+					int arg2, int arg3) {
+			}
+			@Override
+			public void afterTextChanged(Editable arg0) {
+			}
+		});
 
 	}
 
@@ -97,10 +112,10 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		@Override
 		public void onItemClick(AdapterView parent, View view, int position,
 				long id) {
-			client.sendSerializable(position);
+			
+			client.sendSerializable(musicList.getIndexByName(mDrawerList.getItemAtPosition(position).toString()));
 			reloadActivityElements(musicList);
-			Log.d("PA", "" + position);
-			mDrawerLayout.closeDrawer(mDrawerList);
+			mDrawerLayout.closeDrawers();
 		}
 
 	}
@@ -118,6 +133,12 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		this.mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
 		this.upload = (ImageButton) findViewById(R.id.upload_button);
 		this.download = (ImageButton) findViewById(R.id.download_button);
+
+		// Search bar
+		this.inputSearch = (EditText) findViewById(R.id.inputSearch);
+		OnFocusChangeListener ofcListener = new MyFocusChangeListener();
+		this.inputSearch.setOnFocusChangeListener(ofcListener);
+
 	}
 
 	public void enableAllButtons() {
@@ -161,15 +182,8 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 			this.download.setEnabled(false);
 			this.upload.setEnabled(false);
 			PlayActivity.connected = false;
-		}
-	}
 
-	public void saveButtonsState() {
-		this.buttonState = new HashMap<ImageButton, Boolean>();
-		this.buttonState.put(this.play, (Boolean) this.play.isEnabled());
-		this.buttonState.put(this.next, (Boolean) this.next.isEnabled());
-		this.buttonState
-				.put(this.previous, (Boolean) this.previous.isEnabled());
+		}
 	}
 
 	@SuppressLint("NewApi")
@@ -288,7 +302,6 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 
 		return super.onOptionsItemSelected(item);
 	}
-	
 
 	private void startConnection(final String ip) {
 		if (mBound) {
@@ -478,6 +491,24 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		}
 
 	}
+	
+	
+	
+	/** Keyboard related things **/
+	
+	private class MyFocusChangeListener implements OnFocusChangeListener {
+
+	    public void onFocusChange(View v, boolean hasFocus){
+
+	        if(v.getId() == R.id.inputSearch && !hasFocus) {
+
+	            InputMethodManager imm =  (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+	            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+	        }
+	    }
+	}
+	
 
 	/** Defines callbacks for service binding, passed to bindService() */
 	private ServiceConnection mConnection = new ServiceConnection() {

@@ -43,8 +43,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/player_header_bg"
-            android:orientation="vertical"
             android:gravity="center"
+            android:orientation="vertical"
             android:paddingBottom="10dp"
             android:paddingTop="10dp" >
 
@@ -53,44 +53,39 @@
                 android:layout_width="wrap_content"
                 android:layout_height="170dp"
                 android:contentDescription="@string/hello_world"
-                android:src="@drawable/raspberry_pi_logo" />
-            
+                android:src="@drawable/logo_gbpi" />
+
             <LinearLayout
-            android:id="@+id/fileTransfer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp" >
-            
-            <ImageButton 
-                android:id="@+id/upload_button"
-                android:contentDescription="@string/hello_world"
+                android:id="@+id/fileTransfer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginStart="5dp"
-                android:background="@null"
-                android:src="@drawable/ic_upload_unselected"/>
-            
-            <ImageButton 
-                android:id="@+id/download_button"
-                android:contentDescription="@string/hello_world"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginStart="5dp"
-                android:background="@null"
-                android:src="@drawable/ic_download_unselected"/>
-            
-        	</LinearLayout>
-            
+                android:gravity="center"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp" >
+
+                <ImageButton
+                    android:id="@+id/upload_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginStart="5dp"
+                    android:background="@null"
+                    android:contentDescription="@string/hello_world"
+                    android:src="@drawable/ic_upload_unselected" />
+
+                <ImageButton
+                    android:id="@+id/download_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginStart="5dp"
+                    android:background="@null"
+                    android:contentDescription="@string/hello_world"
+                    android:src="@drawable/ic_download_unselected" />
+            </LinearLayout>
         </LinearLayout>
-        
-        
-        
 
         <!-- Player Footer -->
 
@@ -216,7 +211,6 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -248,20 +242,42 @@
         android:id="@+id/frame_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
-
     </FrameLayout>
 
     <!-- Listview to display slider menu -->
 
-    <ListView
-        android:id="@+id/list_slidermenu"
-        android:layout_width="240dp"
-        android:layout_height="match_parent"
+    <LinearLayout
+        android:id="@+id/frame_container2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" 
         android:layout_gravity="start"
-        android:background="@color/background_material_dark"
-        android:choiceMode="singleChoice"
-        android:clickable="true"
-        android:divider="#8c8c8c"
-        android:dividerHeight="1dp" />
+        android:orientation="vertical"
+        android:focusable="true"
+  		android:focusableInTouchMode="true" >
+
+        <!-- Editext for Search -->
+
+        <EditText
+            android:id="@+id/inputSearch"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:hint="Search your song !"
+            android:inputType="textVisiblePassword"
+            android:imeOptions="actionSearch"
+   			android:singleLine="true"
+            android:background="#fff" />
+
+        <ListView
+            android:id="@+id/list_slidermenu"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            
+            android:fadingEdge="vertical"
+            android:background="@color/background_material_dark"
+            android:choiceMode="singleChoice"
+            android:clickable="true"
+            android:divider="#8c8c8c"
+            android:dividerHeight="1dp" />
+    </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>
