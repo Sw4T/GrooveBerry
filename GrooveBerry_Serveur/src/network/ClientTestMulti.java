@@ -1,8 +1,11 @@
 package network;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -17,31 +20,54 @@ public class ClientTestMulti {
 	public static void main (String [] args) {
 		Socket socketSimple = null, socketObject = null;
 		Scanner scan = new Scanner(System.in);
+		BufferedReader bufferIn = null;
+		PrintWriter bufferOut = null;
+		ObjectOutputStream objectOut = null;
+		ObjectInputStream objectIn = null;
 		int entreeUser = 0; String treatment = null;
 		ReadingQueue listReading;
+		
 		try {
-			//Connexion au serveur
+			//Connexion au serveur socket simple
 			socketSimple = new Socket("localhost", Server.SERVER_PORT_SIMPLE);
 			if (socketSimple.isConnected() && socketSimple.isBound()) {
 				System.out.println("Client : Je me suis bien connecté au serveur ! youhou!");
-				socketObject = new Socket("localhost", Server.SERVER_PORT_OBJECT);
-			}
+				bufferOut = new PrintWriter(socketSimple.getOutputStream(), true);
+				bufferIn = new BufferedReader(new InputStreamReader(socketSimple.getInputStream()));
+			} else 
+				System.out.println("CLIENT : Socket simple cliente HS");
 			
-			//Déclaration des buffers entrées/sorties et réception de la liste
-			ObjectOutputStream out = new ObjectOutputStream(socketSimple.getOutputStream());
-			ObjectInputStream in = new ObjectInputStream(socketSimple.getInputStream());
+			socketObject = new Socket("localhost", Server.SERVER_PORT_OBJECT);
 			
+			//Authentification client
+			String messageRecu = bufferIn.readLine();
+			if (messageRecu.equals("#AUTH")) {
+				bufferOut.println("mdp");
+				System.out.println("Mot de passe envoy� !");
+			} else
+				System.out.println("Echec lors de la phase d'authentification ! Recu : " + messageRecu);
+			
+			//Connexion au serveur socket objet
+			if (socketObject.isConnected() && socketObject.isBound()) {
+				objectOut = new ObjectOutputStream(socketObject.getOutputStream());
+				objectOut.flush();
+				objectIn = new ObjectInputStream(socketObject.getInputStream());
+				System.out.println("Flux d'objets initialis� !");
+			} else
+				System.out.println("CLIENT : Socket objet cliente HS");
+			
+			messageRecu = (String) objectIn.readObject();
 			//Reception du fil de lecture depuis le serveur
-			if (in.readObject().equals("#RQ")) {
-				out.writeObject("#OK");
-				out.flush();
-				listReading = (ReadingQueue) in.readObject();
+			if (messageRecu.equals("#RQ")) {
+				objectOut.writeObject("#OK");
+				objectOut.flush();
+				listReading = (ReadingQueue) objectIn.readObject();
 				if (listReading != null)
 					showReadingQueue(listReading);
 			} else
-				System.out.println("Erreurs de synchronisation serveur !");
+				System.out.println("Erreurs de synchronisation serveur ! Recu : " + messageRecu);
 			
-			threadReceive(in);
+			threadReceive(objectIn);
 			//Envoi de chaines définissant des constantes au serveur
 			do {
 				showMenu();
@@ -52,16 +78,16 @@ public class ClientTestMulti {
 					treatment = "";
 				}
 				if (!treatment.equals("")) {
-					out.writeObject(treatment);
-					out.flush();
+					objectOut.writeObject(treatment);
+					objectOut.flush();
 				}
 				//receiveRQ(in);
 			} while (entreeUser != 7);
 			
 			//Fermeture de la connexion avec le serveur
 			if (socketSimple != null) {
-				in.close();
-				out.close();
+				objectIn.close();
+				objectOut.close();
 				socketSimple.close();
 				socketObject.close();
 				scan.close();
