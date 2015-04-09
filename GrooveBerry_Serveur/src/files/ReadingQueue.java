@@ -30,7 +30,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 	private boolean randomised;
 	
 	private LinkedList<AudioFile> queue;
-
+	
 	/**
 	 * Construire un fil de lecture vide.
 	 *

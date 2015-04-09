@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Library extends TrackStorage {
-	public static final String DEFAULT_PATHNAME = "res/library.txt";
+	public static final String DEFAULT_PATHNAME = "res/playlistTest.xml";
 	public static final String DELIMITER = "#";
 
-	public Library() throws IOException {
+	public Library() {
 		super(DEFAULT_PATHNAME);
 	}
 	
@@ -26,6 +26,4 @@ public class Library extends TrackStorage {
 			System.out.println("Fichier deja present dans la bibliotheque"); //avoid track duplication
 		}
 	}
-
-	
 }
