@@ -353,7 +353,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 		
 		// Envoi du changement de morceau à tout les client
 		Object [] objs = new Object[1]; 
-		objs[0] = Server.readingQueue; 
+		objs[0] = Server.getInstance().getReadingQueue(); 
 		NotifierReadingQueue notify = new NotifierReadingQueue(objs);
 		new Thread(notify).start();
 	}

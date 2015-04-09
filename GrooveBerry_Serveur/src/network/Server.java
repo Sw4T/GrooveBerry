@@ -16,40 +16,51 @@ public class Server {
 	public static final int SERVER_PORT_SIMPLE = 12347; 
 	public static final int SERVER_PORT_OBJECT = 12348;
 	private static final int NB_MAX_CLIENTS = 5; //Nombre de clients supportés au maximum
-	public static ArrayList<Client> listClients; //Liste de clients se connectant au serveur
-	public static ReadingQueue readingQueue; //Liste de lecture
 	public static SystemVolumeController volControl;
 	
+	private static volatile Server instanceServer;
+	private static volatile ReadingQueue readingQueue; //Liste de lecture
+	private static volatile ArrayList<Client> listClients; //Liste de clients se connectant au serveur
 	private ServerSocket serverSocketSimple; //Classe gÃ©rant les connexions entrantes et l'envoi de chaines 
 	private ServerSocket serverSocketObject; //Classe gérant l'envoi/réception d'objets plus lourds
 	private Client currentClient; //Pour effectuer les tests
 	
-	public Server() throws IOException {
-		serverSocketSimple = new ServerSocket(SERVER_PORT_SIMPLE);
-		serverSocketObject = new ServerSocket(SERVER_PORT_OBJECT);
-		listClients = new ArrayList<Client>(NB_MAX_CLIENTS);
-		readingQueue = new ReadingQueue();
-		volControl = new SystemVolumeController();
-		initReadingQueue();
+	private Server() {
+		try {
+			serverSocketSimple = new ServerSocket(SERVER_PORT_SIMPLE);
+			serverSocketObject = new ServerSocket(SERVER_PORT_OBJECT);
+			listClients = new ArrayList<Client>(NB_MAX_CLIENTS);
+			readingQueue = new ReadingQueue();
+			volControl = new SystemVolumeController();
+			initReadingQueue();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
-	//Attente d'une connexion cliente et traitement de test
+	public static Server getInstance() {
+		if (instanceServer == null) {
+			synchronized (Server.class) {
+				if (instanceServer == null) {
+					instanceServer = new Server();
+				}
+			}
+		}
+		return instanceServer;
+	}
+	
+	//Attente d'une connexion cliente et authentification
 	public void waitConnection() throws IOException, InterruptedException {
 		while (true) {
 			Socket newSocketSimple = serverSocketSimple.accept();
 			if (listClients.size() != NB_MAX_CLIENTS) 
 			{
-				System.out.println("Client " + newSocketSimple.getInetAddress() + " has connected !");
 				Socket newSocketObject = serverSocketObject.accept();
-				final Client newClient = new Client(newSocketSimple, newSocketObject, this);
-				
-				//updateClientList(newClient);
-				listClients.add(newClient); //TODO Clients illimitÃ©s pour test
-				sendReadingQueueToRemote(newClient); //Envoi de la liste de lecture du serveur
-				new Thread(newClient).start();
+				System.out.println("Client " + newSocketSimple.getInetAddress() + " s'est connecte !");
+				new Thread(new Authenticator(newSocketSimple, newSocketObject)).start();
 			} else {
 				newSocketSimple.close();
-				System.out.println("ERREUR : Trop de connexions sont ouvertes sur le serveur !");
+				System.out.println("ERREUR : Trop de connexions sont ouvertes sur le serveur, refus de connexion !");
 			}
 		}
 	}
@@ -86,19 +97,6 @@ public class Server {
 		}
 	}
 	
-	public synchronized void sendReadingQueueToRemote(Client c) 
-	{
-		c.sendSerializable("#RQ"); //Constante pour reading queue
-		String rep = (String) c.readSerializable();
-		if (rep.equals("#OK")) {
-			System.out.println("Client OK pour l'envoi de la reading queue");
-			if (c.sendSerializable(Server.readingQueue)) {
-				System.out.println("Envoi de la reading queue OK...");
-			}
-		} else
-			System.out.println("Erreur lors de l'envoi de la reading queue");
-	}
-	
 	public synchronized void execute(Object constant) 
 	{
 		if (constant instanceof String) {
@@ -129,16 +127,16 @@ public class Server {
 	}
 	
 	public void updateClientList(Client newClient) {
-		if (listClients.size() == 0)
+		//if (listClients.size() == 0)
 			listClients.add(newClient);
-		else {
+		/*else {
 			for (Client c : listClients) {
 				if (newClient.equals(c))
 					System.out.println("Same client asking for new connection, rejected...");
 				else
 					listClients.add(newClient);
 			}
-		}
+		}*/
 	}
 	
 	public void disconnectClient(Client client) {
@@ -147,6 +145,14 @@ public class Server {
 			listClients.remove(client);
 		} else
 			System.out.println(client.getSocket());
+	}
+	
+	public ArrayList<Client> getClients() {
+		return listClients;
+	}
+	
+	public ReadingQueue getReadingQueue() {
+		return readingQueue;
 	}
 	
 	public Client getCurrentClient() {

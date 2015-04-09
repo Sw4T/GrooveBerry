@@ -9,11 +9,11 @@ import java.io.PrintWriter;
 
 public class AuthenticationSystem {
 	
-	private static String jesuisko = "auth.txt";
+	private static String fileAuthentication = "auth.txt";
 	private File fichierAuth;
 	
 	public AuthenticationSystem() throws IOException {
-		this.fichierAuth = new File(jesuisko);
+		this.fichierAuth = new File(fileAuthentication);
 		if (!this.fichierAuth.exists()) {
 			this.fichierAuth.createNewFile();
 		}

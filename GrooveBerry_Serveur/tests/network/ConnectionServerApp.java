@@ -17,7 +17,7 @@ public class ConnectionServerApp {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		server = new Server();
+		server = Server.getInstance();
 		server.waitConnectionForTest();
 		client_app = new Client(new Socket("localhost", Server.SERVER_PORT_SIMPLE));
 		client_server = server.getCurrentClient();

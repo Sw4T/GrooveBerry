@@ -7,7 +7,7 @@ public class Main {
 	//Main du serveur JAVA
 	public static void main (String [] args) {
 		try {
-			Server serveur = new Server();
+			Server serveur = Server.getInstance();
 			serveur.waitConnection();
 		} catch (IOException e) {
 			e.printStackTrace();

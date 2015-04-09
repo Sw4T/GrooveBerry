@@ -28,8 +28,8 @@ public class Client implements Runnable {
 		try {
 			this.socketSimple = socketSimple;
 			this.socketObject = socketObject;
-			this.objectOut = new ObjectOutputStream(socketSimple.getOutputStream());
-			this.objectIn = new ObjectInputStream(socketSimple.getInputStream());
+			this.objectOut = new ObjectOutputStream(socketObject.getOutputStream());
+			this.objectIn = new ObjectInputStream(socketObject.getInputStream());
 			this.connect = new AtomicBoolean(true);
 			this.server = server;
 		} catch (IOException ex) {
@@ -37,6 +37,11 @@ public class Client implements Runnable {
 		}
 	}
 	
+	/**
+	 * Constructeur utilisé pour les tests
+	 * @param socketSimple
+	 * @throws IOException
+	 */
 	public Client(Socket socketSimple) throws IOException {
 		this.socketSimple = socketSimple;
 		this.objectOut = new ObjectOutputStream(socketSimple.getOutputStream());
@@ -56,7 +61,7 @@ public class Client implements Runnable {
 				Object obj = objectIn.readObject();
 				server.execute(obj);
 				Object [] objs = new Object[1]; 
-				objs[0] = Server.readingQueue;
+				objs[0] = Server.getInstance().getReadingQueue();
 				
 				NotifierReadingQueue notify = new NotifierReadingQueue(objs);
 				new Thread(notify).start(); //Envoi Ã  tous les clients du changement 
@@ -92,6 +97,11 @@ public class Client implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void setBuffers(PrintWriter printer, BufferedReader bufferIn) {
+		this.in = bufferIn;
+		this.out = printer;
 	}
 	
 	public boolean sendSerializable(Serializable toSend) {
