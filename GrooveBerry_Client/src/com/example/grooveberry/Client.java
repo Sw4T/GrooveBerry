@@ -98,8 +98,12 @@ public class Client {
 		return out;
 	}
 
-	public Socket getSocket() {
+	public Socket getSocketSimple() {
 		return socketSimple;
+	}
+	
+	public Socket getSocketFile() {
+		return socketFile;
 	}
 
 	public boolean isConnected() {

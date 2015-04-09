@@ -1,6 +1,7 @@
 package com.example.grooveberry;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 
 import android.app.Service;
@@ -30,7 +31,6 @@ public class LocalService extends Service {
 
 	public void connectToServer(String ip) {
 		try {
-			// Inet4Address.getByName("WAFFLES-PC");
 			this.client = new Client(new Socket(ip, 12347), new Socket(ip,
 					12348));
 			PlayActivity.connected = true;

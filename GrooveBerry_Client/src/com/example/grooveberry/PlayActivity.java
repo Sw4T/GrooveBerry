@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,6 +30,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,6 +58,7 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 
 	private final static String STORETEXT = "storetext.txt";
 	public static boolean connected;
+	public static boolean transferDone;
 
 	private ImageButton play, previous, next, random, loop, upload, download;
 	private TextView musicName, notConnectedWarning;
@@ -325,22 +328,6 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		disableAllButtons();
 		invalidateOptionsMenu();
 	}
-	
-	public void checkHosts(String subnet){
-		   int timeout=1000;
-		   for (int i=1;i<255;i++){
-		       String host=subnet + "." + i;
-		       try {
-				if (InetAddress.getByName(host).isReachable(timeout)){
-				       //System.out.println(host + " is reachable");
-					this.ip = host;
-				   }
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		   }
-		}
 
 	private void startConnection(final String ip) {
 		if (mBound) {
@@ -438,7 +425,7 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == 0 && resultCode == RESULT_OK) {
-			
+			PlayActivity.transferDone = false;
 			Uri uri = data.getData();
 			this.fileToSendURI = this.getPath(uri);
 			if (this.fileToSendURI != null) {
@@ -447,7 +434,9 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 						Toast.LENGTH_LONG).show();
 				this.client.sendObject("upload$" + fileToSend.getName());
 				this.mFileService.uploadFile(this.getPath(uri));
-				
+				Log.d("PA",""+PlayActivity.transferDone);
+				while(!PlayActivity.transferDone);
+				Log.d("PA",""+PlayActivity.transferDone);
 				this.reloadActivityElements(this.musicList);
 			}
 		}
