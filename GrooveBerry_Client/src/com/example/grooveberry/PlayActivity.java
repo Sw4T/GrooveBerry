@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.InetAddress;
 import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
@@ -28,7 +29,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -148,8 +148,6 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		this.mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
 		this.upload = (ImageButton) findViewById(R.id.upload_button);
 		this.download = (ImageButton) findViewById(R.id.download_button);
-
-		// Search bar
 		this.inputSearch = (EditText) findViewById(R.id.inputSearch);
 		OnFocusChangeListener ofcListener = new MyFocusChangeListener();
 		this.inputSearch.setOnFocusChangeListener(ofcListener);
@@ -204,8 +202,6 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 	@SuppressLint("NewApi")
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-
 		if (!PlayActivity.connected)
 			getMenuInflater().inflate(R.menu.play, menu);
 		else {
@@ -216,9 +212,6 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_connect) {
 			WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
@@ -286,7 +279,6 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 							System.out.println("Exception: " + t.toString());
 						}
 					} catch (Exception e) {
-						Log.d("test", "text");
 						Toast.makeText(
 								PlayActivity.this,
 								"You entered an invalid address.\nPlease, re-try with an other one.",
@@ -333,6 +325,22 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		disableAllButtons();
 		invalidateOptionsMenu();
 	}
+	
+	public void checkHosts(String subnet){
+		   int timeout=1000;
+		   for (int i=1;i<255;i++){
+		       String host=subnet + "." + i;
+		       try {
+				if (InetAddress.getByName(host).isReachable(timeout)){
+				       //System.out.println(host + " is reachable");
+					this.ip = host;
+				   }
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		   }
+		}
 
 	private void startConnection(final String ip) {
 		if (mBound) {
@@ -389,21 +397,19 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 			break;
 
 		case R.id.nextButton:
-			action_next();
+			this.music_player_actions("next");
 			break;
 
 		case R.id.previousButton:
-			action_previous();
+			this.music_player_actions("prev");
 			break;
 
 		case R.id.btnRepeat:
-			this.client.sendObject("loop");
-			this.reloadActivityElements(this.musicList);
+			this.music_player_actions("loop");
 			break;
 
 		case R.id.btnShuffle:
-			this.client.sendObject("random");
-			this.reloadActivityElements(this.musicList);
+			this.music_player_actions("random");
 			break;
 
 		case R.id.upload_button:
@@ -417,7 +423,7 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 
 	}
 
-	/** UPLOAD STUFF **/
+	/** UPLOAD RELATED **/
 	
 
 	private void action_upload() {
@@ -435,7 +441,6 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 			
 			Uri uri = data.getData();
 			this.fileToSendURI = this.getPath(uri);
-			Log.d("oAR",this.fileToSendURI);
 			if (this.fileToSendURI != null) {
 				File fileToSend = new File(this.fileToSendURI);
 				Toast.makeText(this, "Sending : " + fileToSend.getName(),
@@ -444,9 +449,6 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 				this.mFileService.uploadFile(this.getPath(uri));
 				
 				this.reloadActivityElements(this.musicList);
-			}
-			else {
-				Log.d("tt", "false");
 			}
 		}
 
@@ -472,9 +474,7 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		return filePath;
 	}
 
-	/*******************/
-
-	/** DOWNLOAD STuFF **/
+	/** DOWNLOAD RELATED **/
 
 	private void action_download() {
 		final Intent fileservice = new Intent(this, FileService.class);
@@ -482,14 +482,7 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		
 		this.client.sendObject("download$"
 				+ this.musicList.getCurrentTrack().getName());
-//		File fileToRecieve = new File(Environment.getExternalStorageDirectory()
-//				.toURI().toString()
-//				+ "GrooveBerry/audio/");
 		this.mFileService.downloadFile("GrooveBerry/audio/");
-		// while (!this.client.readObject().equals("#END")) {
-		// ProgressDialog.show(this, "Download",
-		// "Downloading "+fileToRecieve.getName());
-		// }
 		Toast.makeText(
 				this,
 				Environment.getExternalStorageDirectory().toURI().toString()
@@ -498,33 +491,24 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 
 	}
 
-	/*******************/
-
-	private void action_previous() {
-		this.client.sendObject("prev");
-		this.play.setImageResource(R.drawable.btn_pause);
+	/** MUSIC PLAYER RELATED **/
+	
+	private void music_player_actions(String command) {
+		this.client.sendObject(command);
 		this.reloadActivityElements(this.musicList);
-
-	}
-
-	private void action_next() {
-		this.client.sendObject("next");
-		this.play.setImageResource(R.drawable.btn_pause);
-		this.reloadActivityElements(this.musicList);
-
 	}
 
 	private void action_play() {
 		if (!this.musicList.getCurrentTrack().isPlaying()) {
-			this.client.sendObject("play");
+			this.music_player_actions("play");
 		} else {
-			this.client.sendObject("pause");
+			this.music_player_actions("pause");
 		}
-
-		this.reloadActivityElements(this.musicList);
 
 	}
 
+	/** HARDWARE BUTTON RELATED **/
+	
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
@@ -543,12 +527,12 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		return true;
 	}
 
+	/** REFRESH OF THE MAIN UI **/
+	
 	public void reloadActivityElements(ReadingQueue musicList) {
 
 		this.musicList = musicList;
-		Log.d("PA", "RAE");
 		if (PlayActivity.connected) {
-			Log.d("PA", "RAE2");
 			if (musicList.getCurrentTrackPosition() < musicList
 					.getAudioFileList().size())
 				this.next.setEnabled(true);
@@ -582,7 +566,7 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 		}
 	}
 
-	/** Keyboard related things **/
+	/** KEYBOARD RELATED **/
 
 	private class MyFocusChangeListener implements OnFocusChangeListener {
 
@@ -596,13 +580,13 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 			}
 		}
 	}
-
+	
+	/** SERVICES RELATED **/
 	/** Defines callbacks for service binding, passed to bindService() */
 	private ServiceConnection mConnection = new ServiceConnection() {
 
 		@Override
 		public void onServiceConnected(ComponentName className, IBinder service) {
-			Log.d("CA", "CA : mBound = " + mBound);
 			mBound = true;
 			LocalBinder binder = (LocalBinder) service;
 			mService = binder.getService();
@@ -619,12 +603,9 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 
 		@Override
 		public void onServiceConnected(ComponentName className, IBinder service) {
-			//Log.d("CA", "CA : mBound = " + mBound);
 			mFileBound = true;
 			FileBinder binder = (FileBinder) service;
 			mFileService = binder.getService();
-			Log.d("nvklzv","lzekng,lkzen,");
-			Log.d("FS", mFileService == null?"true":"false");
 			if (mFileService != null) {
 				mFileService.setClient(client);
 			}

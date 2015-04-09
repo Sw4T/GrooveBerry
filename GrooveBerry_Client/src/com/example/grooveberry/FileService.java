@@ -41,7 +41,6 @@ public class FileService extends Service {
 		try {
 			this.client.readObject();
 		} catch (ClassNotFoundException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		this.client.sendObject("#OK");

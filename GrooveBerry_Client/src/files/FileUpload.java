@@ -23,10 +23,8 @@ public class FileUpload implements Runnable {
 		try {
 			this.client.readObject();
 		} catch (ClassNotFoundException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//this.client.sendObject("#OK");
 		sendFile(path);
 	}
 

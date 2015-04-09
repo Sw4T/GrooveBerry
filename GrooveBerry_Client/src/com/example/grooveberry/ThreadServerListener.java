@@ -1,12 +1,9 @@
 package com.example.grooveberry;
 
-import java.io.IOException;
-import java.io.UTFDataFormatException;
 import java.net.SocketException;
 
 import protocol.Protocol;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 import files.ReadingQueue;
 
@@ -38,8 +35,6 @@ public class ThreadServerListener extends Thread {
 			} catch (Exception e) {
 
 				if (e instanceof SocketException) {
-					Log.d("TSL", "1st catch");
-					Log.e("ERROROAZVN ZEV", "tet", e);
 					this.mHandler.post(new Runnable() {
 
 						@Override

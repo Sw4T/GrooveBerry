@@ -1,17 +1,13 @@
 package com.example.grooveberry;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import protocol.Protocol;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 import files.ReadingQueue;
 
 public class LocalService extends Service {
@@ -20,8 +16,6 @@ public class LocalService extends Service {
 	private Client client;
 	private ReadingQueue mL;
 	private boolean received = false;
-	private Protocol p;
-	private PlayActivity playActivity;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -43,7 +37,6 @@ public class LocalService extends Service {
 			if (PlayActivity.connected) {
 				try {
 
-					// Reception du fil de lecture depuis le serveur
 					if (this.client.readObject().equals("#AUTH")) {
 						this.client.sendObject("mdp");
 					}
@@ -54,7 +47,6 @@ public class LocalService extends Service {
 					}
 
 				} catch (Exception e) {
-					Log.d("LS", "LS : 1st catch ");
 					PlayActivity.connected = false;
 					e.printStackTrace();
 				}
