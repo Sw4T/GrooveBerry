@@ -31,7 +31,7 @@ public class XML_DocBuilder {
 		this.audioFileList = audioFileList;
 	}
 	
-	public void createXMLDoc(String path) throws CannotReadException, IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException {
+	public void createXMLDoc(String path) throws CannotReadException, IOException, ReadOnlyFileException, InvalidAudioFrameException {
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -114,37 +114,7 @@ public class XML_DocBuilder {
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(new File(path));
 			transformer.transform(source, result);
-		} catch (ParserConfigurationException | TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public static void main (String [] args) {
-		ArrayList<AudioFile> audioFileList = new ArrayList<>();
-		audioFileList.add(new AudioFile("audio/04 Hey Joe.mp3"));
-		audioFileList.add(new AudioFile("audio/05 Mentira.mp3"));
-		audioFileList.add(new AudioFile("audio/Bob Marley - Jammin.mp3"));
-		audioFileList.add(new AudioFile("audio/free.wav"));
-		audioFileList.add(new AudioFile("audio/aol.wav"));
-		audioFileList.add(new AudioFile("audio/banane2.wav"));
-		audioFileList.add(new AudioFile("audio/15 Voodoo Child (Slight Return).mp3"));
-		XML_DocBuilder xmlbuilder = new XML_DocBuilder(audioFileList);
-		try {
-			xmlbuilder.createXMLDoc("/home/bananarchiste/git/GrooveBerry/GrooveBerry_Serveur/res/library.xml");
-		} catch (CannotReadException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TagException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ReadOnlyFileException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvalidAudioFrameException e) {
+		} catch (ParserConfigurationException | TransformerException | TagException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
