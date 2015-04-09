@@ -1,9 +1,10 @@
 package com.example.grooveberry;
 
 import java.io.IOException;
+import java.io.UTFDataFormatException;
+import java.net.SocketException;
 
 import protocol.Protocol;
-import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
@@ -24,30 +25,46 @@ public class ThreadServerListener extends Thread {
 	}
 
 	public void run() {
-		Log.d("PA", "2eme thread");
-		try {
-			while (PlayActivity.connected) {
+		while (PlayActivity.connected) {
+			try {
 				Protocol p = (Protocol) this.client.readObject();
 				this.readingQueue = (ReadingQueue) this.client.readObject();
-
 				this.mHandler.post(new Runnable() {
-
-					@SuppressLint("NewApi")
 					@Override
 					public void run() {
 						playActivity.reloadActivityElements(readingQueue);
 					}
 				});
+			} catch (Exception e) {
 
-			}
-		} catch (Exception e) {
-			if (e instanceof IOException) {
-				Log.e("THL", "Server's busy");
-			} else {
-				Log.e("THL", "Error");
-				PlayActivity.connected = false;
-			}
+				if (e instanceof SocketException) {
+					Log.d("TSL", "1st catch");
+					Log.e("ERROROAZVN ZEV", "tet", e);
+					this.mHandler.post(new Runnable() {
 
+						@Override
+						public void run() {
+							playActivity.stopConnection();
+
+						}
+					});
+					break;
+				} else {
+
+					this.mHandler.post(new Runnable() {
+						@Override
+						public void run() {
+							Toast.makeText(
+									playActivity,
+									"Server is busy. Spamming makes kittens die.",
+									Toast.LENGTH_LONG).show();
+							playActivity.reloadActivityElements(readingQueue);
+						}
+					});
+					break;
+				}
+			}
 		}
+
 	}
 }

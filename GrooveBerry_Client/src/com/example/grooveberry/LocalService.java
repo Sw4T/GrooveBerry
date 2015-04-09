@@ -1,6 +1,8 @@
 package com.example.grooveberry;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import protocol.Protocol;
@@ -9,6 +11,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 import files.ReadingQueue;
 
 public class LocalService extends Service {
@@ -18,6 +21,7 @@ public class LocalService extends Service {
 	private ReadingQueue mL;
 	private boolean received = false;
 	private Protocol p;
+	private PlayActivity playActivity;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -32,18 +36,18 @@ public class LocalService extends Service {
 
 	public void connectToServer(String ip) {
 		try {
-			Log.d("LocalService", "LS : in method");
-			//
 			// Inet4Address.getByName("WAFFLES-PC");
-			this.client = new Client(new Socket(ip, 12345));
-
-			Log.d("LocalService", "LS : là ?");
+			this.client = new Client(new Socket(ip, 12347), new Socket(ip,
+					12348));
 			PlayActivity.connected = true;
 			if (PlayActivity.connected) {
-				Log.d("LocalService", "LS : Connected");
 				try {
 
 					// Reception du fil de lecture depuis le serveur
+					if (this.client.readObject().equals("#AUTH")) {
+						this.client.sendObject("mdp");
+					}
+					this.client.makeFileStreams();
 					if (this.client.readObject().equals("#RQ")) {
 						this.client.sendObject("#OK");
 						this.mL = (ReadingQueue) client.readSerializable();
@@ -55,20 +59,10 @@ public class LocalService extends Service {
 					e.printStackTrace();
 				}
 			}
-		} catch (Exception e) {
-
-			Log.d("Client", "C : 2nd catch");
-			e.printStackTrace();
-
-		}
-	}
-
-	public void disconnectFromServer() {
-		PlayActivity.connected = false;
-		try {
-			this.client.getSocket().close();
 		} catch (IOException e) {
 			e.printStackTrace();
+			Log.e("LS", "ERROR");
+
 		}
 	}
 
@@ -78,10 +72,6 @@ public class LocalService extends Service {
 
 	public ReadingQueue getReadingQueue() {
 		return this.mL;
-	}
-
-	public void listenServer() {
-		
 	}
 
 	public boolean getReceived() {
