@@ -15,14 +15,14 @@ public class Server {
 
 	public static final int SERVER_PORT_SIMPLE = 12347; 
 	public static final int SERVER_PORT_OBJECT = 12348;
-	private static final int NB_MAX_CLIENTS = 5; //Nombre de clients supportés au maximum
-	public static SystemVolumeController volControl;
+	private static final int NB_MAX_CLIENTS = 5; //Nombre de clients supportï¿½s au maximum
 	
 	private static volatile Server instanceServer;
-	private static volatile ReadingQueue readingQueue; //Liste de lecture
-	private static volatile ArrayList<Client> listClients; //Liste de clients se connectant au serveur
+	private volatile ReadingQueue readingQueue; //Liste de lecture
+	private volatile ArrayList<Client> listClients; //Liste de clients se connectant au serveur
+	public volatile static SystemVolumeController volControl;
 	private ServerSocket serverSocketSimple; //Classe gÃ©rant les connexions entrantes et l'envoi de chaines 
-	private ServerSocket serverSocketObject; //Classe gérant l'envoi/réception d'objets plus lourds
+	private ServerSocket serverSocketObject; //Classe gï¿½rant l'envoi/rï¿½ception d'objets plus lourds
 	private Client currentClient; //Pour effectuer les tests
 	
 	private Server() {
@@ -96,36 +96,7 @@ public class Server {
 			e.printStackTrace();
 		}
 	}
-	
-	public synchronized void execute(Object constant) 
-	{
-		if (constant instanceof String) {
-			switch ((String)constant)
-			{
-				case "play" : readingQueue.getCurrentTrack().play(); break;
-				case "pause" : readingQueue.getCurrentTrack().pause(); break;
-				case "mute" : readingQueue.getCurrentTrack().mute(); break;
-				case "restart" : readingQueue.getCurrentTrack().restart(); break;
-				case "stop" : readingQueue.getCurrentTrack().stop(); break;
-				case "loop" : readingQueue.getCurrentTrack().loop(); break;
-				case "next" : readingQueue.next(); break;
-				case "prev" : readingQueue.prev(); break;
-				case "random" : readingQueue.rand(); break;
-				case "+" : System.out.println("monte le son !!");
-							Server.volControl.increaseVolume(); break;
-				case "-" : Server.volControl.decreaseVolume(); break;
-				default :
-			}
-			
-			
-		}
-		if (constant instanceof Integer) {
-			readingQueue.setCurrentTrackPostion((Integer) constant);
-			readingQueue.getCurrentTrack().play();
-		}
-		System.out.println("Received " + constant + " from the client, processing...");
-	}
-	
+
 	public void updateClientList(Client newClient) {
 		//if (listClients.size() == 0)
 			listClients.add(newClient);
@@ -153,6 +124,10 @@ public class Server {
 	
 	public ReadingQueue getReadingQueue() {
 		return readingQueue;
+	}
+	
+	public Integer getMasterVolume() {
+		return volControl.getVolumePercentage();
 	}
 	
 	public Client getCurrentClient() {
