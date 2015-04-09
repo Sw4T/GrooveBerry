@@ -1,9 +1,8 @@
 package network;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import files.AuthenticationSystem;
@@ -11,11 +10,11 @@ import files.AuthenticationSystem;
 public class Authenticator implements Runnable {
 
 	private Socket socketSimple;
-	private Socket socketObject;
+	private Socket socketFile;
 	
 	public Authenticator(Socket socketSimple, Socket socketObject) {
 		this.socketSimple = socketSimple;
-		this.socketObject = socketObject;
+		this.socketFile = socketObject;
 	}
 	
 	@Override
@@ -23,19 +22,19 @@ public class Authenticator implements Runnable {
 		try {
 			System.out.println("Authentification du client " + socketSimple.getInetAddress());
 			AuthenticationSystem authSystem = new AuthenticationSystem();
-			PrintWriter printer = new PrintWriter(socketSimple.getOutputStream(), true);
-			BufferedReader buffer = new BufferedReader(new InputStreamReader(socketSimple.getInputStream()));
+			ObjectOutputStream printer = new ObjectOutputStream(socketSimple.getOutputStream());
+			ObjectInputStream buffer = new ObjectInputStream(socketSimple.getInputStream());
 			
-			//Vérification du mot de passe 
-			printer.println("#AUTH");
+			//Vï¿½rification du mot de passe 
+			printer.writeObject("#AUTH");
 			try {
-				String passwordReceived = buffer.readLine();
+				String passwordReceived = (String) buffer.readObject();
 				boolean passwordOK = authSystem.verifyPassword(passwordReceived);
-				System.out.println("Mot de passe reçu du client " + socketSimple.getInetAddress().getHostAddress() + " : " + passwordReceived);
+				System.out.println("Mot de passe reï¿½u du client " + socketSimple.getInetAddress().getHostAddress() + " : " + passwordReceived);
 				Server server = Server.getInstance();
 				if (passwordOK) {
 					System.out.println("Authentification OK...");
-					Client newClient = new Client(socketSimple, socketObject, server);
+					Client newClient = new Client(socketSimple, socketFile, server);
 					newClient.setBuffers(printer, buffer);
 					
 					sendReadingQueueToRemote(newClient); 
@@ -45,11 +44,11 @@ public class Authenticator implements Runnable {
 					System.out.println("Authentification FAILED...");
 			} catch (IOException e) {
 				e.printStackTrace();
-				System.out.println("Erreur lors de la réception du mot de passe venant du client !");
-			}
+				System.out.println("Erreur lors de la rï¿½ception du mot de passe venant du client !");
+			} catch (ClassNotFoundException e) {}
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("Erreur lors de la création de flux avec le client !");
+			System.out.println("Erreur lors de la crï¿½ation de flux avec le client !");
 		}
 	}
 	
