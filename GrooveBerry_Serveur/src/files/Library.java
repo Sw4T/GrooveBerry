@@ -5,8 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Library extends TrackStorage {
-	public static final String DEFAULT_PATHNAME = "res/playlistTest.xml";
-	public static final String DELIMITER = "#";
+	public static final String DEFAULT_PATHNAME = "res/library.xml";
 
 	public Library() {
 		super(DEFAULT_PATHNAME);

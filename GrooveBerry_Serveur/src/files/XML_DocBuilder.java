@@ -40,7 +40,6 @@ public class XML_DocBuilder {
 			doc.appendChild(rootElement);
 			Element artist = doc.createElement("noArtist"); //node pour les artistes non tagés 
 			rootElement.appendChild(artist);
-			
 			for (AudioFile audioFile : this.audioFileList) {
 				TagReader tag = new TagReader(audioFile);
 				artist = doc.createElement("artist");

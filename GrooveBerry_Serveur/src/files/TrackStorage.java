@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.soap.Node;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -20,7 +19,6 @@ import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.traversal.NodeIterator;
 import org.xml.sax.SAXException;
 
 /**
@@ -37,8 +35,6 @@ import org.xml.sax.SAXException;
 
 public abstract class TrackStorage {
 
-	public static final String DELIMITER = "#";
-	
 	protected ArrayList<AudioFile> audioFileList;
 	protected File file;
 	
@@ -100,13 +96,6 @@ public abstract class TrackStorage {
 	 * @throws FileNotFoundException
 	 */
 	protected void updateLibraryFile() {
-		
-		/*PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(this.file, false), true);
-		for (AudioFile audioFile : audioFileList) {
-			printWriterOutputFile.println(audioFile.getName() + DELIMITER + audioFile.getAbsolutePath());
-		}
-		printWriterOutputFile.close();
-		*/
 		XML_DocBuilder xBuilder = new XML_DocBuilder(this.audioFileList);
 		try {
 			xBuilder.createXMLDoc(this.file.getAbsolutePath());
@@ -145,25 +134,9 @@ public abstract class TrackStorage {
 	 * @throws XPathExpressionException 
 	 */
 	public void updateLibrary(){
-		/*Scanner fileScanner = new Scanner(this.file);
-		while(fileScanner.hasNextLine()) {
-			String line = fileScanner.nextLine();
-			if (!line.equals("")) {
-				String filePath = line.split(DELIMITER)[1]; //TODO Exception
-				if (!this.contains(filePath)) { 
-					try {
-						this.add(filePath);
-					} catch (FileNotFoundException e) {
-					}
-				}
-			}
-		}
-		fileScanner.close();*/
 		try{
-			System.out.println("update");
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder= factory.newDocumentBuilder();
-			builder = factory.newDocumentBuilder();
 			Document doc = builder.parse(this.file.getAbsolutePath());
 			XPathFactory xPathfactory = XPathFactory.newInstance();
 			XPath xpath = xPathfactory.newXPath();
@@ -226,10 +199,10 @@ public abstract class TrackStorage {
 		return result;
 	}	
 	
-	public static void main (String [] args) {
+/*	public static void main (String [] args) {
 		TrackStorage test = new Library();
 		for(AudioFile track : test.audioFileList){
 			System.out.println(track.getName());
 		}
-	}
+	}*/
 }

@@ -39,19 +39,6 @@ public class AudioFile implements Runnable, Serializable
 		this();
 		loadFile(filePath);
 	}
-	/*
-	public void volumeUp(){
-		if(volume.getValue()+10 < volume.getMaximum()){
-			volume.setValue(+10.0f);
-		}
-	}
-	
-	public void volumeDown(){
-		if(volume.getValue()-10 > volume.getMinimum()){
-			volume.setValue(-10.0f);
-		}
-	}
-	*/
 	/**
 	* Creates a file object. If the file path exists on the system, the given file is an mp3, and
 	* a song is not currently playing in this instance of the program, true is returned.
@@ -230,10 +217,6 @@ public class AudioFile implements Runnable, Serializable
 				AudioInputStream in = AudioSystem.getAudioInputStream(file);
 				AudioInputStream din = null;
 				AudioFormat baseFormat = in.getFormat();
-				/*this.volume = (FloatControl) this.getLine(baseFormat).getControl(FloatControl.Type.MASTER_GAIN);
-				if(this.volume != null){
-					this.volume.setValue(0);
-				}*/
 				AudioFormat decodedFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
 															baseFormat.getSampleRate(),
 															16,
@@ -338,8 +321,4 @@ public class AudioFile implements Runnable, Serializable
 		}
 		return x;
 	}
-
-	/*public FloatControl getVolume() {
-		return this.volume;
-	}*/
 }
