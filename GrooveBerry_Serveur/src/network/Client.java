@@ -1,24 +1,27 @@
 package network;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.Socket;
+import java.util.StringTokenizer;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import protocol.Notifier;
 import protocol.NotifierReadingQueue;
+import protocol.NotifierVolume;
+import protocol.Protocol;
+import files.ReadingQueue;
 
 public class Client implements Runnable {
 
 	private Socket socketSimple; //Socket utilisé pour communiquer avec le client
-	private Socket socketObject; //Socket utilisé pour communiquer avec le client
-	private ObjectInputStream objectIn; 
-	private ObjectOutputStream objectOut;
-	private BufferedReader in;
-	private PrintWriter out;
+	private Socket socketFile; //Socket utilisé pour communiquer avec le client
+	private ObjectInputStream fileIn; 
+	private ObjectOutputStream fileOut;
+	private ObjectInputStream in;
+	private ObjectOutputStream out;
 	
 	private String clientName; //Pseudo du client
 	protected AtomicBoolean connect; //Booléen assurant que le client est connecté
@@ -27,9 +30,9 @@ public class Client implements Runnable {
 	public Client(Socket socketSimple, Socket socketObject, Server server) {
 		try {
 			this.socketSimple = socketSimple;
-			this.socketObject = socketObject;
-			this.objectOut = new ObjectOutputStream(socketObject.getOutputStream());
-			this.objectIn = new ObjectInputStream(socketObject.getInputStream());
+			this.socketFile = socketObject;
+			this.fileOut = new ObjectOutputStream(socketObject.getOutputStream());
+			this.fileIn = new ObjectInputStream(socketObject.getInputStream());
 			this.connect = new AtomicBoolean(true);
 			this.server = server;
 		} catch (IOException ex) {
@@ -38,14 +41,14 @@ public class Client implements Runnable {
 	}
 	
 	/**
-	 * Constructeur utilis� pour les tests
+	 * Constructeur utilis� pour les tests
 	 * @param socketSimple
 	 * @throws IOException
 	 */
 	public Client(Socket socketSimple) throws IOException {
 		this.socketSimple = socketSimple;
-		this.objectOut = new ObjectOutputStream(socketSimple.getOutputStream());
-		this.objectIn = new ObjectInputStream(socketSimple.getInputStream());
+		this.fileOut = new ObjectOutputStream(socketSimple.getOutputStream());
+		this.fileIn = new ObjectInputStream(socketSimple.getInputStream());
 		this.connect = new AtomicBoolean(true);
 	}
 	
@@ -58,13 +61,20 @@ public class Client implements Runnable {
 	public void run() {
 		while (connect.get()) { //Tant que la connexion est active
 			try {
-				Object obj = objectIn.readObject();
-				server.execute(obj);
-				Object [] objs = new Object[1]; 
-				objs[0] = Server.getInstance().getReadingQueue();
 				
-				NotifierReadingQueue notify = new NotifierReadingQueue(objs);
-				new Thread(notify).start(); //Envoi à tous les clients du changement 
+				Object obj = in.readObject();
+				Protocol protocolUsed = execute(obj);
+				Object [] toSend = new Object[2]; //Objets allant être envoyé aux clients
+				Notifier threadNotifier = null;
+				
+				if (protocolUsed == Protocol.MODIFY_READING_QUEUE) 
+					threadNotifier = new NotifierReadingQueue(toSend);
+				else {
+					toSend[0] = Server.getInstance().getMasterVolume();
+					threadNotifier = new NotifierVolume(toSend);
+				}
+					
+				new Thread(threadNotifier).start(); //Envoi à tous les clients du changement 
 			} catch (ClassNotFoundException | IOException e) {
 				this.close();
 				connect.set(false);
@@ -81,35 +91,99 @@ public class Client implements Runnable {
 			constant = readString();
 			if (constant == null)
 				return;
-			server.execute(constant);
+			execute(constant);
 		} while (!constant.equals("exit"));
 		System.out.println("Fin du traitement client " + getSocket());
+	}
+	
+	public synchronized Protocol execute(Object constant) 
+	{
+		String commande = null;
+		ReadingQueue readingQueue = Server.getInstance().getReadingQueue();
+		if (constant instanceof String) {
+			StringTokenizer stringTokenizer = new StringTokenizer((String) constant, "$");
+			commande = stringTokenizer.nextToken();
+			switch (commande)
+			{
+				case "play" : readingQueue.getCurrentTrack().play(); break;
+				case "pause" : readingQueue.getCurrentTrack().pause(); break;
+				case "mute" : readingQueue.getCurrentTrack().mute(); break;
+				case "restart" : readingQueue.getCurrentTrack().restart(); break;
+				case "stop" : readingQueue.getCurrentTrack().stop(); break;
+				case "loop" : readingQueue.getCurrentTrack().loop(); break;
+				case "next" : readingQueue.next(); break;
+				case "prev" : readingQueue.prev(); break;
+				case "random" : readingQueue.rand(); break;
+				case "+" : Server.volControl.increaseVolume(); break;
+				case "-" : Server.volControl.decreaseVolume(); break;
+				case "download" : 
+					if (stringTokenizer.hasMoreTokens()) {
+						String filePath = stringTokenizer.nextToken();
+						uploadFile(filePath);
+					}
+					break;
+				case "upload" : 
+					if (stringTokenizer.hasMoreTokens()) {
+						String filePath = stringTokenizer.nextToken();
+						downloadFile(filePath);
+					}; break;
+				default :
+			}
+			
+		}
+		if (constant instanceof Integer) {
+			readingQueue.setCurrentTrackPostion((Integer) constant);
+			readingQueue.getCurrentTrack().play();
+		}
+		System.out.println("Received " + constant + " from the client, processing...");
+		if (commande.equals("+") || commande.equals("-"))
+			return (Protocol.MODIFY_VOLUME);
+		else
+			return (Protocol.MODIFY_READING_QUEUE);
+	}
+	
+	private void uploadFile(String filePath) {
+		try {
+			fileOut.writeObject("#OK");
+			new Thread(new FileUpload(fileOut, filePath)).start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void downloadFile(String filePath) {
+		try {
+			fileOut.writeObject("#OK");
+			new Thread(new FileDownload(fileIn)).start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 		
 	public void close() {
 		try {
-			this.objectIn.close();
-			this.objectOut.close();
+			this.fileIn.close();
+			this.fileOut.close();
 			this.in.close();
 			this.out.close();
-			this.socketObject.close();
+			this.socketFile.close();
 			this.socketSimple.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void setBuffers(PrintWriter printer, BufferedReader bufferIn) {
+	public void setBuffers(ObjectOutputStream printer, ObjectInputStream bufferIn) {
 		this.in = bufferIn;
 		this.out = printer;
 	}
 	
 	public boolean sendSerializable(Serializable toSend) {
-		if (objectOut != null) {
+		if (out != null) {
 			try {
-				objectOut.writeObject(toSend);
-				objectOut.flush();
-				objectOut.reset();
+				out.writeObject(toSend);
+				out.flush();
+				out.reset();
 				return true;
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -119,11 +193,11 @@ public class Client implements Runnable {
 	}
 	
 	public boolean sendString(String toSend) {
-		if (objectOut != null) {
+		if (out != null) {
 			try {
-				objectOut.writeUTF(toSend);
-				objectOut.flush();
-				objectOut.reset();
+				out.writeUTF(toSend);
+				out.flush();
+				out.reset();
 				return true;
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -133,9 +207,9 @@ public class Client implements Runnable {
 	}
 	
 	public Serializable readSerializable() {
-		if (objectIn != null) {
+		if (in != null) {
 			try {
-				return ((Serializable) objectIn.readObject());
+				return ((Serializable) in.readObject());
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}
@@ -144,9 +218,9 @@ public class Client implements Runnable {
 	}
 	
 	public String readString() {
-		if (objectIn != null) {
+		if (in != null) {
 			try {
-				return objectIn.readUTF();
+				return in.readUTF();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -163,11 +237,11 @@ public class Client implements Runnable {
 	}
 
 	public ObjectInputStream getIn() {
-		return objectIn;
+		return in;
 	}
 
 	public ObjectOutputStream getOut() {
-		return objectOut;
+		return out;
 	}
 
 	public Socket getSocket() {
@@ -184,5 +258,4 @@ public class Client implements Runnable {
 			return true;
 		return false;
 	}
-
 }

@@ -2,7 +2,6 @@ package network;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
@@ -16,43 +15,43 @@ import files.ReadingQueue;
 
 public class ClientTestMulti {
 	
+	static Scanner scannerDL = new Scanner(System.in);
+	static ObjectOutputStream objectOut = null;
+	static ObjectInputStream objectIn = null;
+	static ObjectOutputStream fileOut = null;
+	static ObjectInputStream fileIn = null;
+	
 	//Main du client Android ici simulé 
-	public static void main (String [] args) {
-		Socket socketSimple = null, socketObject = null;
-		Scanner scan = new Scanner(System.in);
-		BufferedReader bufferIn = null;
-		PrintWriter bufferOut = null;
-		ObjectOutputStream objectOut = null;
-		ObjectInputStream objectIn = null;
+	public static void main (String [] args) throws InterruptedException {
+		Socket socketSimple = null, socketFile = null;
 		int entreeUser = 0; String treatment = null;
 		ReadingQueue listReading;
 		
 		try {
 			//Connexion au serveur socket simple
 			socketSimple = new Socket("localhost", Server.SERVER_PORT_SIMPLE);
+			socketFile = new Socket("localhost", Server.SERVER_PORT_OBJECT);
 			if (socketSimple.isConnected() && socketSimple.isBound()) {
 				System.out.println("Client : Je me suis bien connecté au serveur ! youhou!");
-				bufferOut = new PrintWriter(socketSimple.getOutputStream(), true);
-				bufferIn = new BufferedReader(new InputStreamReader(socketSimple.getInputStream()));
+				objectOut = new ObjectOutputStream(socketSimple.getOutputStream());
+				objectIn = new ObjectInputStream(socketSimple.getInputStream());
+				System.out.println("Flux d'objets initialis� !");
 			} else 
 				System.out.println("CLIENT : Socket simple cliente HS");
 			
-			socketObject = new Socket("localhost", Server.SERVER_PORT_OBJECT);
 			
 			//Authentification client
-			String messageRecu = bufferIn.readLine();
+			String messageRecu = (String) objectIn.readObject();
 			if (messageRecu.equals("#AUTH")) {
-				bufferOut.println("mdp");
-				System.out.println("Mot de passe envoy� !");
+				objectOut.writeObject("mdp");
+				System.out.println("Mot de passe envoy� !");
 			} else
 				System.out.println("Echec lors de la phase d'authentification ! Recu : " + messageRecu);
 			
 			//Connexion au serveur socket objet
-			if (socketObject.isConnected() && socketObject.isBound()) {
-				objectOut = new ObjectOutputStream(socketObject.getOutputStream());
-				objectOut.flush();
-				objectIn = new ObjectInputStream(socketObject.getInputStream());
-				System.out.println("Flux d'objets initialis� !");
+			if (socketFile.isConnected() && socketFile.isBound()) {
+				fileOut = new ObjectOutputStream(socketFile.getOutputStream());
+				fileIn = new ObjectInputStream(socketFile.getInputStream());
 			} else
 				System.out.println("CLIENT : Socket objet cliente HS");
 			
@@ -69,11 +68,13 @@ public class ClientTestMulti {
 			
 			threadReceive(objectIn);
 			//Envoi de chaines définissant des constantes au serveur
+			Scanner scan = new Scanner(System.in);
 			do {
 				showMenu();
 				try {
 					entreeUser = scan.nextInt();
 					treatment = convertIntToMusicConst(entreeUser);
+					System.out.println("traitement envoyé : " + treatment);
 				} catch (InputMismatchException inputFail) {
 					treatment = "";
 				}
@@ -81,7 +82,6 @@ public class ClientTestMulti {
 					objectOut.writeObject(treatment);
 					objectOut.flush();
 				}
-				//receiveRQ(in);
 			} while (entreeUser != 7);
 			
 			//Fermeture de la connexion avec le serveur
@@ -89,7 +89,7 @@ public class ClientTestMulti {
 				objectIn.close();
 				objectOut.close();
 				socketSimple.close();
-				socketObject.close();
+				socketFile.close();
 				scan.close();
 			}
 		} catch (IOException | ClassNotFoundException e) {
@@ -114,15 +114,45 @@ public class ClientTestMulti {
 	
 	public static void receiveRQ(ObjectInputStream is) throws ClassNotFoundException, IOException {
 		//Reception de la nouvelle liste
-		Protocol prot = (Protocol) is.readObject();
-		ReadingQueue rq = (ReadingQueue) is.readObject();
-		System.out.println("********RECEIVED*******\nprotocole : " + prot);
-		System.out.println("current track : " + rq.getCurrentTrack().getName());	
+		synchronized (is) {
+			Protocol prot = (Protocol) is.readObject();
+			System.out.println("********RECEIVED*******\nprotocole : " + prot);
+			if (prot == Protocol.MODIFY_READING_QUEUE) {
+				ReadingQueue rq = (ReadingQueue) is.readObject();
+				System.out.println("Current track : " + rq.getCurrentTrack().getName());	
+			} else if (prot == Protocol.MODIFY_VOLUME) {
+				Integer volume = (Integer) is.readObject();
+				System.out.println("Le volume a été modifié à " + volume + "%");
+			}
+			
+		}
 	}
 	
-	public static String convertIntToMusicConst(int input) 
+	public static void download() throws IOException, ClassNotFoundException, InterruptedException {
+		System.out.println("Entrez le nom du fichier à télécharger sur le serveur");
+		String file = scannerDL.nextLine();
+		
+		objectOut.writeObject("download$" + file);
+		objectOut.flush();
+		fileIn.readObject();
+		//scannerDL.close();
+		new Thread(new FileDownload(fileIn)).start();
+	}
+	
+	public static void upload() throws IOException, ClassNotFoundException, InterruptedException {
+		System.out.println("Entrez le nom du fichier à mettre sur le serveur");
+		String file = scannerDL.nextLine();
+		
+		objectOut.writeObject("upload$" + file);
+		objectOut.flush();
+		fileIn.readObject();
+		//scannerDL.close();
+		new Thread(new FileUpload(fileOut, file)).start();
+	}
+	
+	public static String convertIntToMusicConst(int input) throws ClassNotFoundException, IOException, InterruptedException 
 	{
-		String toReturn;
+		String toReturn = "";
 		switch (input) {
 			case 1 : toReturn = "play"; break;
 			case 2 : toReturn = "pause"; break;
@@ -136,6 +166,8 @@ public class ClientTestMulti {
 			case 10 : toReturn = "random"; break;
 			case 11 : toReturn = "+"; break;
 			case 12 : toReturn = "-"; break;
+			case 13 : download(); break;
+			case 14 : upload(); break;
 			default : toReturn = "";
 		}
 		return toReturn;
@@ -153,6 +185,8 @@ public class ClientTestMulti {
 		System.out.println("8. Next");
 		System.out.println("9. Prev");
 		System.out.println("10. Random");
+		System.out.println("13. Download");
+		System.out.println("14. Upload");
 	}
 	
 	public static void showReadingQueue(ReadingQueue list) 
