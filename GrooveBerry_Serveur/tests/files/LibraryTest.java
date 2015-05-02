@@ -62,10 +62,10 @@ public class LibraryTest {
 			xBuilder.createXMLDoc(DEFAULT_PATHNAME);
 			this.factory = DocumentBuilderFactory.newInstance();
 			this.builder= factory.newDocumentBuilder();
-			this.library = new Library();			
-			
+			this.doc = builder.parse(DEFAULT_PATHNAME);
+			this.library = new Library();		
 		}
-		catch(IOException | ParserConfigurationException | CannotReadException | ReadOnlyFileException | InvalidAudioFrameException e){
+		catch(IOException | ParserConfigurationException | CannotReadException | ReadOnlyFileException | InvalidAudioFrameException | SAXException e){
 			e.printStackTrace();
 		}
 	}
@@ -83,7 +83,7 @@ public class LibraryTest {
 		this.factory = null;
 		this.builder = null;
 		this.doc = null;
-		
+		this.library = null;
 		//if (this.file.exists()) {
 			//this.file.delete();
 		//}
@@ -107,14 +107,14 @@ public class LibraryTest {
 
 	@Test
 	public void testConstructorCreateALibraryWithAudioFileList() throws IOException, XPathExpressionException, SAXException {
-		this.doc = builder.parse(DEFAULT_PATHNAME);
-		this.library = new Library(audioFileListTest);
+		this.audioFileListTest.add(test);
+		this.library = new Library(this.audioFileListTest);
 		
 		XPathFactory xPathfactory = XPathFactory.newInstance();
 		XPath xpath = xPathfactory.newXPath();
-		
 		XPathExpression expr = (XPathExpression) xpath.compile("/library/artist/track[@title='Jammin']/fileName/text()");
 		String title = (String) expr.evaluate(this.doc,XPathConstants.STRING);
+		
 		assertEquals("Bob Marley - Jammin.mp3", title);
 		expr = (XPathExpression) xpath.compile("//fileName/text()");
 		NodeList fileName = (NodeList) expr.evaluate(this.doc,XPathConstants.NODESET);
@@ -147,10 +147,12 @@ public class LibraryTest {
 		this.library.add("audio/9.wav");
 		this.library.add("audio/test.wav");
 		this.library.add("audio/Bob Marley - Jammin.mp3");
+		XPathFactory xPathfactory = XPathFactory.newInstance();
+		XPath xpath = xPathfactory.newXPath();
 		
-		String userName = System.getProperty("user.name");
-		String line = this.fileScanner.nextLine();
-		assertEquals("Bob Marley - Jammin.mp3#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/Bob Marley - Jammin.mp3", line);
+		XPathExpression expr = (XPathExpression) xpath.compile("/library/artist/track/fileName/text()");
+		String title = (String) expr.evaluate(this.doc,XPathConstants.STRING);
+		assertEquals("Bob Marley - Jammin.mp3#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/Bob Marley - Jammin.mp3", );
 		line = this.fileScanner.nextLine();
 		assertEquals("9.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/9.wav", line);
 		line = this.fileScanner.nextLine();
@@ -164,33 +166,24 @@ public class LibraryTest {
 		}
 		
 	}
-
+*/
 	@Test
-	public void testUpdateLibraryBaseOnFile() throws IOException {
-		ArrayList<AudioFile> audioFileListTest = new ArrayList<>();
-		audioFileListTest.add(bob);
-		audioFileListTest.add(leNeuf);
-		audioFileListTest.add(test);
-		audioFileListTest.add(aol);
-		
-		PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(this.file, true));
-		String userName = System.getProperty("user.name");
-		printWriterOutputFile.println("Bob Marley - Jammin.mp3#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/Bob Marley - Jammin.mp3");
-		printWriterOutputFile.println("9.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/9.wav");
-		printWriterOutputFile.println("test.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/test.wav");
-		printWriterOutputFile.print("aol.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/aol.wav");
-		printWriterOutputFile.close();
+	public void testUpdateLibraryBaseOnFile() throws IOException, XPathExpressionException {
 		
 		this.library.updateLibrary();
-		
-		String line = this.fileScanner.nextLine();
-		assertEquals("Bob Marley - Jammin.mp3#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/Bob Marley - Jammin.mp3", line);
-		line = this.fileScanner.nextLine();
-		assertEquals("9.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/9.wav", line);
-		line = this.fileScanner.nextLine();
-		assertEquals("test.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/test.wav", line);
-		line = this.fileScanner.nextLine();
-		assertEquals("aol.wav#/home/" + userName + "/git/GrooveBerry/GrooveBerry_Serveur/audio/aol.wav", line);
+		XPathFactory xPathfactory = XPathFactory.newInstance();
+		XPath xpath = xPathfactory.newXPath();
+		XPathExpression expr = (XPathExpression) xpath.compile("/library/artist/track[@title='Jammin']/fileName/text()");
+		String title = (String) expr.evaluate(this.doc,XPathConstants.STRING);
+		assertEquals("Bob Marley - Jammin.mp3", title);
+		expr = (XPathExpression) xpath.compile("//track/fileName");
+		NodeList fileName = (NodeList) expr.evaluate(this.doc,XPathConstants.NODESET);
+		title = fileName.item(0).getNodeValue();
+		assertEquals("9.wav", title);
+		title = fileName.item(1).getNodeValue();
+		assertEquals("test.wav", title);
+		title = fileName.item(2).getNodeValue();
+		assertEquals("aol.wav", title);
 		
 		ArrayList<AudioFile> audioFileList  = this.library.getAudioFileList();
 		assertEquals(audioFileListTest.size(), audioFileList.size());
@@ -201,7 +194,7 @@ public class LibraryTest {
 		
 		
 	}
-	
+/*
 	@Test
 	public void testUpdateLibraryBaseOnFileWithError() throws IOException {
 		ArrayList<AudioFile> audioFileListTest = new ArrayList<>();

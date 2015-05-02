@@ -18,6 +18,7 @@ public class FileDownload implements Runnable {
 			finish = false;
 			File file = (File) this.in.readObject();
 			file.renameTo(new File("download/" + file.getName()));
+			System.out.println(file.getPath());
 			file.createNewFile();
 			if (file.exists())
 				finish = true;
