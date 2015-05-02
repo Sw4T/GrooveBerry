@@ -20,9 +20,11 @@ public class ConnectionServerApp {
 		server = Server.getInstance();
 		server.waitConnectionForTest();
 		client_app = new Client(new Socket("localhost", Server.SERVER_PORT_SIMPLE));
+		Thread.sleep(100);
 		client_server = server.getCurrentClient();
 		System.out.println("Initialisation effectuée...");
-		Thread.sleep(100);
+		while (client_server == null) 
+			Thread.sleep(100);
 	}
 
 	@AfterClass
@@ -35,10 +37,10 @@ public class ConnectionServerApp {
 	@Test
 	public void test_connection_ok()
 	{
-		assertEquals(true, client_app.getSocket().isConnected());
-		assertEquals(true, client_app.getSocket().isBound());
-		assertEquals(true, client_server.getSocket().isConnected());
-		assertEquals(true, client_server.getSocket().isBound());
+		assertEquals(true, client_app.getSocketSimple().isConnected());
+		assertEquals(true, client_app.getSocketSimple().isBound());
+		assertEquals(true, client_server.getSocketSimple().isConnected());
+		assertEquals(true, client_server.getSocketSimple().isBound());
 	}
 	
 	@Test

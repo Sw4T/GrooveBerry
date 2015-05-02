@@ -47,8 +47,8 @@ public class Client implements Runnable {
 	 */
 	public Client(Socket socketSimple) throws IOException {
 		this.socketSimple = socketSimple;
-		this.fileOut = new ObjectOutputStream(socketSimple.getOutputStream());
-		this.fileIn = new ObjectInputStream(socketSimple.getInputStream());
+		this.out= new ObjectOutputStream(socketSimple.getOutputStream());
+		this.in = new ObjectInputStream(socketSimple.getInputStream());
 		this.connect = new AtomicBoolean(true);
 	}
 	
@@ -93,7 +93,7 @@ public class Client implements Runnable {
 				return;
 			execute(constant);
 		} while (!constant.equals("exit"));
-		System.out.println("Fin du traitement client " + getSocket());
+		System.out.println("Fin du traitement client " + getSocketSimple());
 	}
 	
 	public synchronized Protocol execute(Object constant) 
@@ -244,7 +244,7 @@ public class Client implements Runnable {
 		return out;
 	}
 
-	public Socket getSocket() {
+	public Socket getSocketSimple() {
 		return socketSimple;
 	}
 	
@@ -254,7 +254,7 @@ public class Client implements Runnable {
 			return false;
 		if (!(o instanceof Client))
 			return false;
-		if (((Client) o).getSocket().getInetAddress().getHostAddress().equals(this.socketSimple.getInetAddress().getHostAddress()))
+		if (((Client) o).getSocketSimple().getInetAddress().getHostAddress().equals(this.socketSimple.getInetAddress().getHostAddress()))
 			return true;
 		return false;
 	}

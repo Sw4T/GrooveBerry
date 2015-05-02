@@ -65,8 +65,9 @@ public class ClientTestMulti {
 					showReadingQueue(listReading);
 			} else
 				System.out.println("Erreurs de synchronisation serveur ! Recu : " + messageRecu);
-			
+
 			threadReceive(objectIn);
+			
 			//Envoi de chaines définissant des constantes au serveur
 			Scanner scan = new Scanner(System.in);
 			do {
@@ -135,7 +136,6 @@ public class ClientTestMulti {
 		objectOut.writeObject("download$" + file);
 		objectOut.flush();
 		fileIn.readObject();
-		//scannerDL.close();
 		new Thread(new FileDownload(fileIn)).start();
 	}
 	
@@ -146,7 +146,6 @@ public class ClientTestMulti {
 		objectOut.writeObject("upload$" + file);
 		objectOut.flush();
 		fileIn.readObject();
-		//scannerDL.close();
 		new Thread(new FileUpload(fileOut, file)).start();
 	}
 	

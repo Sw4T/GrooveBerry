@@ -69,16 +69,15 @@ public class Server {
 	public void waitConnectionForTest() {
 		new Thread(new Runnable() {
 			@Override
-			public void run() {
-					while (true) {
-						try {
-							Socket socket = serverSocketSimple.accept();
-							System.out.println("SERVEUR : Client " + socket.getInetAddress() + " has connected !");
-							currentClient = new Client(socket);
-						} catch (IOException e) {
-							e.printStackTrace();
-						} 
-					}
+			public void run() {	
+				Socket socket;
+				try {
+					socket = serverSocketSimple.accept();
+					System.out.println("SERVEUR : Client " + socket.getInetAddress() + " has connected !");
+					currentClient = new Client(socket);	
+				} catch (IOException e) {
+					e.printStackTrace();
+				}	
 			}
 		}).start();
 	}
@@ -112,10 +111,10 @@ public class Server {
 	
 	public void disconnectClient(Client client) {
 		if (listClients.contains(client)) {
-			System.out.println("Client existant " + client.getSocket() + " déconnecté");
+			System.out.println("Client existant " + client.getSocketSimple() + " déconnecté");
 			listClients.remove(client);
 		} else
-			System.out.println(client.getSocket());
+			System.out.println(client.getSocketSimple());
 	}
 	
 	public ArrayList<Client> getClients() {
