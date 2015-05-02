@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<library>
+  <noArtist>
+    <track>
+      <fileName>9.wav</fileName>
+      <path>/home/bananarchiste/git/GrooveBerry/GrooveBerry_Serveur/audio/9.wav</path>
+    </track>
+    <track>
+      <fileName>test.wav</fileName>
+      <path>/home/bananarchiste/git/GrooveBerry/GrooveBerry_Serveur/audio/test.wav</path>
+    </track>
+    <track>
+      <fileName>aol.wav</fileName>
+      <path>/home/bananarchiste/git/GrooveBerry/GrooveBerry_Serveur/audio/aol.wav</path>
+    </track>
+  </noArtist>
+  <artist name="Bob Marley">
+    <track title="Jammin">
+      <fileName>Bob Marley - Jammin.mp3</fileName>
+      <path>/home/bananarchiste/git/GrooveBerry/GrooveBerry_Serveur/audio/Bob Marley - Jammin.mp3</path>
+    </track>
+  </artist>
+</library>
