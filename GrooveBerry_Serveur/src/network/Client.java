@@ -83,21 +83,6 @@ public class Client implements Runnable {
 	}
 	
 	/**
-	 * Récupère une constante de traitement du client connecté afin de changer l'état du serveur/du fil de lecture.
-	 */
-	public synchronized void getTreatmentFromRemote() 
-	{
-		String constant;
-		do {
-			constant = readString();
-			if (constant == null)
-				return;
-			execute(constant);
-		} while (!constant.equals("exit"));
-		System.out.println("Fin du traitement client " + getSocketSimple());
-	}
-	
-	/**
 	 * Execute une action sur le serveur et agissant sur les attributs de celui-ci.
 	 * @param constant
 	 * 		Constante de traitement allant être exécutée

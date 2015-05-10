@@ -22,13 +22,13 @@ public class Server {
 	private volatile ArrayList<Client> listClients; //Liste de clients se connectant au serveur
 	public volatile static SystemVolumeController volumeControl; //Classe gérant le volume 
 	private ServerSocket serverSocketSimple; //Classe gérant les connexions entrantes et l'envoi de chaines 
-	private ServerSocket serverSocketObject; //Classe gérant l'envoi/réception d'objets plus lourds
+	private ServerSocket serverSocketFile; //Classe gérant l'envoi/réception d'objets plus lourds
 	private Client currentClient; //Pour effectuer les tests
 	
 	private Server() {
 		try {
 			serverSocketSimple = new ServerSocket(SERVER_PORT_SIMPLE);
-			serverSocketObject = new ServerSocket(SERVER_PORT_OBJECT);
+			serverSocketFile = new ServerSocket(SERVER_PORT_OBJECT);
 			listClients = new ArrayList<Client>(NB_MAX_CLIENTS);
 			readingQueue = new ReadingQueue();
 			volumeControl = new SystemVolumeController();
@@ -56,7 +56,7 @@ public class Server {
 			Socket newSocketSimple = serverSocketSimple.accept();
 			if (listClients.size() != NB_MAX_CLIENTS) 
 			{
-				Socket newSocketObject = serverSocketObject.accept();
+				Socket newSocketObject = serverSocketFile.accept();
 				System.out.println("SERVEUR : Client " + newSocketSimple.getInetAddress() + " s'est connecte !");
 				new Thread(new Authenticator(newSocketSimple, newSocketObject)).start();
 			} else {
