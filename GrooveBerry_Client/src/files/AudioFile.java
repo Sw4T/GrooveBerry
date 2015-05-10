@@ -3,6 +3,7 @@ package files;
 import java.io.File;
 import java.io.Serializable;
 <<<<<<< HEAD:GrooveBerry_Client/src/files/AudioFile.java
+<<<<<<< HEAD:GrooveBerry_Client/src/files/AudioFile.java
 <<<<<<< HEAD:GrooveBerry_Serveur/src/files/AudioFile.java
 import java.util.Observable;
 =======
@@ -10,6 +11,8 @@ import java.util.Observable;
 =======
 import java.util.Observable;
 >>>>>>> origin/serverDev:GrooveBerry_Serveur/src/files/AudioFile.java
+=======
+>>>>>>> origin/clientDev:GrooveBerry_Client/src/files/AudioFile.java
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -17,6 +20,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
 
+<<<<<<< HEAD:GrooveBerry_Client/src/files/AudioFile.java
 <<<<<<< HEAD:GrooveBerry_Client/src/files/AudioFile.java
 <<<<<<< HEAD:GrooveBerry_Serveur/src/files/AudioFile.java
 public class AudioFile extends Observable implements Runnable, Serializable
@@ -27,6 +31,10 @@ public class AudioFile implements Runnable, Serializable
 =======
 public class AudioFile extends Observable implements Runnable, Serializable
 >>>>>>> origin/serverDev:GrooveBerry_Serveur/src/files/AudioFile.java
+=======
+
+public class AudioFile implements Runnable, Serializable
+>>>>>>> origin/clientDev:GrooveBerry_Client/src/files/AudioFile.java
 {
 
 	private static final long serialVersionUID = -726613633651477466L;
@@ -220,10 +228,13 @@ public class AudioFile extends Observable implements Runnable, Serializable
 				restart = false;
 				AudioInputStream in = AudioSystem.getAudioInputStream(file);
 				AudioInputStream din = null;
+<<<<<<< HEAD:GrooveBerry_Client/src/files/AudioFile.java
 <<<<<<< HEAD:GrooveBerry_Serveur/src/files/AudioFile.java
 				AudioFormat baseFormat = in.getFormat();
 <<<<<<< HEAD:GrooveBerry_Client/src/files/AudioFile.java
 =======
+=======
+>>>>>>> origin/clientDev:GrooveBerry_Client/src/files/AudioFile.java
 				javax.sound.sampled.AudioFormat baseFormat = in.getFormat();
 				/*this.volume = (FloatControl) this.getLine(baseFormat).getControl(FloatControl.Type.MASTER_GAIN);
 				if(this.volume != null){
@@ -345,7 +356,10 @@ public class AudioFile extends Observable implements Runnable, Serializable
 	/*public FloatControl getVolume() {
 		return this.volume;
 	}*/
+<<<<<<< HEAD:GrooveBerry_Client/src/files/AudioFile.java
 >>>>>>> origin/clientDev:GrooveBerry_Client/src/files/AudioFile.java
 =======
 >>>>>>> origin/serverDev:GrooveBerry_Serveur/src/files/AudioFile.java
+=======
+>>>>>>> origin/clientDev:GrooveBerry_Client/src/files/AudioFile.java
 }
