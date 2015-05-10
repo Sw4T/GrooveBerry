@@ -16,15 +16,15 @@ import files.ReadingQueue;
 
 public class Client implements Runnable {
 
-	private Socket socketSimple; //Socket utilisé pour communiquer avec le client
-	private Socket socketFile; //Socket utilisé pour communiquer avec le client
+	private Socket socketSimple; //Socket utilisée pour communiquer avec le client
+	private Socket socketFile; //Socket utilisée pour un envoi d'objets/de fichiers avec le client
 	private ObjectInputStream fileIn; 
 	private ObjectOutputStream fileOut;
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
 	
 	private String clientName; //Pseudo du client
-	protected AtomicBoolean connect; //Booléen assurant que le client est connectÃ©
+	protected AtomicBoolean connect; //Booléen assurant que le client est connecté
 	private Server server; //Référence au serveur principal
 	
 	public Client(Socket socketSimple, Socket socketObject, Server server) {
@@ -176,9 +176,7 @@ public class Client implements Runnable {
 			this.out.close();
 			this.socketFile.close();
 			this.socketSimple.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} catch (IOException e) {}
 	}
 	
 	public void setBuffers(ObjectOutputStream printer, ObjectInputStream bufferIn) {

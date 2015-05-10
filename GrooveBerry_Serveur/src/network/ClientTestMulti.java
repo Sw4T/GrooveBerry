@@ -79,7 +79,7 @@ public class ClientTestMulti {
 				try {
 					entreeUser = scan.nextInt();
 					treatment = convertIntToMusicConst(entreeUser);
-					System.out.println("traitement envoyÃ© : " + treatment);
+					System.out.println("CLIENT : Traitement envoyé : " + treatment);
 				} catch (InputMismatchException inputFail) {
 					treatment = "";
 				}
@@ -110,7 +110,6 @@ public class ClientTestMulti {
 					while (true)
 						receiveRQ(is);
 				} catch (ClassNotFoundException | IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -118,14 +117,13 @@ public class ClientTestMulti {
 	}
 	
 	public static void receiveRQ(ObjectInputStream is) throws ClassNotFoundException, IOException {
-		//Reception de la nouvelle liste
 		synchronized (is) {
-			Protocol prot = (Protocol) is.readObject();
-			System.out.println("********RECEIVED*******\nprotocole : " + prot);
-			if (prot == Protocol.MODIFY_READING_QUEUE) {
+			Protocol protocol = (Protocol) is.readObject();
+			System.out.println("********RECEIVED*******\nProtocole : " + protocol);
+			if (protocol == Protocol.MODIFY_READING_QUEUE) {
 				ReadingQueue rq = (ReadingQueue) is.readObject();
 				System.out.println("Current track : " + rq.getCurrentTrack().getName());	
-			} else if (prot == Protocol.MODIFY_VOLUME) {
+			} else if (protocol == Protocol.MODIFY_VOLUME) {
 				Integer volume = (Integer) is.readObject();
 				System.out.println("Le volume a été modifié de " + volume + "%");
 			}
@@ -134,7 +132,7 @@ public class ClientTestMulti {
 	}
 	
 	public static void downloadTest() throws IOException, ClassNotFoundException, InterruptedException {
-		System.out.println("Entrez le nom du fichier Ã  télécharger sur le serveur");
+		System.out.println("Entrez le nom du fichier à télécharger sur le serveur");
 		String file = scannerDL.nextLine();
 		
 		objectOut.writeObject("download$" + file);
