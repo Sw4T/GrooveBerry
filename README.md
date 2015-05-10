@@ -11,7 +11,7 @@
 * Natacha MORIN
 
 **`Product Owner`**
-* Enzo ALUNNI
+* Enzo ALUNNI-BAGARELLI
 
 * * *
 **`Environnement`**
