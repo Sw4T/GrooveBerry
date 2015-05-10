@@ -2,7 +2,10 @@ package files;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.ArrayList;
+
+import javax.swing.JFileChooser;
 
 import org.junit.Test;
 
@@ -17,14 +20,16 @@ public class AudioFileScannerTest {
 		assertEquals(5, audioFileList.size());
 		
 		ArrayList<AudioFile> audioFileListTest = new ArrayList<>();
-		audioFileListTest.add(new AudioFile("audioTest/01 Clandestino.mp3"));
-		audioFileListTest.add(new AudioFile("audioTest/free.wav"));
-		audioFileListTest.add(new AudioFile("audioTest/12 Bold as Love.mp3"));
-		audioFileListTest.add(new AudioFile("audioTest/04 Hey Joe.mp3"));
-		audioFileListTest.add(new AudioFile("audioTest/9.wav"));
+		
+		File[] list = new File("audioTest/").listFiles();
+		
+		audioFileListTest.add(new AudioFile(list[0].getPath()));
+		audioFileListTest.add(new AudioFile(list[1].getPath()));
+		audioFileListTest.add(new AudioFile(list[2].getPath()));
+		audioFileListTest.add(new AudioFile(list[3].getPath()));
+		audioFileListTest.add(new AudioFile(list[4].getPath()));
 		
 		for (int i = 0 ; i < audioFileListTest.size() ; i++) {
-			System.out.println(audioFileList.get(i).getPath());
 			assertEquals(audioFileListTest.get(i).getPath(), audioFileList.get(i).getPath());
 		}
 		

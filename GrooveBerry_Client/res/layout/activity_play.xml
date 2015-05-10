@@ -1,0 +1,233 @@
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/fond"
+        tools:context=".PlayActivity" >
+
+        <!-- Player Header -->
+
+        <LinearLayout
+            android:id="@+id/player_header_bg"
+            android:layout_width="fill_parent"
+            android:layout_height="60dip"
+            android:layout_alignParentTop="true"
+            android:background="@layout/bg_player_header"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp" >
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:paddingEnd="10dp"
+                android:paddingLeft="10dp"
+                android:paddingStart="10dp"
+                android:text="@string/musicname"
+                android:textColor="#04b3d2"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/songThumbnail"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/player_header_bg"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp" >
+
+            <ImageView
+                android:id="@+id/launcher_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="170dp"
+                android:contentDescription="@string/hello_world"
+                android:src="@drawable/logo_gbpi2" />
+        </LinearLayout>
+
+        <!-- Player Footer -->
+
+        <LinearLayout
+            android:id="@+id/player_footer_bg"
+            android:layout_width="fill_parent"
+            android:layout_height="100dp"
+            android:layout_alignParentBottom="true"
+            android:background="@layout/bg_player_footer"
+            android:gravity="center" >
+
+            <!-- Player Buttons -->
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@layout/rounded_corner"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp" >
+
+                <!-- Repeat Button -->
+
+                <ImageButton
+                    android:id="@+id/btnRepeat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginStart="5dp"
+                    android:background="@null"
+                    android:contentDescription="@string/hello_world"
+                    android:src="@drawable/img_btn_repeat" />
+
+                <!-- Previous Button -->
+
+                <ImageButton
+                    android:id="@+id/previousButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:contentDescription="@string/hello_world"
+                    android:src="@drawable/btn_previous" />
+
+                <!-- Play Button -->
+
+                <ImageButton
+                    android:id="@+id/playButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:contentDescription="@string/hello_world"
+                    android:src="@drawable/btn_play" />
+
+                <!-- Next Button -->
+
+                <ImageButton
+                    android:id="@+id/nextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:contentDescription="@string/hello_world"
+                    android:src="@drawable/btn_next" />
+
+                <!-- Shuffle Button -->
+
+                <ImageButton
+                    android:id="@+id/btnShuffle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:background="@null"
+                    android:src="@drawable/img_btn_shuffle" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/warning_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/player_footer_bg"
+            android:gravity="center"
+            android:paddingBottom="20dp"
+            android:paddingTop="20dp" >
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/notconnectedwarning"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_toLeftOf="@+id/textView4"
+                android:contentDescription="@string/warningLogoDesc"
+                android:src="@drawable/ic_tab_name_unselected" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/fileTransfer"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_below="@id/songThumbnail"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp" >
+
+            <ImageButton
+                android:id="@+id/upload_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:background="@null"
+                android:contentDescription="@string/hello_world"
+                android:src="@drawable/ic_upload_unselected" />
+
+            <ImageButton
+                android:id="@+id/download_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:background="@null"
+                android:contentDescription="@string/hello_world"
+                android:src="@drawable/ic_download_unselected" />
+        </LinearLayout>
+    </RelativeLayout>
+    <!-- Framelayout to display Fragments -->
+
+    <FrameLayout
+        android:id="@+id/frame_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </FrameLayout>
+
+    <!-- Listview to display slider menu -->
+
+    <LinearLayout
+        android:id="@+id/frame_container2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical" >
+
+        <!-- Editext for Search -->
+
+        <EditText
+            android:id="@+id/inputSearch"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:background="#fff"
+            android:hint="Search your song !"
+            android:imeOptions="actionSearch"
+            android:inputType="textVisiblePassword"
+            android:singleLine="true" />
+
+        <ListView
+            android:id="@+id/list_slidermenu"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:background="@color/background_material_dark"
+            android:choiceMode="singleChoice"
+            android:clickable="true"
+            android:divider="#8c8c8c"
+            android:dividerHeight="1dp" />
+    </LinearLayout>
+
+</android.support.v4.widget.DrawerLayout>

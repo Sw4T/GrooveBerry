@@ -7,7 +7,7 @@ public class SystemVolumeController {
 	private int volumePercentage;
 	
 	public SystemVolumeController() {
-		this.volumePercentage = -1;
+		this.volumePercentage = 50;
 	}
 
 	public int getVolumePercentage() {

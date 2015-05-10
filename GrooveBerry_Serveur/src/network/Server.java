@@ -7,63 +7,84 @@ import java.util.ArrayList;
 
 import files.AudioFile;
 import files.AudioFileScanner;
-import files.AudioListener;
 import files.Library;
 import files.ReadingQueue;
+import files.SystemVolumeController;
 
 public class Server {
 
-	public static final int SERVER_PORT = 12345;
-	public static ArrayList<Client> listClients; //Liste de clients se connectant au serveur
-	public static ReadingQueue readingQueue; //Liste de lecture
-	private static final int NB_MAX_CLIENTS = 5;
-	private ServerSocket server; //Classe gÃ©rant les connexions entrantes
+	public static final int SERVER_PORT_SIMPLE = 12347; //Port servant à l'établissement d'une connexion socket simple (envoi de primitifs)
+	public static final int SERVER_PORT_OBJECT = 12348; //Port servant à l'établissement d'une connexion socket objet (envoi de d'objets sérialisés)
+	private static final int NB_MAX_CLIENTS = 5; 
+	
+	private static volatile Server instanceServer; //Instance unique de la classe Server (pattern Singleton)
+	private volatile ReadingQueue readingQueue; //Liste de lecture
+	private volatile ArrayList<Client> listClients; //Liste de clients se connectant au serveur
+	public volatile static SystemVolumeController volumeControl; //Classe gérant le volume 
+	private ServerSocket serverSocketSimple; //Classe gérant les connexions entrantes et l'envoi de chaines 
+	private ServerSocket serverSocketObject; //Classe gérant l'envoi/réception d'objets plus lourds
 	private Client currentClient; //Pour effectuer les tests
 	
-	public Server() throws IOException {
-		server = new ServerSocket(SERVER_PORT);
-		listClients = new ArrayList<Client>(NB_MAX_CLIENTS);
-		readingQueue = new ReadingQueue();
-		initReadingQueue();
-	}
-	
-	//Attente d'une connexion cliente et traitement de test
-	public void waitConnection() throws IOException, InterruptedException {
-		while (true) {
-			if (listClients.size() != NB_MAX_CLIENTS) {
-				Socket socket = server.accept();
-				System.out.println("Client " + socket.getInetAddress() + " has connected !");
-				final Client newClient = new Client(socket, this);
-				//updateClientList(newClient);
-				listClients.add(newClient); //TODO Clients illimitÃ©s pour test
-				
-				sendReadingQueueToRemote(newClient); //Envoi de la liste de lecture du serveur
-				new Thread(newClient).start();
-			} 
+	private Server() {
+		try {
+			serverSocketSimple = new ServerSocket(SERVER_PORT_SIMPLE);
+			serverSocketObject = new ServerSocket(SERVER_PORT_OBJECT);
+			listClients = new ArrayList<Client>(NB_MAX_CLIENTS);
+			readingQueue = new ReadingQueue();
+			volumeControl = new SystemVolumeController();
+			initReadingQueue();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
 		}
 	}
 	
-	//Utilisation d'un nouveau thread pour permettre d'effectuer les tests en parallÃ¨le
+	public static Server getInstance() {
+		if (instanceServer == null) {
+			synchronized (Server.class) {
+				if (instanceServer == null) {
+					instanceServer = new Server();
+				}
+			}
+		}
+		return instanceServer;
+	}
+	
+	//Attente d'une connexion cliente et authentification
+	public void waitConnection() throws IOException, InterruptedException {
+		while (true) {
+			Socket newSocketSimple = serverSocketSimple.accept();
+			if (listClients.size() != NB_MAX_CLIENTS) 
+			{
+				Socket newSocketObject = serverSocketObject.accept();
+				System.out.println("SERVEUR : Client " + newSocketSimple.getInetAddress() + " s'est connecte !");
+				new Thread(new Authenticator(newSocketSimple, newSocketObject)).start();
+			} else {
+				newSocketSimple.close();
+				System.out.println("ERREUR : Trop de connexions sont ouvertes sur le serveur, refus de connexion !");
+			}
+		}
+	}
+	
+	//Utilisation d'un nouveau thread pour permettre d'effectuer les tests en parallèle
 	public void waitConnectionForTest() {
 		new Thread(new Runnable() {
 			@Override
-			public void run() {
-					while (true) {
-						try {
-							Socket socket = server.accept();
-							System.out.println("Client " + socket.getInetAddress() + " has connected !");
-							currentClient = new Client(socket);
-						} catch (IOException e) {
-							e.printStackTrace();
-						} 
-					}
+			public void run() {	
+				Socket socket;
+				try {
+					socket = serverSocketSimple.accept();
+					System.out.println("SERVEUR : Client " + socket.getInetAddress() + " has connected !");
+					currentClient = new Client(socket);	
+				} catch (IOException e) {
+					e.printStackTrace();
+				}	
 			}
 		}).start();
 	}
 	
 	public void initReadingQueue() {
 		AudioFileScanner directoryScanneur = new AudioFileScanner("audio/");
-		
 		Library library;
 		try {
 			library = new Library(directoryScanneur.getAudioFileList());
@@ -75,65 +96,43 @@ public class Server {
 			e.printStackTrace();
 		}
 	}
-	
-	public synchronized void sendReadingQueueToRemote(Client c) 
-	{
-		c.sendSerializable("#RQ"); //Constante pour reading queue
-		String rep = (String) c.readSerializable();
-		if (rep.equals("#OK")) {
-			System.out.println("Client OK pour l'envoi de la reading queue");
-			if (c.sendSerializable(Server.readingQueue)) {
-				System.out.println("Envoi de la reading queue OK...");
-			}
-		} else
-			System.out.println("Erreur lors de l'envoi de la reading queue");
-	}
-	
-	public synchronized void execute(Object constant) 
-	{
-		if (constant instanceof String) {
-			switch ((String)constant)
-			{
-				case "play" : readingQueue.getCurrentTrack().play(); break;
-				case "pause" : readingQueue.getCurrentTrack().pause(); break;
-				case "mute" : readingQueue.getCurrentTrack().mute(); break;
-				case "restart" : readingQueue.getCurrentTrack().restart(); break;
-				case "stop" : readingQueue.getCurrentTrack().stop(); break;
-				case "loop" : readingQueue.getCurrentTrack().loop(); break;
-				case "next" : readingQueue.next(); break;
-				case "prev" : readingQueue.prev(); break;
-				case "random" : readingQueue.rand(); break;
-				default :
-			}
-			
-			
-		}
-		if (constant instanceof Integer) {
-			readingQueue.setCurrentTrackPostion((Integer) constant);
-			readingQueue.getCurrentTrack().play();
-		}
-		System.out.println("Received " + constant + " from the client, processing...");
-	}
+
 	
 	public void updateClientList(Client newClient) {
-		if (listClients.size() == 0)
+		//if (listClients.size() == 0)
 			listClients.add(newClient);
-		else {
+		/*else {
 			for (Client c : listClients) {
 				if (newClient.equals(c))
 					System.out.println("Same client asking for new connection, rejected...");
 				else
 					listClients.add(newClient);
 			}
-		}
+		}*/
 	}
 	
 	public void disconnectClient(Client client) {
 		if (listClients.contains(client)) {
-			System.out.println("Client existant " + client.getSocket() + " dÃ©connectÃ©");
+<<<<<<< HEAD
+			System.out.println("Client existant " + client.getSocket() + " déconnecté");
+=======
+			System.out.println("SERVEUR : Client existant " + client.getSocketSimple() + " déconnecté");
+>>>>>>> origin/serverDev
 			listClients.remove(client);
 		} else
-			System.out.println(client.getSocket());
+			System.out.println(client.getSocketSimple());
+	}
+	
+	public synchronized ArrayList<Client> getClients() {
+		return listClients;
+	}
+	
+	public synchronized ReadingQueue getReadingQueue() {
+		return readingQueue;
+	}
+	
+	public Integer getMasterVolume() {
+		return volumeControl.getVolumePercentage();
 	}
 	
 	public Client getCurrentClient() {

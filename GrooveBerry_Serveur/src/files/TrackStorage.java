@@ -2,11 +2,24 @@ package files;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Scanner;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * TrackStorage est une classe abstraite qui spécifie un
@@ -22,12 +35,10 @@ import java.util.Scanner;
 
 public abstract class TrackStorage {
 
-	public static final String DELIMITER = "#";
-	
 	protected ArrayList<AudioFile> audioFileList;
 	protected File file;
 	
-	public TrackStorage(String filePath) throws IOException {
+	public TrackStorage(String filePath) {
 		this.audioFileList = new ArrayList<>();
 		
 		this.file = new File(filePath);
@@ -52,8 +63,11 @@ public abstract class TrackStorage {
 	 * @param filePath
 	 * 		le chemin du fichier de sauvegarde
 	 * @throws IOException
+	 * @throws SAXException 
+	 * @throws ParserConfigurationException 
+	 * @throws XPathExpressionException 
 	 */
-	public TrackStorage(ArrayList<AudioFile> audioFileList, String filePath) throws IOException {
+	public TrackStorage(ArrayList<AudioFile> audioFileList, String filePath){
 		this(filePath);
 		this.audioFileList = audioFileList;
 	}
@@ -63,7 +77,7 @@ public abstract class TrackStorage {
 	 * @return
 	 * 		true si le conteneur est vide, false sinon.
 	 */
-	public boolean isEmpty() {
+	public boolean isEmpty(){
 		return this.audioFileList.isEmpty();
 	}
 	
@@ -81,12 +95,14 @@ public abstract class TrackStorage {
 	 * 
 	 * @throws FileNotFoundException
 	 */
-	protected void updateLibraryFile() throws FileNotFoundException {
-		PrintWriter printWriterOutputFile = new PrintWriter(new FileOutputStream(this.file, false), true);
-		for (AudioFile audioFile : audioFileList) {
-			printWriterOutputFile.println(audioFile.getName() + DELIMITER + audioFile.getAbsolutePath());
+	protected void updateLibraryFile() {
+		XML_DocBuilder xBuilder = new XML_DocBuilder(this.audioFileList);
+		try {
+			xBuilder.createXMLDoc(this.file.getAbsolutePath());
+		} catch (CannotReadException | IOException | ReadOnlyFileException | InvalidAudioFrameException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		printWriterOutputFile.close();
 	}
 	
 	/**
@@ -98,7 +114,7 @@ public abstract class TrackStorage {
 	 */
 	protected boolean contains(String filePath) {
 		boolean contain = false;
-		for (AudioFile audioFile : audioFileList) {
+		for (AudioFile audioFile : this.audioFileList) {
 			if (audioFile.getAbsolutePath().equals(filePath) || audioFile.getPath().equals(filePath)) {
 				contain = true;
 				break;
@@ -112,23 +128,30 @@ public abstract class TrackStorage {
 	 * de sauvegarde.
 	 * 
 	 * @throws IOException
+	 * @throws ParserConfigurationException 
+	 * @throws SAXException 
+	 * @throws XPathExpressionException 
 	 */
-	public void updateLibrary() throws IOException {
-		Scanner fileScanner = new Scanner(this.file);
-		while(fileScanner.hasNextLine()) {
-			String line = fileScanner.nextLine();
-			if (!line.equals("")) {
-				String filePath = line.split(DELIMITER)[1]; //TODO Exception
-				if (!this.contains(filePath)) { 
-					try {
-						this.add(filePath);
-					} catch (FileNotFoundException e) {
-						
-					}
-				}
+	public void updateLibrary(){
+		try{
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder= factory.newDocumentBuilder();
+			Document doc = builder.parse(this.file.getAbsolutePath());
+			XPathFactory xPathfactory = XPathFactory.newInstance();
+			XPath xpath = xPathfactory.newXPath();
+			
+			XPathExpression expr = (XPathExpression) xpath.compile("//path/text()");
+			NodeList pathList = (NodeList) expr.evaluate(doc,XPathConstants.NODESET);
+			this.audioFileList.clear();
+			   for (int i = 0; i <= pathList.getLength() - 1; i++){
+				   String path = pathList.item(i).getNodeValue();
+				   AudioFile audioFile = new AudioFile(path);
+				   this.audioFileList.add(audioFile);
 			}
 		}
-		fileScanner.close();
+		catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -164,4 +187,21 @@ public abstract class TrackStorage {
 		}
 		updateLibraryFile();
 	}
+	
+	public ArrayList<AudioFile> getTrackByName(String searchSequence) {
+		ArrayList<AudioFile> result = new ArrayList<>();
+		for (AudioFile audioFile : this.getAudioFileList()) {
+			if (audioFile.getName().contains(searchSequence)) {
+				result.add(audioFile);
+			}
+		}
+		return result;
+	}	
+	
+/*	public static void main (String [] args) {
+		TrackStorage test = new Library();
+		for(AudioFile track : test.audioFileList){
+			System.out.println(track.getName());
+		}
+	}*/
 }

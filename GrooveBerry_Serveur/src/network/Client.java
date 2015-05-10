@@ -5,34 +5,51 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
+import java.util.StringTokenizer;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import files.AudioListener;
+import protocol.Notifier;
 import protocol.NotifierReadingQueue;
+import protocol.NotifierVolume;
+import protocol.Protocol;
+import files.ReadingQueue;
 
 public class Client implements Runnable {
 
-	private Socket socket; //Socket utilisÃ© pour communiquer avec le client
-	private String clientName; //Pseudo du client
-	private ObjectInputStream in; 
+	private Socket socketSimple; //Socket utilisé pour communiquer avec le client
+	private Socket socketFile; //Socket utilisé pour communiquer avec le client
+	private ObjectInputStream fileIn; 
+	private ObjectOutputStream fileOut;
+	private ObjectInputStream in;
 	private ObjectOutputStream out;
-	protected AtomicBoolean connect; //BoolÃ©en assurant que le client est connectÃ©
-	private Server server; //RÃ©fÃ©rence au serveur principal
 	
-	public Client(Socket newSocket) {
+	private String clientName; //Pseudo du client
+	protected AtomicBoolean connect; //Booléen assurant que le client est connectÃ©
+	private Server server; //Référence au serveur principal
+	
+	public Client(Socket socketSimple, Socket socketObject, Server server) {
 		try {
-			this.socket = newSocket;
-			this.out = new ObjectOutputStream(socket.getOutputStream());
-			this.in = new ObjectInputStream(socket.getInputStream());
+			this.socketSimple = socketSimple;
+			this.socketFile = socketObject;
+			this.fileOut = new ObjectOutputStream(socketObject.getOutputStream());
+			this.fileIn = new ObjectInputStream(socketObject.getInputStream());
 			this.connect = new AtomicBoolean(true);
+			this.server = server;
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 	}
 	
-	public Client(Socket newSocket, Server server) {
-		this(newSocket);
-		this.server = server;
+	/**
+	 * Constructeur utilisé pour les tests
+	 * @param socketSimple
+	 * @throws IOException
+	 */
+	public Client(Socket socketSimple) throws IOException {
+		this.socketSimple = socketSimple;
+		this.out= new ObjectOutputStream(socketSimple.getOutputStream());
+		this.in = new ObjectInputStream(socketSimple.getInputStream());
+		this.connect = new AtomicBoolean(true);
 	}
 	
 	/**
@@ -45,21 +62,29 @@ public class Client implements Runnable {
 		while (connect.get()) { //Tant que la connexion est active
 			try {
 				Object obj = in.readObject();
-				server.execute(obj); 
-				Object [] objs = new Object[1]; 
-				objs[0] = Server.readingQueue;
+				Protocol protocolUsed = execute(obj);
+				Object [] toSend = new Object[2]; //Objets allant être envoyé aux clients
+				Notifier threadNotifier = null;
 				
-				NotifierReadingQueue notify = new NotifierReadingQueue(objs);
-				new Thread(notify).start(); //Envoi Ã  tous les clients du changement 
+				if (protocolUsed == Protocol.MODIFY_READING_QUEUE) 
+					threadNotifier = new NotifierReadingQueue(toSend);
+				else {
+					toSend[0] = Server.getInstance().getMasterVolume();
+					threadNotifier = new NotifierVolume(toSend);
+				}
+					
+				new Thread(threadNotifier).start(); //Envoi à tous les clients du changement d'état du serveur
 			} catch (ClassNotFoundException | IOException e) {
-				e.printStackTrace();
+				this.close();
 				connect.set(false);
 				server.disconnectClient(this);
 			}
 		}
 	}
 	
-	//ReÃ§oit des chaines de caractÃ¨res venant du client, tant que "exit" n'a pas Ã©tÃ© reÃ§u
+	/**
+	 * Récupère une constante de traitement du client connecté afin de changer l'état du serveur/du fil de lecture.
+	 */
 	public synchronized void getTreatmentFromRemote() 
 	{
 		String constant;
@@ -67,11 +92,106 @@ public class Client implements Runnable {
 			constant = readString();
 			if (constant == null)
 				return;
-			server.execute(constant);
+			execute(constant);
 		} while (!constant.equals("exit"));
-		System.out.println("Fin du traitement client " + getSocket());
+		System.out.println("Fin du traitement client " + getSocketSimple());
+	}
+	
+	/**
+	 * Execute une action sur le serveur et agissant sur les attributs de celui-ci.
+	 * @param constant
+	 * 		Constante de traitement allant être exécutée
+	 * @return
+	 * 		Le protocole correspondant au traitement effectué
+	 */
+	public synchronized Protocol execute(Object constant) 
+	{
+		String commande = null;
+		ReadingQueue readingQueue = Server.getInstance().getReadingQueue();
+		if (constant instanceof String) {
+			StringTokenizer stringTokenizer = new StringTokenizer((String) constant, "$");
+			commande = stringTokenizer.nextToken();
+			switch (commande)
+			{
+				case "play" : readingQueue.getCurrentTrack().play(); break;
+				case "pause" : readingQueue.getCurrentTrack().pause(); break;
+				case "mute" : readingQueue.getCurrentTrack().mute(); break;
+				case "restart" : readingQueue.getCurrentTrack().restart(); break;
+				case "stop" : readingQueue.getCurrentTrack().stop(); break;
+				case "loop" : readingQueue.getCurrentTrack().loop(); break;
+				case "next" : readingQueue.next(); break;
+				case "prev" : readingQueue.prev(); break;
+				case "random" : readingQueue.rand(); break;
+				case "+" : Server.volumeControl.increaseVolume(); break;
+				case "-" : Server.volumeControl.decreaseVolume(); break;
+				case "download" : 
+					if (stringTokenizer.hasMoreTokens()) {
+						String filePath = stringTokenizer.nextToken();
+						uploadFile(filePath);
+					}
+					break;
+				case "upload" : 
+					if (stringTokenizer.hasMoreTokens()) {
+						String filePath = stringTokenizer.nextToken();
+						downloadFile(filePath);
+					}; break;
+				default :
+			}
+			
+		}
+		if (constant instanceof Integer) {
+			readingQueue.setCurrentTrackPostion((Integer) constant);
+			readingQueue.getCurrentTrack().play();
+		}
+<<<<<<< HEAD
+		System.out.println("Received " + constant + " from the client, processing...");
+		/*if (commande.equals("+") || commande.equals("-"))
+=======
+		System.out.println("SERVEUR : Received " + constant + " from the client, processing...");
+		if (commande != null && (commande.equals("+") || commande.equals("-")))
+>>>>>>> origin/serverDev
+			return (Protocol.MODIFY_VOLUME);
+		else
+			return (Protocol.MODIFY_READING_QUEUE);*/
+		return (Protocol.MODIFY_READING_QUEUE);
+	}
+	
+	private void uploadFile(String filePath) {
+		try {
+			fileOut.writeObject("#OK");
+			new Thread(new FileUpload(fileOut, filePath)).start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void downloadFile(String filePath) {
+		try {
+			fileOut.writeObject("#OK");
+			new Thread(new FileDownload(fileIn)).start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 		
+	public void close() {
+		try {
+			this.fileIn.close();
+			this.fileOut.close();
+			this.in.close();
+			this.out.close();
+			this.socketFile.close();
+			this.socketSimple.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void setBuffers(ObjectOutputStream printer, ObjectInputStream bufferIn) {
+		this.in = bufferIn;
+		this.out = printer;
+	}
+	
 	public boolean sendSerializable(Serializable toSend) {
 		if (out != null) {
 			try {
@@ -138,8 +258,8 @@ public class Client implements Runnable {
 		return out;
 	}
 
-	public Socket getSocket() {
-		return socket;
+	public Socket getSocketSimple() {
+		return socketSimple;
 	}
 	
 	@Override
@@ -148,9 +268,8 @@ public class Client implements Runnable {
 			return false;
 		if (!(o instanceof Client))
 			return false;
-		if (((Client) o).getSocket().getInetAddress().getHostAddress().equals(this.socket.getInetAddress().getHostAddress()))
+		if (((Client) o).getSocketSimple().getInetAddress().getHostAddress().equals(this.socketSimple.getInetAddress().getHostAddress()))
 			return true;
 		return false;
 	}
-
 }

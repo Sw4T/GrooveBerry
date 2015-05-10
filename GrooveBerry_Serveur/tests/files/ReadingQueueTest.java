@@ -207,8 +207,6 @@ public class ReadingQueueTest {
 		assertEquals(-1, this.readingQueue.getCurrentTrackPosition());
 	}
 	
-	
-	
 	// Use Case
 	@Test
 	public void testChangeCurrentTrack_2Next1Prev2Next() {

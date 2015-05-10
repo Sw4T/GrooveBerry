@@ -13,55 +13,102 @@ import files.ReadingQueue;
 
 public class ClientTestMulti {
 	
+	static Scanner scannerDL = new Scanner(System.in);
+	static ObjectOutputStream objectOut = null;
+	static ObjectInputStream objectIn = null;
+	static ObjectOutputStream fileOut = null;
+	static ObjectInputStream fileIn = null;
+	
 	//Main du client Android ici simulÃ© 
-	@SuppressWarnings("unchecked")
-	public static void main (String [] args) {
-		Socket socket = null;
-		Scanner scan = new Scanner(System.in);
+	public static void main (String [] args) throws InterruptedException {
+		Socket socketSimple = null, socketFile = null;
 		int entreeUser = 0; String treatment = null;
 		ReadingQueue listReading;
+		
 		try {
-			//Connexion au serveur
-			socket = new Socket("localhost", Server.SERVER_PORT);
-			if (socket.isConnected() && socket.isBound())
-				System.out.println("Client : Je me suis bien connectÃ© au serveur ! youhou!");
+			//Connexion au serveur socket simple
+			socketSimple = new Socket("localhost", Server.SERVER_PORT_SIMPLE);
+			socketFile = new Socket("localhost", Server.SERVER_PORT_OBJECT);
+			if (socketSimple.isConnected() && socketSimple.isBound()) {
+<<<<<<< HEAD
+				System.out.println("Client : Je me suis bien connecté au serveur ! youhou!");
+				objectOut = new ObjectOutputStream(socketSimple.getOutputStream());
+				objectIn = new ObjectInputStream(socketSimple.getInputStream());
+				System.out.println("Flux d'objets initialisé !");
+			} else 
+				System.out.println("CLIENT : Socket simple cliente HS");
 			
-			//DÃ©claration des buffers entrÃ©es/sorties et rÃ©ception de la liste
-			ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+=======
+				System.out.println("CLIENT : Je me suis bien connecté au serveur !");
+				objectOut = new ObjectOutputStream(socketSimple.getOutputStream());
+				objectIn = new ObjectInputStream(socketSimple.getInputStream());
+				System.out.println("Flux d'objets initialisé !");
+			} else {
+				System.out.println("CLIENT : Socket simple cliente non connectée");
+				System.exit(1);
+			}
+>>>>>>> origin/serverDev
+			
+			//Authentification cliente
+			String messageRecu = (String) objectIn.readObject();
+			if (messageRecu.equals("#AUTH")) {
+<<<<<<< HEAD
+				objectOut.writeObject("mdp");
+=======
+				objectOut.writeObject("mdp"); //Défini en dur dans auth.txt pour l'instant
+>>>>>>> origin/serverDev
+				System.out.println("Mot de passe envoyé !");
+			} else
+				System.out.println("Echec lors de la phase d'authentification ! Recu : " + messageRecu);
+			
+			//Connexion au serveur socket objet
+			if (socketFile.isConnected() && socketFile.isBound()) {
+				fileOut = new ObjectOutputStream(socketFile.getOutputStream());
+				fileIn = new ObjectInputStream(socketFile.getInputStream());
+			} else {
+				System.out.println("CLIENT : Socket objet cliente non connectée");
+				System.exit(2);
+			}
+			
+			messageRecu = (String) objectIn.readObject();
 			
 			//Reception du fil de lecture depuis le serveur
-			if (in.readObject().equals("#RQ")) {
-				out.writeObject("#OK");
-				out.flush();
-				listReading = (ReadingQueue) in.readObject();
+			if (messageRecu.equals("#RQ")) {
+				objectOut.writeObject("#OK");
+				objectOut.flush();
+				listReading = (ReadingQueue) objectIn.readObject();
 				if (listReading != null)
 					showReadingQueue(listReading);
-			} else
-				System.out.println("Erreurs de synchronisation serveur !");
+			} else {
+				System.out.println("Erreurs de synchronisation serveur ! Recu : " + messageRecu);
+				System.exit(3);
+			}
+
+			threadReceive(objectIn);
 			
-			threadReceive(in);
 			//Envoi de chaines dÃ©finissant des constantes au serveur
+			Scanner scan = new Scanner(System.in);
 			do {
 				showMenu();
 				try {
 					entreeUser = scan.nextInt();
 					treatment = convertIntToMusicConst(entreeUser);
+					System.out.println("traitement envoyé : " + treatment);
 				} catch (InputMismatchException inputFail) {
 					treatment = "";
 				}
 				if (!treatment.equals("")) {
-					out.writeObject(treatment);
-					out.flush();
+					objectOut.writeObject(treatment);
+					objectOut.flush();
 				}
-				//receiveRQ(in);
 			} while (entreeUser != 7);
 			
 			//Fermeture de la connexion avec le serveur
-			if (socket != null) {
-				in.close();
-				out.close();
-				socket.close();
+			if (socketSimple != null) {
+				objectIn.close();
+				objectOut.close();
+				socketSimple.close();
+				socketFile.close();
 				scan.close();
 			}
 		} catch (IOException | ClassNotFoundException e) {
@@ -86,15 +133,43 @@ public class ClientTestMulti {
 	
 	public static void receiveRQ(ObjectInputStream is) throws ClassNotFoundException, IOException {
 		//Reception de la nouvelle liste
-		Protocol prot = (Protocol) is.readObject();
-		ReadingQueue rq = (ReadingQueue) is.readObject();
-		System.out.println("********RECEIVED*******\nprotocole : " + prot);
-		System.out.println("current track : " + rq.getCurrentTrack().getName());	
+		synchronized (is) {
+			Protocol prot = (Protocol) is.readObject();
+			System.out.println("********RECEIVED*******\nprotocole : " + prot);
+			if (prot == Protocol.MODIFY_READING_QUEUE) {
+				ReadingQueue rq = (ReadingQueue) is.readObject();
+				System.out.println("Current track : " + rq.getCurrentTrack().getName());	
+			} else if (prot == Protocol.MODIFY_VOLUME) {
+				Integer volume = (Integer) is.readObject();
+				System.out.println("Le volume a été modifié de " + volume + "%");
+			}
+			
+		}
 	}
 	
-	public static String convertIntToMusicConst(int input) 
+	public static void downloadTest() throws IOException, ClassNotFoundException, InterruptedException {
+		System.out.println("Entrez le nom du fichier Ã  télécharger sur le serveur");
+		String file = scannerDL.nextLine();
+		
+		objectOut.writeObject("download$" + file);
+		objectOut.flush();
+		fileIn.readObject();
+		new Thread(new FileDownload(fileIn)).start();
+	}
+	
+	public static void uploadTest() throws IOException, ClassNotFoundException, InterruptedException {
+		System.out.println("Entrez le nom du fichier Ã  mettre sur le serveur");
+		String file = scannerDL.nextLine();
+		
+		objectOut.writeObject("upload$" + file);
+		objectOut.flush();
+		fileIn.readObject();
+		new Thread(new FileUpload(fileOut, file)).start();
+	}
+	
+	public static String convertIntToMusicConst(int input) throws ClassNotFoundException, IOException, InterruptedException 
 	{
-		String toReturn;
+		String toReturn = "";
 		switch (input) {
 			case 1 : toReturn = "play"; break;
 			case 2 : toReturn = "pause"; break;
@@ -105,7 +180,11 @@ public class ClientTestMulti {
 			case 7 : toReturn = "exit"; break;
 			case 8 : toReturn = "next"; break;
 			case 9 : toReturn = "prev"; break;
-			case 10 : toReturn = "random"; break; 
+			case 10 : toReturn = "random"; break;
+			case 11 : toReturn = "+"; break;
+			case 12 : toReturn = "-"; break;
+			case 13 : downloadTest(); break;
+			case 14 : uploadTest(); break;
 			default : toReturn = "";
 		}
 		return toReturn;
@@ -123,6 +202,8 @@ public class ClientTestMulti {
 		System.out.println("8. Next");
 		System.out.println("9. Prev");
 		System.out.println("10. Random");
+		System.out.println("13. Download");
+		System.out.println("14. Upload");
 	}
 	
 	public static void showReadingQueue(ReadingQueue list) 

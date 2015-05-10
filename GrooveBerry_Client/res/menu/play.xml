@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:yourapp="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.grooveberry.PlayActivity" >
+
+    <item
+        android:id="@+id/action_connect"
+        android:title="@string/action_connect"
+        yourapp:showAsAction="never"/>
+    <item
+        android:id="@+id/action_exit"
+        android:title="@string/action_exit"
+        yourapp:showAsAction="never"/>
+
+</menu>
