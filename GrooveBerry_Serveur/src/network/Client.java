@@ -16,16 +16,16 @@ import files.ReadingQueue;
 
 public class Client implements Runnable {
 
-	private Socket socketSimple; //Socket utilisÃ© pour communiquer avec le client
-	private Socket socketFile; //Socket utilisÃ© pour communiquer avec le client
+	private Socket socketSimple; //Socket utilisé pour communiquer avec le client
+	private Socket socketFile; //Socket utilisé pour communiquer avec le client
 	private ObjectInputStream fileIn; 
 	private ObjectOutputStream fileOut;
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
 	
 	private String clientName; //Pseudo du client
-	protected AtomicBoolean connect; //BoolÃ©en assurant que le client est connectÃ©
-	private Server server; //RÃ©fÃ©rence au serveur principal
+	protected AtomicBoolean connect; //Booléen assurant que le client est connectÃ©
+	private Server server; //Référence au serveur principal
 	
 	public Client(Socket socketSimple, Socket socketObject, Server server) {
 		try {
@@ -41,14 +41,14 @@ public class Client implements Runnable {
 	}
 	
 	/**
-	 * Constructeur utilisï¿½ pour les tests
+	 * Constructeur utilisé pour les tests
 	 * @param socketSimple
 	 * @throws IOException
 	 */
 	public Client(Socket socketSimple) throws IOException {
 		this.socketSimple = socketSimple;
-		this.fileOut = new ObjectOutputStream(socketSimple.getOutputStream());
-		this.fileIn = new ObjectInputStream(socketSimple.getInputStream());
+		this.out= new ObjectOutputStream(socketSimple.getOutputStream());
+		this.in = new ObjectInputStream(socketSimple.getInputStream());
 		this.connect = new AtomicBoolean(true);
 	}
 	
@@ -61,10 +61,9 @@ public class Client implements Runnable {
 	public void run() {
 		while (connect.get()) { //Tant que la connexion est active
 			try {
-				
 				Object obj = in.readObject();
 				Protocol protocolUsed = execute(obj);
-				Object [] toSend = new Object[2]; //Objets allant Ãªtre envoyÃ© aux clients
+				Object [] toSend = new Object[2]; //Objets allant être envoyé aux clients
 				Notifier threadNotifier = null;
 				
 				if (protocolUsed == Protocol.MODIFY_READING_QUEUE) 
@@ -74,7 +73,7 @@ public class Client implements Runnable {
 					threadNotifier = new NotifierVolume(toSend);
 				}
 					
-				new Thread(threadNotifier).start(); //Envoi Ã  tous les clients du changement 
+				new Thread(threadNotifier).start(); //Envoi à tous les clients du changement d'état du serveur
 			} catch (ClassNotFoundException | IOException e) {
 				this.close();
 				connect.set(false);
@@ -83,7 +82,9 @@ public class Client implements Runnable {
 		}
 	}
 	
-	//ReÃ§oit des chaines de caractÃ¨res venant du client, tant que "exit" n'a pas Ã©tÃ© reÃ§u
+	/**
+	 * Récupère une constante de traitement du client connecté afin de changer l'état du serveur/du fil de lecture.
+	 */
 	public synchronized void getTreatmentFromRemote() 
 	{
 		String constant;
@@ -93,9 +94,16 @@ public class Client implements Runnable {
 				return;
 			execute(constant);
 		} while (!constant.equals("exit"));
-		System.out.println("Fin du traitement client " + getSocket());
+		System.out.println("Fin du traitement client " + getSocketSimple());
 	}
 	
+	/**
+	 * Execute une action sur le serveur et agissant sur les attributs de celui-ci.
+	 * @param constant
+	 * 		Constante de traitement allant être exécutée
+	 * @return
+	 * 		Le protocole correspondant au traitement effectué
+	 */
 	public synchronized Protocol execute(Object constant) 
 	{
 		String commande = null;
@@ -114,8 +122,8 @@ public class Client implements Runnable {
 				case "next" : readingQueue.next(); break;
 				case "prev" : readingQueue.prev(); break;
 				case "random" : readingQueue.rand(); break;
-				case "+" : Server.volControl.increaseVolume(); break;
-				case "-" : Server.volControl.decreaseVolume(); break;
+				case "+" : Server.volumeControl.increaseVolume(); break;
+				case "-" : Server.volumeControl.decreaseVolume(); break;
 				case "download" : 
 					if (stringTokenizer.hasMoreTokens()) {
 						String filePath = stringTokenizer.nextToken();
@@ -135,8 +143,13 @@ public class Client implements Runnable {
 			readingQueue.setCurrentTrackPostion((Integer) constant);
 			readingQueue.getCurrentTrack().play();
 		}
+<<<<<<< HEAD
 		System.out.println("Received " + constant + " from the client, processing...");
 		/*if (commande.equals("+") || commande.equals("-"))
+=======
+		System.out.println("SERVEUR : Received " + constant + " from the client, processing...");
+		if (commande != null && (commande.equals("+") || commande.equals("-")))
+>>>>>>> origin/serverDev
 			return (Protocol.MODIFY_VOLUME);
 		else
 			return (Protocol.MODIFY_READING_QUEUE);*/
@@ -245,7 +258,7 @@ public class Client implements Runnable {
 		return out;
 	}
 
-	public Socket getSocket() {
+	public Socket getSocketSimple() {
 		return socketSimple;
 	}
 	
@@ -255,7 +268,7 @@ public class Client implements Runnable {
 			return false;
 		if (!(o instanceof Client))
 			return false;
-		if (((Client) o).getSocket().getInetAddress().getHostAddress().equals(this.socketSimple.getInetAddress().getHostAddress()))
+		if (((Client) o).getSocketSimple().getInetAddress().getHostAddress().equals(this.socketSimple.getInetAddress().getHostAddress()))
 			return true;
 		return false;
 	}

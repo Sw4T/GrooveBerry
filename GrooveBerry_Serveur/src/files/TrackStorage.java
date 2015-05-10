@@ -102,7 +102,6 @@ public abstract class TrackStorage {
 		} catch (CannotReadException | IOException | ReadOnlyFileException | InvalidAudioFrameException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println("Fail to create XML file");
 		}
 	}
 	

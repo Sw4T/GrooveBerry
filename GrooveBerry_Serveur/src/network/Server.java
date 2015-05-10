@@ -13,16 +13,16 @@ import files.SystemVolumeController;
 
 public class Server {
 
-	public static final int SERVER_PORT_SIMPLE = 12347; 
-	public static final int SERVER_PORT_OBJECT = 12348;
-	private static final int NB_MAX_CLIENTS = 5; //Nombre de clients supportï¿½s au maximum
+	public static final int SERVER_PORT_SIMPLE = 12347; //Port servant à l'établissement d'une connexion socket simple (envoi de primitifs)
+	public static final int SERVER_PORT_OBJECT = 12348; //Port servant à l'établissement d'une connexion socket objet (envoi de d'objets sérialisés)
+	private static final int NB_MAX_CLIENTS = 5; 
 	
-	private static volatile Server instanceServer;
+	private static volatile Server instanceServer; //Instance unique de la classe Server (pattern Singleton)
 	private volatile ReadingQueue readingQueue; //Liste de lecture
 	private volatile ArrayList<Client> listClients; //Liste de clients se connectant au serveur
-	public volatile static SystemVolumeController volControl;
-	private ServerSocket serverSocketSimple; //Classe gÃ©rant les connexions entrantes et l'envoi de chaines 
-	private ServerSocket serverSocketObject; //Classe gï¿½rant l'envoi/rï¿½ception d'objets plus lourds
+	public volatile static SystemVolumeController volumeControl; //Classe gérant le volume 
+	private ServerSocket serverSocketSimple; //Classe gérant les connexions entrantes et l'envoi de chaines 
+	private ServerSocket serverSocketObject; //Classe gérant l'envoi/réception d'objets plus lourds
 	private Client currentClient; //Pour effectuer les tests
 	
 	private Server() {
@@ -31,10 +31,11 @@ public class Server {
 			serverSocketObject = new ServerSocket(SERVER_PORT_OBJECT);
 			listClients = new ArrayList<Client>(NB_MAX_CLIENTS);
 			readingQueue = new ReadingQueue();
-			volControl = new SystemVolumeController();
+			volumeControl = new SystemVolumeController();
 			initReadingQueue();
 		} catch (IOException e) {
 			e.printStackTrace();
+			System.exit(-1);
 		}
 	}
 	
@@ -56,7 +57,7 @@ public class Server {
 			if (listClients.size() != NB_MAX_CLIENTS) 
 			{
 				Socket newSocketObject = serverSocketObject.accept();
-				System.out.println("Client " + newSocketSimple.getInetAddress() + " s'est connecte !");
+				System.out.println("SERVEUR : Client " + newSocketSimple.getInetAddress() + " s'est connecte !");
 				new Thread(new Authenticator(newSocketSimple, newSocketObject)).start();
 			} else {
 				newSocketSimple.close();
@@ -65,20 +66,19 @@ public class Server {
 		}
 	}
 	
-	//Utilisation d'un nouveau thread pour permettre d'effectuer les tests en parallÃ¨le
+	//Utilisation d'un nouveau thread pour permettre d'effectuer les tests en parallèle
 	public void waitConnectionForTest() {
 		new Thread(new Runnable() {
 			@Override
-			public void run() {
-					while (true) {
-						try {
-							Socket socket = serverSocketSimple.accept();
-							System.out.println("SERVEUR : Client " + socket.getInetAddress() + " has connected !");
-							currentClient = new Client(socket);
-						} catch (IOException e) {
-							e.printStackTrace();
-						} 
-					}
+			public void run() {	
+				Socket socket;
+				try {
+					socket = serverSocketSimple.accept();
+					System.out.println("SERVEUR : Client " + socket.getInetAddress() + " has connected !");
+					currentClient = new Client(socket);	
+				} catch (IOException e) {
+					e.printStackTrace();
+				}	
 			}
 		}).start();
 	}
@@ -97,6 +97,7 @@ public class Server {
 		}
 	}
 
+	
 	public void updateClientList(Client newClient) {
 		//if (listClients.size() == 0)
 			listClients.add(newClient);
@@ -112,22 +113,26 @@ public class Server {
 	
 	public void disconnectClient(Client client) {
 		if (listClients.contains(client)) {
+<<<<<<< HEAD
 			System.out.println("Client existant " + client.getSocket() + " déconnecté");
+=======
+			System.out.println("SERVEUR : Client existant " + client.getSocketSimple() + " déconnecté");
+>>>>>>> origin/serverDev
 			listClients.remove(client);
 		} else
-			System.out.println(client.getSocket());
+			System.out.println(client.getSocketSimple());
 	}
 	
-	public ArrayList<Client> getClients() {
+	public synchronized ArrayList<Client> getClients() {
 		return listClients;
 	}
 	
-	public ReadingQueue getReadingQueue() {
+	public synchronized ReadingQueue getReadingQueue() {
 		return readingQueue;
 	}
 	
 	public Integer getMasterVolume() {
-		return volControl.getVolumePercentage();
+		return volumeControl.getVolumePercentage();
 	}
 	
 	public Client getCurrentClient() {

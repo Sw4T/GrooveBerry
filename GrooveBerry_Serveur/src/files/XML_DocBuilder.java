@@ -93,6 +93,7 @@ public class XML_DocBuilder {
 					track.setAttribute("title", tag.getSong());
 				}
 				if(notExist){
+					
 					artist.appendChild(track);
 				}
 				else{

@@ -2,6 +2,7 @@ package files;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.Observable;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -9,7 +10,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
 
-public class AudioFile implements Runnable, Serializable
+public class AudioFile extends Observable implements Runnable, Serializable
 {
 
 	private static final long serialVersionUID = -726613633651477466L;
@@ -17,7 +18,6 @@ public class AudioFile implements Runnable, Serializable
 	private boolean running, mute, pause, loop, restart;
 	private final int byteChunkSize = 4096;//number of bytes to read at one time
 	private byte[] muteData;
-	private AudioListener listenerEvent;
 	private boolean isStopped;
 	//private FloatControl volume;
 
@@ -75,18 +75,6 @@ public class AudioFile implements Runnable, Serializable
 	}
 	
 	/**
-	 * Ajoute un listener au fichier audio
-	 * @param listener
-	 */
-	public void addListener(AudioListener listener) {
-	 	this.listenerEvent = listener;
-	}
-	
-	public void removeListener() {
-		this.listenerEvent = null;
-	}
-	
-	/**
 	* Pauses the audio at its current place. Calling this method once pauses the audio stream, calling it
 	* again unpauses the audio stream.
 	*/
@@ -109,8 +97,8 @@ public class AudioFile implements Runnable, Serializable
 		if (file != null) {
 			running = false;
 			isStopped = true;
-			if (this.listenerEvent != null)
-				this.listenerEvent.stopOfPlay();
+			setChanged();
+			notifyObservers("StopOfPlay");
 		}
 	}
 	
@@ -229,8 +217,10 @@ public class AudioFile implements Runnable, Serializable
 				in.close();
 			} while((loop || restart) && running);
 			running = false;
-			if (this.listenerEvent != null && !isStopped)
-				this.listenerEvent.endOfPlay();
+			if (!isStopped) {
+				setChanged();
+				notifyObservers("EndOfPlay");
+			}
 			isStopped = false;
 		} catch(Exception e) {
 			System.err.println("Problem getting audio stream!");
