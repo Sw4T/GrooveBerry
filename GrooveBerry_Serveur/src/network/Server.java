@@ -4,17 +4,20 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
+import protocol.NotifierReadingQueue;
 import files.AudioFile;
 import files.AudioFileScanner;
 import files.Library;
 import files.ReadingQueue;
 import files.SystemVolumeController;
 
-public class Server {
+public class Server implements Observer {
 
-	public static final int SERVER_PORT_SIMPLE = 12347; 
-	public static final int SERVER_PORT_OBJECT = 12348;
+	public static final int SERVER_PORT_SIMPLE = 12367; 
+	public static final int SERVER_PORT_OBJECT = 12368;
 	private static final int NB_MAX_CLIENTS = 5; //Nombre de clients support�s au maximum
 	
 	private static volatile Server instanceServer;
@@ -32,13 +35,12 @@ public class Server {
 			listClients = new ArrayList<Client>(NB_MAX_CLIENTS);
 			readingQueue = new ReadingQueue();
 			volControl = new SystemVolumeController();
-			initReadingQueue();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public static Server getInstance() {
+	public synchronized static Server getInstance() {
 		if (instanceServer == null) {
 			synchronized (Server.class) {
 				if (instanceServer == null) {
@@ -131,5 +133,31 @@ public class Server {
 	
 	public Client getCurrentClient() {
 		return this.currentClient;
+	}
+	
+	@Override
+	public void update(Observable o, Object arg) {
+		if (o instanceof AudioFile) {
+			String state = (String) arg;
+			switch (state) {
+				case "EndOfPlay" : endOfPlay(); break;
+				case "StopOfPlay" : stopOfPlay(); break;
+			}
+		}
+		
+	}
+
+	private void stopOfPlay() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void endOfPlay() {
+		// Envoi du changement de morceau à tout les client
+		Object [] objs = new Object[1]; 
+		objs[0] = Server.getInstance().getReadingQueue(); 
+		NotifierReadingQueue notify = new NotifierReadingQueue(objs);
+		new Thread(notify).start();
+		
 	}
 }

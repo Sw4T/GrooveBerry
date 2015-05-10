@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.StringTokenizer;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -12,6 +14,7 @@ import protocol.Notifier;
 import protocol.NotifierReadingQueue;
 import protocol.NotifierVolume;
 import protocol.Protocol;
+import files.AudioFile;
 import files.ReadingQueue;
 
 public class Client implements Runnable {

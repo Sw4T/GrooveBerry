@@ -52,6 +52,7 @@ public class ReadingQueue implements Observer, Serializable {
 		
 		this.currentTrack = track;
 		this.currentTrack.addObserver(this);
+		this.currentTrack.addObserver(Server.getInstance());
 		this.currentTrackIndex = 0;
 	}
 	
@@ -98,6 +99,7 @@ public class ReadingQueue implements Observer, Serializable {
 			this.currentTrackIndex = 0;
 			this.currentTrack.deleteObserver(this);
 			this.currentTrack.addObserver(this);
+			this.currentTrack.addObserver(Server.getInstance());
 		}
 		this.queue.add(track);
 	}
@@ -117,6 +119,7 @@ public class ReadingQueue implements Observer, Serializable {
 			this.currentTrackIndex = 0;
 			this.currentTrack.deleteObserver(this);
 			this.currentTrack.addObserver(this);
+			this.currentTrack.addObserver(Server.getInstance());
 		}
 		if (index <= this.currentTrackIndex && !this.isEmpty()) {
 			this.currentTrackIndex++;
@@ -257,6 +260,7 @@ public class ReadingQueue implements Observer, Serializable {
 		this.currentTrack = this.queue.get(index);
 		this.currentTrack.deleteObserver(this);
 		this.currentTrack.addObserver(this);
+		this.currentTrack.addObserver(Server.getInstance());
 	}
 	
 	/**
@@ -309,6 +313,7 @@ public class ReadingQueue implements Observer, Serializable {
 		this.currentTrackIndex = shiftInt;
 		this.currentTrack.deleteObserver(this);
 		this.currentTrack.addObserver(this);
+		this.currentTrack.addObserver(Server.getInstance());
 	}
 	
 	/**
@@ -355,12 +360,6 @@ public class ReadingQueue implements Observer, Serializable {
 		if ((trackIndex + 1 < this.queue.size()) || this.isRandomised()) {
 			next();
 		}
-		
-		// Envoi du changement de morceau à tout les client
-		Object [] objs = new Object[1]; 
-		objs[0] = Server.getInstance().getReadingQueue(); 
-		NotifierReadingQueue notify = new NotifierReadingQueue(objs);
-		new Thread(notify).start();
 	}
 	
 	/**
