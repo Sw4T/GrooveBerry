@@ -20,35 +20,35 @@ public class Authenticator implements Runnable {
 	@Override
 	public void run() {
 		try {
-			System.out.println("Authentification du client " + socketSimple.getInetAddress());
+			System.out.println("SERVEUR : Authentification du client " + socketSimple.getInetAddress());
 			AuthenticationSystem authSystem = new AuthenticationSystem();
 			ObjectOutputStream printer = new ObjectOutputStream(socketSimple.getOutputStream());
 			ObjectInputStream buffer = new ObjectInputStream(socketSimple.getInputStream());
 			
-			//Vï¿½rification du mot de passe 
 			printer.writeObject("#AUTH");
 			try {
 				String passwordReceived = (String) buffer.readObject();
 				boolean passwordOK = authSystem.verifyPassword(passwordReceived);
-				System.out.println("Mot de passe reï¿½u du client " + socketSimple.getInetAddress().getHostAddress() + " : " + passwordReceived);
+				System.out.println("SERVEUR : Mot de passe reçu du client " + socketSimple.getInetAddress().getHostAddress() + " : " + passwordReceived);
+				
 				Server server = Server.getInstance();
 				if (passwordOK) {
-					System.out.println("Authentification OK...");
+					System.out.println("SERVEUR : Authentification OK...");
 					Client newClient = new Client(socketSimple, socketFile, server);
 					newClient.setBuffers(printer, buffer);
 					
 					sendReadingQueueToRemote(newClient); 
 					server.updateClientList(newClient); 
-					new Thread(newClient).start(); //Lancement du traitement client
+					new Thread(newClient).start(); //Démarrage du traitement client
 				} else
-					System.out.println("Authentification FAILED...");
+					System.out.println("SERVEUR : Authentification FAILED...");
 			} catch (IOException e) {
 				e.printStackTrace();
-				System.out.println("Erreur lors de la rï¿½ception du mot de passe venant du client !");
+				System.out.println("Erreur lors de la réception du mot de passe venant du client !");
 			} catch (ClassNotFoundException e) {}
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("Erreur lors de la crï¿½ation de flux avec le client !");
+			System.out.println("Erreur lors de la création de flux avec le client !");
 		}
 	}
 	
@@ -58,10 +58,10 @@ public class Authenticator implements Runnable {
 		String rep = (String) c.readSerializable();
 		if (rep.equals("#OK")) {
 			if (c.sendSerializable(Server.getInstance().getReadingQueue())) {
-				System.out.println("Envoi de la reading queue OK...");
+				System.out.println("SERVEUR : Envoi de la reading queue OK...");
 			}
 		} else
-			System.out.println("Erreur lors de l'envoi de la reading queue");
+			System.out.println("SERVEUR : Erreur lors de l'envoi de la reading queue");
 	}
 
 }
