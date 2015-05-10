@@ -8,7 +8,7 @@
 * Nicolas SYMPHORIEN
 
 **`SCRUM Master`**
-* Natasha MORIN
+* Natacha MORIN
 
 **`Product Owner`**
 * Enzo ALUNNI
