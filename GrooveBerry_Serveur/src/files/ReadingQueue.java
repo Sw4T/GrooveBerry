@@ -23,13 +23,8 @@ import protocol.NotifierReadingQueue;
  * @author Nicolas Symphorien, Enzo Alunni Bagarelli
  * @version 1.0
  */
-<<<<<<< HEAD
-
-public class ReadingQueue implements AudioListener, Serializable {
-=======
 
 public class ReadingQueue implements Observer, Serializable {
->>>>>>> origin/serverDev
 	private static final long serialVersionUID = -1233259350112363601L;
 	
 	private	AudioFile currentTrack;
@@ -57,6 +52,7 @@ public class ReadingQueue implements Observer, Serializable {
 		
 		this.currentTrack = track;
 		this.currentTrack.addObserver(this);
+		this.currentTrack.addObserver(Server.getInstance());
 		this.currentTrackIndex = 0;
 	}
 	
@@ -103,6 +99,7 @@ public class ReadingQueue implements Observer, Serializable {
 			this.currentTrackIndex = 0;
 			this.currentTrack.deleteObserver(this);
 			this.currentTrack.addObserver(this);
+			this.currentTrack.addObserver(Server.getInstance());
 		}
 		this.queue.add(track);
 	}
@@ -122,6 +119,7 @@ public class ReadingQueue implements Observer, Serializable {
 			this.currentTrackIndex = 0;
 			this.currentTrack.deleteObserver(this);
 			this.currentTrack.addObserver(this);
+			this.currentTrack.addObserver(Server.getInstance());
 		}
 		if (index <= this.currentTrackIndex && !this.isEmpty()) {
 			this.currentTrackIndex++;
@@ -262,6 +260,7 @@ public class ReadingQueue implements Observer, Serializable {
 		this.currentTrack = this.queue.get(index);
 		this.currentTrack.deleteObserver(this);
 		this.currentTrack.addObserver(this);
+		this.currentTrack.addObserver(Server.getInstance());
 	}
 	
 	/**
@@ -314,6 +313,7 @@ public class ReadingQueue implements Observer, Serializable {
 		this.currentTrackIndex = shiftInt;
 		this.currentTrack.deleteObserver(this);
 		this.currentTrack.addObserver(this);
+		this.currentTrack.addObserver(Server.getInstance());
 	}
 	
 	/**
@@ -360,12 +360,6 @@ public class ReadingQueue implements Observer, Serializable {
 		if ((trackIndex + 1 < this.queue.size()) || this.isRandomised()) {
 			next();
 		}
-		
-		// Envoi du changement de morceau à tout les client
-		Object [] objs = new Object[1]; 
-		objs[0] = Server.getInstance().getReadingQueue(); 
-		NotifierReadingQueue notify = new NotifierReadingQueue(objs);
-		new Thread(notify).start();
 	}
 	
 	/**
@@ -406,8 +400,6 @@ public class ReadingQueue implements Observer, Serializable {
 			paused = track.isPaused();
 		}
 	}
-<<<<<<< HEAD
-=======
 
 	@Override
 	public void update(Observable o, Object arg) {
@@ -419,5 +411,5 @@ public class ReadingQueue implements Observer, Serializable {
 			}
 		}
 	}
->>>>>>> origin/serverDev
+
 }
