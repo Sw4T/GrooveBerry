@@ -112,7 +112,7 @@ public class Server {
 	
 	public void disconnectClient(Client client) {
 		if (listClients.contains(client)) {
-			System.out.println("Client existant " + client.getSocket() + " dÃ©connectÃ©");
+			System.out.println("Client existant " + client.getSocket() + " déconnecté");
 			listClients.remove(client);
 		} else
 			System.out.println(client.getSocket());

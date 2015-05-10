@@ -32,10 +32,10 @@ public class ClientTestMulti {
 			socketSimple = new Socket("localhost", Server.SERVER_PORT_SIMPLE);
 			socketFile = new Socket("localhost", Server.SERVER_PORT_OBJECT);
 			if (socketSimple.isConnected() && socketSimple.isBound()) {
-				System.out.println("Client : Je me suis bien connectÃ© au serveur ! youhou!");
+				System.out.println("Client : Je me suis bien connecté au serveur ! youhou!");
 				objectOut = new ObjectOutputStream(socketSimple.getOutputStream());
 				objectIn = new ObjectInputStream(socketSimple.getInputStream());
-				System.out.println("Flux d'objets initialisï¿½ !");
+				System.out.println("Flux d'objets initialisé !");
 			} else 
 				System.out.println("CLIENT : Socket simple cliente HS");
 			
@@ -44,7 +44,7 @@ public class ClientTestMulti {
 			String messageRecu = (String) objectIn.readObject();
 			if (messageRecu.equals("#AUTH")) {
 				objectOut.writeObject("mdp");
-				System.out.println("Mot de passe envoyï¿½ !");
+				System.out.println("Mot de passe envoyé !");
 			} else
 				System.out.println("Echec lors de la phase d'authentification ! Recu : " + messageRecu);
 			
@@ -74,7 +74,7 @@ public class ClientTestMulti {
 				try {
 					entreeUser = scan.nextInt();
 					treatment = convertIntToMusicConst(entreeUser);
-					System.out.println("traitement envoyÃ© : " + treatment);
+					System.out.println("traitement envoyé : " + treatment);
 				} catch (InputMismatchException inputFail) {
 					treatment = "";
 				}

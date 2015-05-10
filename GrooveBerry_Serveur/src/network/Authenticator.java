@@ -30,7 +30,7 @@ public class Authenticator implements Runnable {
 			try {
 				String passwordReceived = (String) buffer.readObject();
 				boolean passwordOK = authSystem.verifyPassword(passwordReceived);
-				System.out.println("Mot de passe reï¿½u du client " + socketSimple.getInetAddress().getHostAddress() + " : " + passwordReceived);
+				System.out.println("Mot de passe reçu du client " + socketSimple.getInetAddress().getHostAddress() + " : " + passwordReceived);
 				Server server = Server.getInstance();
 				if (passwordOK) {
 					System.out.println("Authentification OK...");
