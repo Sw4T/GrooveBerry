@@ -136,7 +136,7 @@ public class Client implements Runnable {
 			readingQueue.getCurrentTrack().play();
 		}
 		System.out.println("Received " + constant + " from the client, processing...");
-		if (commande.equals("+") || commande.equals("-"))
+		if (commande != null && (commande.equals("+") || commande.equals("-")))
 			return (Protocol.MODIFY_VOLUME);
 		else
 			return (Protocol.MODIFY_READING_QUEUE);
