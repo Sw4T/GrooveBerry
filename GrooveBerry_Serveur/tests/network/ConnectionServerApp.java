@@ -18,6 +18,7 @@ public class ConnectionServerApp {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		server = Server.getInstance();
+		server.initReadingQueue();
 		server.waitConnectionForTest();
 		client_app = new Client(new Socket("localhost", Server.SERVER_PORT_SIMPLE));
 		Thread.sleep(100);

@@ -34,9 +34,11 @@ public class ModifyReadingQueue {
 			tennisc.wav
 			test.wav
 	 */
+	
 	@BeforeClass
-	public static void setUp() throws Exception {
+	public static void setUpBeforeClass() throws Exception {
 		server = Server.getInstance();
+		server.initReadingQueue();
 		server.waitConnectionForTest();
 		client_app = new Client(new Socket("localhost", Server.SERVER_PORT_SIMPLE));
 		Thread.sleep(100);
@@ -48,7 +50,7 @@ public class ModifyReadingQueue {
 	}
 
 	@AfterClass
-	public static void tearDown() throws Exception {
+	public static void tearDownAfterClass() throws Exception {
 		client_app = null;
 		client_server = null;
 		server = null;
