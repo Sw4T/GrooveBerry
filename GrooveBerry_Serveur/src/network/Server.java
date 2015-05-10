@@ -4,17 +4,20 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
+import protocol.NotifierReadingQueue;
 import files.AudioFile;
 import files.AudioFileScanner;
 import files.Library;
 import files.ReadingQueue;
 import files.SystemVolumeController;
 
-public class Server {
+public class Server implements Observer {
 
-	public static final int SERVER_PORT_SIMPLE = 12347; //Port servant à l'établissement d'une connexion socket simple (envoi de primitifs)
-	public static final int SERVER_PORT_OBJECT = 12348; //Port servant à l'établissement d'une connexion socket objet (envoi de d'objets sérialisés)
+	public static final int SERVER_PORT_SIMPLE = 12347; //Port servant ï¿½ l'ï¿½tablissement d'une connexion socket simple (envoi de primitifs)
+	public static final int SERVER_PORT_OBJECT = 12348; //Port servant ï¿½ l'ï¿½tablissement d'une connexion socket objet (envoi de d'objets sï¿½rialisï¿½s)
 	private static final int NB_MAX_CLIENTS = 5; 
 	
 	private static volatile Server instanceServer; //Instance unique de la classe Server (pattern Singleton)
@@ -32,14 +35,13 @@ public class Server {
 			listClients = new ArrayList<Client>(NB_MAX_CLIENTS);
 			readingQueue = new ReadingQueue();
 			volumeControl = new SystemVolumeController();
-			initReadingQueue();
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
 	}
 	
-	public static Server getInstance() {
+	public synchronized static Server getInstance() {
 		if (instanceServer == null) {
 			synchronized (Server.class) {
 				if (instanceServer == null) {
@@ -66,7 +68,7 @@ public class Server {
 		}
 	}
 	
-	//Utilisation d'un nouveau thread pour permettre d'effectuer les tests en parallèle
+	//Utilisation d'un nouveau thread pour permettre d'effectuer les tests en parallï¿½le
 	public void waitConnectionForTest() {
 		new Thread(new Runnable() {
 			@Override
@@ -113,7 +115,7 @@ public class Server {
 	
 	public void disconnectClient(Client client) {
 		if (listClients.contains(client)) {
-			System.out.println("SERVEUR : Client existant " + client.getSocketSimple() + " déconnecté");
+			System.out.println("SERVEUR : Client existant " + client.getSocketSimple() + " dï¿½connectï¿½");
 			listClients.remove(client);
 		} else
 			System.out.println(client.getSocketSimple());
@@ -133,5 +135,31 @@ public class Server {
 	
 	public Client getCurrentClient() {
 		return this.currentClient;
+	}
+	
+	@Override
+	public void update(Observable o, Object arg) {
+		if (o instanceof AudioFile) {
+			String state = (String) arg;
+			switch (state) {
+				case "EndOfPlay" : endOfPlay(); break;
+				case "StopOfPlay" : stopOfPlay(); break;
+			}
+		}
+		
+	}
+
+	private void stopOfPlay() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void endOfPlay() {
+		// Envoi du changement de morceau Ã  tout les client
+		Object [] objs = new Object[1]; 
+		objs[0] = Server.getInstance().getReadingQueue(); 
+		NotifierReadingQueue notify = new NotifierReadingQueue(objs);
+		new Thread(notify).start();
+		
 	}
 }

@@ -41,7 +41,7 @@ public class Client implements Runnable {
 	}
 	
 	/**
-	 * Constructeur utilisé pour les tests
+	 * Constructeur utilisï¿½ pour les tests
 	 * @param socketSimple
 	 * @throws IOException
 	 */
@@ -63,7 +63,7 @@ public class Client implements Runnable {
 			try {
 				Object obj = in.readObject();
 				Protocol protocolUsed = execute(obj);
-				Object [] toSend = new Object[2]; //Objets allant être envoyé aux clients
+				Object [] toSend = new Object[2]; //Objets allant ï¿½tre envoyï¿½ aux clients
 				Notifier threadNotifier = null;
 				
 				if (protocolUsed == Protocol.MODIFY_READING_QUEUE) 
@@ -73,7 +73,7 @@ public class Client implements Runnable {
 					threadNotifier = new NotifierVolume(toSend);
 				}
 					
-				new Thread(threadNotifier).start(); //Envoi à tous les clients du changement d'état du serveur
+				new Thread(threadNotifier).start(); //Envoi ï¿½ tous les clients du changement d'ï¿½tat du serveur
 			} catch (ClassNotFoundException | IOException e) {
 				this.close();
 				connect.set(false);
@@ -85,9 +85,9 @@ public class Client implements Runnable {
 	/**
 	 * Execute une action sur le serveur et agissant sur les attributs de celui-ci.
 	 * @param constant
-	 * 		Constante de traitement allant être exécutée
+	 * 		Constante de traitement allant ï¿½tre exï¿½cutï¿½e
 	 * @return
-	 * 		Le protocole correspondant au traitement effectué
+	 * 		Le protocole correspondant au traitement effectuï¿½
 	 */
 	public synchronized Protocol execute(Object constant) 
 	{
@@ -128,11 +128,13 @@ public class Client implements Runnable {
 			readingQueue.setCurrentTrackPostion((Integer) constant);
 			readingQueue.getCurrentTrack().play();
 		}
+
 		System.out.println("SERVEUR : Received " + constant + " from the client, processing...");
-		if (commande != null && (commande.equals("+") || commande.equals("-")))
+		/*if (commande != null && (commande.equals("+") || commande.equals("-")))
 			return (Protocol.MODIFY_VOLUME);
 		else
-			return (Protocol.MODIFY_READING_QUEUE);
+			return (Protocol.MODIFY_READING_QUEUE);*/
+		return (Protocol.MODIFY_READING_QUEUE);
 	}
 	
 	private void uploadFile(String filePath) {

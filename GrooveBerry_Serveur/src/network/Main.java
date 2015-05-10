@@ -8,6 +8,7 @@ public class Main {
 	public static void main (String [] args) {
 		try {
 			Server serveur = Server.getInstance();
+			serveur.initReadingQueue();
 			serveur.waitConnection();
 		} catch (IOException e) {
 			e.printStackTrace();
