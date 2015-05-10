@@ -23,8 +23,6 @@ public class ConnectionServerApp {
 		Thread.sleep(100);
 		client_server = server.getCurrentClient();
 		System.out.println("Initialisation effectu�e...");
-		while (client_server == null) 
-			Thread.sleep(100);
 	}
 
 	@AfterClass
@@ -65,33 +63,33 @@ public class ConnectionServerApp {
 	@Test
 	public void test_send_serializable_to_server() 
 	{
-		ArrayList<String> test = new ArrayList<String>();
-		test.add("jm pas");
-		test.add("les tests.");
-		assertEquals(client_app.sendSerializable(test), true);
+		ArrayList<String> send = new ArrayList<String>();
+		send.add("jm pas");
+		send.add("les tests.");
+		assertEquals(client_app.sendSerializable(send), true);
 		ArrayList<String> received = (ArrayList<String>) client_server.readSerializable();
-		assertEquals(received, test); //Vérification de la similarité des tableaux
-		assertEquals(received.size(), test.size()); //Vérification de la taille
+		assertEquals(received, send); //Vérification de la similarité des tableaux
+		assertEquals(received.size(), send.size()); //Vérification de la taille
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Test
 	public void test_send_several_serializable_to_server() 
 	{
-		ArrayList<String> test = new ArrayList<String>();
-		test.add("jm pas");
-		test.add("les tests.");
-		assertEquals(client_app.sendSerializable(test), true); //Envoi effectué sans erreur
+		ArrayList<String> send = new ArrayList<String>();
+		send.add("jm pas");
+		send.add("les tests.");
+		assertEquals(client_app.sendSerializable(send), true); //Envoi effectué sans erreur
 		ArrayList<String> received = (ArrayList<String>) client_server.readSerializable();
-		assertEquals(received, test); //Vérification de la similarité des tableaux
-		assertEquals(received.size(), test.size()); //Vérification de la taille
+		assertEquals(received, send); //Vérification de la similarité des tableaux
+		assertEquals(received.size(), send.size()); //Vérification de la taille
 		
-		test.add("pour de");
-		test.add("vrai");
-		assertEquals(client_app.sendSerializable(test), true);
+		send.add("pour de");
+		send.add("vrai");
+		assertEquals(client_app.sendSerializable(send), true);
 		received = (ArrayList<String>) client_server.readSerializable();
-		assertEquals(received, test); //Vérification de la similarité des tableaux
-		assertEquals(received.size(), test.size()); //Vérification de la taille
+		assertEquals(received, send); //Vérification de la similarité des tableaux
+		assertEquals(received.size(), send.size()); //Vérification de la taille
 	}
 
 }

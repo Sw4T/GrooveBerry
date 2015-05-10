@@ -16,15 +16,15 @@ import files.SystemVolumeController;
 
 public class Server implements Observer {
 
-	public static final int SERVER_PORT_SIMPLE = 12367; 
-	public static final int SERVER_PORT_OBJECT = 12368;
-	private static final int NB_MAX_CLIENTS = 5; //Nombre de clients support�s au maximum
+	public static final int SERVER_PORT_SIMPLE = 12347; //Port servant � l'�tablissement d'une connexion socket simple (envoi de primitifs)
+	public static final int SERVER_PORT_OBJECT = 12348; //Port servant � l'�tablissement d'une connexion socket objet (envoi de d'objets s�rialis�s)
+	private static final int NB_MAX_CLIENTS = 5; 
 	
-	private static volatile Server instanceServer;
+	private static volatile Server instanceServer; //Instance unique de la classe Server (pattern Singleton)
 	private volatile ReadingQueue readingQueue; //Liste de lecture
 	private volatile ArrayList<Client> listClients; //Liste de clients se connectant au serveur
-	public volatile static SystemVolumeController volControl;
-	private ServerSocket serverSocketSimple; //Classe gérant les connexions entrantes et l'envoi de chaines 
+	public volatile static SystemVolumeController volumeControl; //Classe g�rant le volume 
+	private ServerSocket serverSocketSimple; //Classe g�rant les connexions entrantes et l'envoi de chaines 
 	private ServerSocket serverSocketObject; //Classe g�rant l'envoi/r�ception d'objets plus lourds
 	private Client currentClient; //Pour effectuer les tests
 	
@@ -34,9 +34,11 @@ public class Server implements Observer {
 			serverSocketObject = new ServerSocket(SERVER_PORT_OBJECT);
 			listClients = new ArrayList<Client>(NB_MAX_CLIENTS);
 			readingQueue = new ReadingQueue();
-			volControl = new SystemVolumeController();
+			volumeControl = new SystemVolumeController();
+			initReadingQueue();
 		} catch (IOException e) {
 			e.printStackTrace();
+			System.exit(-1);
 		}
 	}
 	
@@ -58,7 +60,7 @@ public class Server implements Observer {
 			if (listClients.size() != NB_MAX_CLIENTS) 
 			{
 				Socket newSocketObject = serverSocketObject.accept();
-				System.out.println("Client " + newSocketSimple.getInetAddress() + " s'est connecte !");
+				System.out.println("SERVEUR : Client " + newSocketSimple.getInetAddress() + " s'est connecte !");
 				new Thread(new Authenticator(newSocketSimple, newSocketObject)).start();
 			} else {
 				newSocketSimple.close();
@@ -67,7 +69,7 @@ public class Server implements Observer {
 		}
 	}
 	
-	//Utilisation d'un nouveau thread pour permettre d'effectuer les tests en parallèle
+	//Utilisation d'un nouveau thread pour permettre d'effectuer les tests en parall�le
 	public void waitConnectionForTest() {
 		new Thread(new Runnable() {
 			@Override
@@ -98,6 +100,7 @@ public class Server implements Observer {
 		}
 	}
 
+	
 	public void updateClientList(Client newClient) {
 		//if (listClients.size() == 0)
 			listClients.add(newClient);
@@ -113,22 +116,22 @@ public class Server implements Observer {
 	
 	public void disconnectClient(Client client) {
 		if (listClients.contains(client)) {
-			System.out.println("Client existant " + client.getSocketSimple() + " déconnecté");
+			System.out.println("SERVEUR : Client existant " + client.getSocketSimple() + " d�connect�");
 			listClients.remove(client);
 		} else
 			System.out.println(client.getSocketSimple());
 	}
 	
-	public ArrayList<Client> getClients() {
+	public synchronized ArrayList<Client> getClients() {
 		return listClients;
 	}
 	
-	public ReadingQueue getReadingQueue() {
+	public synchronized ReadingQueue getReadingQueue() {
 		return readingQueue;
 	}
 	
 	public Integer getMasterVolume() {
-		return volControl.getVolumePercentage();
+		return volumeControl.getVolumePercentage();
 	}
 	
 	public Client getCurrentClient() {
