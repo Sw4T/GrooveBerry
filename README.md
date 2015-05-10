@@ -1,6 +1,6 @@
 # GrooveBerry
 
-Projet tuteuré 2015 : **Développement d'une application Android pilotant une station musicale sur système embarqué**
+##### **Développement d'une application Android pilotant une station musicale sur système embarqué**
 * * *
 **`Développeurs`**
 * Jonathan BELMADI
