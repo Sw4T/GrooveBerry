@@ -411,4 +411,5 @@ public class ReadingQueue implements Observer, Serializable {
 			}
 		}
 	}
+
 }

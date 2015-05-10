@@ -30,20 +30,20 @@ public class ClientTestMulti {
 			socketSimple = new Socket("localhost", Server.SERVER_PORT_SIMPLE);
 			socketFile = new Socket("localhost", Server.SERVER_PORT_OBJECT);
 			if (socketSimple.isConnected() && socketSimple.isBound()) {
-				System.out.println("CLIENT : Je me suis bien connecté au serveur !");
+				System.out.println("CLIENT : Je me suis bien connectï¿½ au serveur !");
 				objectOut = new ObjectOutputStream(socketSimple.getOutputStream());
 				objectIn = new ObjectInputStream(socketSimple.getInputStream());
-				System.out.println("Flux d'objets initialisé !");
+				System.out.println("Flux d'objets initialisï¿½ !");
 			} else {
-				System.out.println("CLIENT : Socket simple cliente non connectée");
+				System.out.println("CLIENT : Socket simple cliente non connectï¿½e");
 				System.exit(1);
 			}
 			
 			//Authentification cliente
 			String messageRecu = (String) objectIn.readObject();
 			if (messageRecu.equals("#AUTH")) {
-				objectOut.writeObject("mdp"); //Défini en dur dans auth.txt pour l'instant
-				System.out.println("Mot de passe envoyé !");
+				objectOut.writeObject("mdp"); //Dï¿½fini en dur dans auth.txt pour l'instant
+				System.out.println("Mot de passe envoyï¿½ !");
 			} else
 				System.out.println("Echec lors de la phase d'authentification ! Recu : " + messageRecu);
 			
@@ -52,7 +52,7 @@ public class ClientTestMulti {
 				fileOut = new ObjectOutputStream(socketFile.getOutputStream());
 				fileIn = new ObjectInputStream(socketFile.getInputStream());
 			} else {
-				System.out.println("CLIENT : Socket objet cliente non connectée");
+				System.out.println("CLIENT : Socket objet cliente non connectï¿½e");
 				System.exit(2);
 			}
 			
@@ -79,7 +79,7 @@ public class ClientTestMulti {
 				try {
 					entreeUser = scan.nextInt();
 					treatment = convertIntToMusicConst(entreeUser);
-					System.out.println("traitement envoyÃ© : " + treatment);
+					System.out.println("traitement envoyï¿½ : " + treatment);
 				} catch (InputMismatchException inputFail) {
 					treatment = "";
 				}
@@ -127,14 +127,14 @@ public class ClientTestMulti {
 				System.out.println("Current track : " + rq.getCurrentTrack().getName());	
 			} else if (prot == Protocol.MODIFY_VOLUME) {
 				Integer volume = (Integer) is.readObject();
-				System.out.println("Le volume a été modifié de " + volume + "%");
+				System.out.println("Le volume a ï¿½tï¿½ modifiï¿½ deï¿½" + volume + "%");
 			}
 			
 		}
 	}
 	
 	public static void downloadTest() throws IOException, ClassNotFoundException, InterruptedException {
-		System.out.println("Entrez le nom du fichier Ã  télécharger sur le serveur");
+		System.out.println("Entrez le nom du fichier Ã  tï¿½lï¿½charger sur le serveur");
 		String file = scannerDL.nextLine();
 		
 		objectOut.writeObject("download$" + file);

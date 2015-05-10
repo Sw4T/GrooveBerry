@@ -29,8 +29,7 @@ public class Authenticator implements Runnable {
 			try {
 				String passwordReceived = (String) buffer.readObject();
 				boolean passwordOK = authSystem.verifyPassword(passwordReceived);
-				System.out.println("SERVEUR : Mot de passe reçu du client " + socketSimple.getInetAddress().getHostAddress() + " : " + passwordReceived);
-				
+				System.out.println("SERVEUR : Mot de passe reï¿½u du client " + socketSimple.getInetAddress().getHostAddress() + " : " + passwordReceived);
 				Server server = Server.getInstance();
 				if (passwordOK) {
 					System.out.println("SERVEUR : Authentification OK...");
@@ -39,16 +38,16 @@ public class Authenticator implements Runnable {
 					
 					sendReadingQueueToRemote(newClient); 
 					server.updateClientList(newClient); 
-					new Thread(newClient).start(); //Démarrage du traitement client
+					new Thread(newClient).start(); //Dï¿½marrage du traitement client
 				} else
 					System.out.println("SERVEUR : Authentification FAILED...");
 			} catch (IOException e) {
 				e.printStackTrace();
-				System.out.println("Erreur lors de la réception du mot de passe venant du client !");
+				System.out.println("Erreur lors de la rï¿½ception du mot de passe venant du client !");
 			} catch (ClassNotFoundException e) {}
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("Erreur lors de la création de flux avec le client !");
+			System.out.println("Erreur lors de la crï¿½ation de flux avec le client !");
 		}
 	}
 	
