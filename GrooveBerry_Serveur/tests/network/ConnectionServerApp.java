@@ -64,12 +64,12 @@ public class ConnectionServerApp {
 	public void test_send_serializable_to_server() 
 	{
 		ArrayList<String> send = new ArrayList<String>();
-		send.add("jm pas");
-		send.add("les tests.");
+		send.add("Mr Leblanc rocks");
+		send.add("And Patrice Petit too");
 		assertEquals(client_app.sendSerializable(send), true);
 		ArrayList<String> received = (ArrayList<String>) client_server.readSerializable();
-		assertEquals(received, send); //V√©rification de la similarit√© des tableaux
-		assertEquals(received.size(), send.size()); //V√©rification de la taille
+		assertEquals(received, send); //VÈrification de la similaritÈ des tableaux
+		assertEquals(received.size(), send.size()); //VÈrification de la taille
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -77,19 +77,20 @@ public class ConnectionServerApp {
 	public void test_send_several_serializable_to_server() 
 	{
 		ArrayList<String> send = new ArrayList<String>();
-		send.add("jm pas");
-		send.add("les tests.");
+		send.add("Mr Leblanc rocks");
+		send.add("And Patrice Petit too");
 		assertEquals(client_app.sendSerializable(send), true); //Envoi effectu√© sans erreur
 		ArrayList<String> received = (ArrayList<String>) client_server.readSerializable();
-		assertEquals(received, send); //V√©rification de la similarit√© des tableaux
-		assertEquals(received.size(), send.size()); //V√©rification de la taille
+		assertEquals(received, send); //VÈrification de la similaritÈ des tableaux
+		assertEquals(received.size(), send.size()); //VÈrification de la taille
 		
-		send.add("pour de");
-		send.add("vrai");
+		send.add("1");
+		send.add("2");
+		send.add("3");
 		assertEquals(client_app.sendSerializable(send), true);
 		received = (ArrayList<String>) client_server.readSerializable();
-		assertEquals(received, send); //V√©rification de la similarit√© des tableaux
-		assertEquals(received.size(), send.size()); //V√©rification de la taille
+		assertEquals(received, send); //VÈrification de la similarit√© des tableaux
+		assertEquals(received.size(), send.size()); //VÈrification de la taille
 	}
 
 }
