@@ -3,85 +3,25 @@
   <noArtist>
     <track>
       <fileName>9.wav</fileName>
-      <path>C:\Users\Pierre\git\GrooveBerry_Main\GrooveBerry_Serveur\audio\9.wav</path>
-    </track>
-    <track>
-      <fileName>aol.wav</fileName>
-      <path>C:\Users\Pierre\git\GrooveBerry_Main\GrooveBerry_Serveur\audio\aol.wav</path>
-    </track>
-    <track>
-      <fileName>banane2.wav</fileName>
-      <path>C:\Users\Pierre\git\GrooveBerry_Main\GrooveBerry_Serveur\audio\banane2.wav</path>
-    </track>
-    <track>
-      <fileName>conneriesd1formaticiens.wav</fileName>
-      <path>C:\Users\Pierre\git\GrooveBerry_Main\GrooveBerry_Serveur\audio\conneriesd1formaticiens.wav</path>
-    </track>
-    <track>
-      <fileName>free.wav</fileName>
-      <path>C:\Users\Pierre\git\GrooveBerry_Main\GrooveBerry_Serveur\audio\free.wav</path>
-    </track>
-    <track>
-      <fileName>tennisc.wav</fileName>
-      <path>C:\Users\Pierre\git\GrooveBerry_Main\GrooveBerry_Serveur\audio\tennisc.wav</path>
+      <path>/home/nicolas/git/GrooveBerry/GrooveBerry_Serveur/audio/9.wav</path>
     </track>
     <track>
       <fileName>test.wav</fileName>
-      <path>C:\Users\Pierre\git\GrooveBerry_Main\GrooveBerry_Serveur\audio\test.wav</path>
+      <path>/home/nicolas/git/GrooveBerry/GrooveBerry_Serveur/audio/test.wav</path>
+    </track>
+    <track>
+      <fileName>aol.wav</fileName>
+      <path>/home/nicolas/git/GrooveBerry/GrooveBerry_Serveur/audio/aol.wav</path>
+    </track>
+    <track>
+      <fileName>test.wav</fileName>
+      <path>/home/nicolas/git/GrooveBerry/GrooveBerry_Serveur/audio/test.wav</path>
     </track>
   </noArtist>
-  <artist name="Manu Chao">
-    <album title="Clandestino">
-      <track title="Clandestino" year="1998">
-        <fileName>01 Clandestino.mp3</fileName>
-        <path>C:\Users\Pierre\git\GrooveBerry_Main\GrooveBerry_Serveur\audio\01 Clandestino.mp3</path>
-      </track>
-      <track title="Mentira..." year="1998">
-        <fileName>05 Mentira.mp3</fileName>
-        <path>C:\Users\Pierre\git\GrooveBerry_Main\GrooveBerry_Serveur\audio\05 Mentira.mp3</path>
-      </track>
-    </album>
-  </artist>
-  <artist name="Groundation">
-    <album title="A Miracle">
-      <track title="Defender of Beauty (feat Marcia Griffiths)" year="2014">
-        <fileName>02 - Defender of Beauty (feat Marcia Griffiths).mp3</fileName>
-        <path>C:\Users\Pierre\git\GrooveBerry_Main\GrooveBerry_Serveur\audio\02 - Defender of Beauty (feat Marcia Griffiths).mp3</path>
-      </track>
-      <track title="Born Again" year="2014">
-        <fileName>09 - Born Again.mp3</fileName>
-        <path>C:\Users\Pierre\git\GrooveBerry_Main\GrooveBerry_Serveur\audio\09 - Born Again.mp3</path>
-      </track>
-    </album>
-  </artist>
-  <artist name="Jimi Hendrix">
-    <album title="Experience Hendrix: The Best of Jimi Hendrix [Import Bonus CD] Disc 1">
-      <track title="Hey Joe" year="1998">
-        <fileName>04 Hey Joe.mp3</fileName>
-        <path>C:\Users\Pierre\git\GrooveBerry_Main\GrooveBerry_Serveur\audio\04 Hey Joe.mp3</path>
-      </track>
-      <track title="Little Wing" year="1998">
-        <fileName>09 Little Wing.mp3</fileName>
-        <path>C:\Users\Pierre\git\GrooveBerry_Main\GrooveBerry_Serveur\audio\09 Little Wing.mp3</path>
-      </track>
-      <track title="Bold as Love" year="1998">
-        <fileName>12 Bold as Love.mp3</fileName>
-        <path>C:\Users\Pierre\git\GrooveBerry_Main\GrooveBerry_Serveur\audio\12 Bold as Love.mp3</path>
-      </track>
-      <track title="Voodoo Child (Slight Return)" year="1998">
-        <fileName>15 Voodoo Child (Slight Return).mp3</fileName>
-        <path>C:\Users\Pierre\git\GrooveBerry_Main\GrooveBerry_Serveur\audio\15 Voodoo Child (Slight Return).mp3</path>
-      </track>
-      <track title="Freedom" year="1998">
-        <fileName>16 Freedom.mp3</fileName>
-        <path>C:\Users\Pierre\git\GrooveBerry_Main\GrooveBerry_Serveur\audio\16 Freedom.mp3</path>
-      </track>
-    </album>
-  </artist>
   <artist name="Bob Marley">
     <track title="Jammin">
       <fileName>Bob Marley - Jammin.mp3</fileName>
-      <path>C:\Users\Pierre\git\GrooveBerry_Main\GrooveBerry_Serveur\audio\Bob Marley - Jammin.mp3</path>
+      <path>/home/nicolas/git/GrooveBerry/GrooveBerry_Serveur/audio/Bob Marley - Jammin.mp3</path>
     </track>
   </artist>
 </library>

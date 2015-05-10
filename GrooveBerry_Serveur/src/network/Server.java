@@ -35,7 +35,6 @@ public class Server implements Observer {
 			listClients = new ArrayList<Client>(NB_MAX_CLIENTS);
 			readingQueue = new ReadingQueue();
 			volumeControl = new SystemVolumeController();
-			initReadingQueue();
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(-1);
