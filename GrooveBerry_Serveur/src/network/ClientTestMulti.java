@@ -1,10 +1,8 @@
 package network;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -32,19 +30,20 @@ public class ClientTestMulti {
 			socketSimple = new Socket("localhost", Server.SERVER_PORT_SIMPLE);
 			socketFile = new Socket("localhost", Server.SERVER_PORT_OBJECT);
 			if (socketSimple.isConnected() && socketSimple.isBound()) {
-				System.out.println("Client : Je me suis bien connectÃ© au serveur ! youhou!");
+				System.out.println("CLIENT : Je me suis bien connecté au serveur !");
 				objectOut = new ObjectOutputStream(socketSimple.getOutputStream());
 				objectIn = new ObjectInputStream(socketSimple.getInputStream());
-				System.out.println("Flux d'objets initialisï¿½ !");
-			} else 
-				System.out.println("CLIENT : Socket simple cliente HS");
+				System.out.println("Flux d'objets initialisé !");
+			} else {
+				System.out.println("CLIENT : Socket simple cliente non connectée");
+				System.exit(1);
+			}
 			
-			
-			//Authentification client
+			//Authentification cliente
 			String messageRecu = (String) objectIn.readObject();
 			if (messageRecu.equals("#AUTH")) {
-				objectOut.writeObject("mdp");
-				System.out.println("Mot de passe envoyï¿½ !");
+				objectOut.writeObject("mdp"); //Défini en dur dans auth.txt pour l'instant
+				System.out.println("Mot de passe envoyé !");
 			} else
 				System.out.println("Echec lors de la phase d'authentification ! Recu : " + messageRecu);
 			
@@ -52,10 +51,13 @@ public class ClientTestMulti {
 			if (socketFile.isConnected() && socketFile.isBound()) {
 				fileOut = new ObjectOutputStream(socketFile.getOutputStream());
 				fileIn = new ObjectInputStream(socketFile.getInputStream());
-			} else
-				System.out.println("CLIENT : Socket objet cliente HS");
+			} else {
+				System.out.println("CLIENT : Socket objet cliente non connectée");
+				System.exit(2);
+			}
 			
 			messageRecu = (String) objectIn.readObject();
+			
 			//Reception du fil de lecture depuis le serveur
 			if (messageRecu.equals("#RQ")) {
 				objectOut.writeObject("#OK");
@@ -63,8 +65,10 @@ public class ClientTestMulti {
 				listReading = (ReadingQueue) objectIn.readObject();
 				if (listReading != null)
 					showReadingQueue(listReading);
-			} else
+			} else {
 				System.out.println("Erreurs de synchronisation serveur ! Recu : " + messageRecu);
+				System.exit(3);
+			}
 
 			threadReceive(objectIn);
 			
@@ -123,14 +127,14 @@ public class ClientTestMulti {
 				System.out.println("Current track : " + rq.getCurrentTrack().getName());	
 			} else if (prot == Protocol.MODIFY_VOLUME) {
 				Integer volume = (Integer) is.readObject();
-				System.out.println("Le volume a Ã©tÃ© modifiÃ© Ã  " + volume + "%");
+				System.out.println("Le volume a été modifié de " + volume + "%");
 			}
 			
 		}
 	}
 	
-	public static void download() throws IOException, ClassNotFoundException, InterruptedException {
-		System.out.println("Entrez le nom du fichier Ã  tÃ©lÃ©charger sur le serveur");
+	public static void downloadTest() throws IOException, ClassNotFoundException, InterruptedException {
+		System.out.println("Entrez le nom du fichier Ã  télécharger sur le serveur");
 		String file = scannerDL.nextLine();
 		
 		objectOut.writeObject("download$" + file);
@@ -139,7 +143,7 @@ public class ClientTestMulti {
 		new Thread(new FileDownload(fileIn)).start();
 	}
 	
-	public static void upload() throws IOException, ClassNotFoundException, InterruptedException {
+	public static void uploadTest() throws IOException, ClassNotFoundException, InterruptedException {
 		System.out.println("Entrez le nom du fichier Ã  mettre sur le serveur");
 		String file = scannerDL.nextLine();
 		
@@ -165,8 +169,8 @@ public class ClientTestMulti {
 			case 10 : toReturn = "random"; break;
 			case 11 : toReturn = "+"; break;
 			case 12 : toReturn = "-"; break;
-			case 13 : download(); break;
-			case 14 : upload(); break;
+			case 13 : downloadTest(); break;
+			case 14 : uploadTest(); break;
 			default : toReturn = "";
 		}
 		return toReturn;

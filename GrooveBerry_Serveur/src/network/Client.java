@@ -61,7 +61,6 @@ public class Client implements Runnable {
 	public void run() {
 		while (connect.get()) { //Tant que la connexion est active
 			try {
-				
 				Object obj = in.readObject();
 				Protocol protocolUsed = execute(obj);
 				Object [] toSend = new Object[2]; //Objets allant être envoyé aux clients
