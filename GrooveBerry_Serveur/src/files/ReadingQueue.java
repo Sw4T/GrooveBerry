@@ -3,6 +3,8 @@ package files;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Random;
 
 import network.Server;
@@ -22,7 +24,7 @@ import protocol.NotifierReadingQueue;
  * @version 1.0
  */
 
-public class ReadingQueue implements AudioListener, Serializable {
+public class ReadingQueue implements Observer, Serializable {
 	private static final long serialVersionUID = -1233259350112363601L;
 	
 	private	AudioFile currentTrack;
@@ -49,7 +51,7 @@ public class ReadingQueue implements AudioListener, Serializable {
 		this.queue.add(track);
 		
 		this.currentTrack = track;
-		this.currentTrack.addListener(this);
+		this.currentTrack.addObserver(this);
 		this.currentTrackIndex = 0;
 	}
 	
@@ -94,7 +96,8 @@ public class ReadingQueue implements AudioListener, Serializable {
 		if (this.isEmpty()) {
 			this.currentTrack = track;
 			this.currentTrackIndex = 0;
-			this.currentTrack.addListener(this);
+			this.currentTrack.deleteObserver(this);
+			this.currentTrack.addObserver(this);
 		}
 		this.queue.add(track);
 	}
@@ -112,7 +115,8 @@ public class ReadingQueue implements AudioListener, Serializable {
 		if (this.isEmpty()) {
 			this.currentTrack = track;
 			this.currentTrackIndex = 0;
-			this.currentTrack.addListener(this);
+			this.currentTrack.deleteObserver(this);
+			this.currentTrack.addObserver(this);
 		}
 		if (index <= this.currentTrackIndex && !this.isEmpty()) {
 			this.currentTrackIndex++;
@@ -251,7 +255,8 @@ public class ReadingQueue implements AudioListener, Serializable {
 		this.currentTrackIndex = index;
 		this.currentTrack.stop();
 		this.currentTrack = this.queue.get(index);
-		this.currentTrack.addListener(this);
+		this.currentTrack.deleteObserver(this);
+		this.currentTrack.addObserver(this);
 	}
 	
 	/**
@@ -302,7 +307,8 @@ public class ReadingQueue implements AudioListener, Serializable {
 		}
 		this.currentTrack = this.queue.get(shiftInt);
 		this.currentTrackIndex = shiftInt;
-		this.currentTrack.addListener(this);
+		this.currentTrack.deleteObserver(this);
+		this.currentTrack.addObserver(this);
 	}
 	
 	/**
@@ -343,7 +349,6 @@ public class ReadingQueue implements AudioListener, Serializable {
 	 * Evenement qui survient à la fin de la lecture d'un morceau dans
 	 * le fil de lecture.
 	 */
-	@Override
 	public void endOfPlay() {
 		
 		int trackIndex = getCurrentTrackPosition();
@@ -362,7 +367,6 @@ public class ReadingQueue implements AudioListener, Serializable {
 	 * Evenement qui survient à la mise sur stop d'un morceau dans
 	 * le fil de lecture.
 	 */
-	@Override
 	public void stopOfPlay() {
 		
 	}
@@ -395,6 +399,17 @@ public class ReadingQueue implements AudioListener, Serializable {
 			looped = track.isLooping();
 			played = track.isPlaying();
 			paused = track.isPaused();
+		}
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (o instanceof AudioFile) {
+			String state = (String) arg;
+			switch (state) {
+				case "EndOfPlay" : endOfPlay(); break;
+				case "StopOfPlay" : stopOfPlay(); break;
+			}
 		}
 	}
 }
