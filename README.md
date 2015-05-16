@@ -46,10 +46,10 @@ __Configuration du projet__
 * Récupérer le projet `GrooveBerry_Client` via le répertoire git 
 * Importer la bibliothèque `Android Support v7 appcompat` via "Import -> Android -> Existing Code" se situant dans le dossier `RACINE_INSTALLATION/android-sdks/extras/android/support/v7`
 * Aller dans les propriétés du projet, vérifier que l'API que vous avez installé est bien la cible du projet sous "Android -> Project Build Target", ajouter la librarie `appcompat-v7` dans l'onglet "Library"
-* Si des il y a des erreurs, vérifier dans les propriétés du projet appcompat-v7 que la case 'Library' est bien cochée dans l'onglet "Android"
+* Si il y a des erreurs, vérifier dans les propriétés du projet appcompat-v7 que la case 'Library' est bien cochée dans l'onglet "Android"
 
 `Lancement de l'application`
 
-* Créer une nouvelle configuration Android pour pouvoir lancer le projet (via "Default Activity")
+* Créer une nouvelle configuration Android pour pouvoir lancer le projet (via "Default Activity") sur un appareil Android (virtuel ou non)
 * Une fois l'application et le `Main` du serveur lancé, se connecter via le bouton des options (par défaut en haut à droite) et entrer l'adresse IP de la machine ou tourne le serveur
 * Vous pouvez maintenant piloté la musique à distance !
