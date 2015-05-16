@@ -2,16 +2,13 @@ package com.example.grooveberry;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.InetAddress;
 import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -378,34 +375,21 @@ public class PlayActivity extends ActionBarActivity implements OnClickListener {
 	@SuppressLint("NewApi")
 	public void onClick(View view) {
 
-		switch (view.getId()) {
-		case R.id.playButton:
+		int id = view.getId();
+		if (id == R.id.playButton) {
 			action_play();
-			break;
-
-		case R.id.nextButton:
+		} else if (id == R.id.nextButton) {
 			this.music_player_actions("next");
-			break;
-
-		case R.id.previousButton:
+		} else if (id == R.id.previousButton) {
 			this.music_player_actions("prev");
-			break;
-
-		case R.id.btnRepeat:
+		} else if (id == R.id.btnRepeat) {
 			this.music_player_actions("loop");
-			break;
-
-		case R.id.btnShuffle:
+		} else if (id == R.id.btnShuffle) {
 			this.music_player_actions("random");
-			break;
-
-		case R.id.upload_button:
+		} else if (id == R.id.upload_button) {
 			action_upload();
-			break;
-
-		case R.id.download_button:
+		} else if (id == R.id.download_button) {
 			action_download();
-			break;
 		}
 
 	}

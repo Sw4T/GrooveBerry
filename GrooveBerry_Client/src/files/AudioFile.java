@@ -2,17 +2,6 @@ package files;
 
 import java.io.File;
 import java.io.Serializable;
-<<<<<<< HEAD:GrooveBerry_Client/src/files/AudioFile.java
-<<<<<<< HEAD:GrooveBerry_Client/src/files/AudioFile.java
-<<<<<<< HEAD:GrooveBerry_Serveur/src/files/AudioFile.java
-import java.util.Observable;
-=======
->>>>>>> origin/clientDev:GrooveBerry_Client/src/files/AudioFile.java
-=======
-import java.util.Observable;
->>>>>>> origin/serverDev:GrooveBerry_Serveur/src/files/AudioFile.java
-=======
->>>>>>> origin/clientDev:GrooveBerry_Client/src/files/AudioFile.java
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -20,21 +9,8 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
 
-<<<<<<< HEAD:GrooveBerry_Client/src/files/AudioFile.java
-<<<<<<< HEAD:GrooveBerry_Client/src/files/AudioFile.java
-<<<<<<< HEAD:GrooveBerry_Serveur/src/files/AudioFile.java
-public class AudioFile extends Observable implements Runnable, Serializable
-=======
 
 public class AudioFile implements Runnable, Serializable
->>>>>>> origin/clientDev:GrooveBerry_Client/src/files/AudioFile.java
-=======
-public class AudioFile extends Observable implements Runnable, Serializable
->>>>>>> origin/serverDev:GrooveBerry_Serveur/src/files/AudioFile.java
-=======
-
-public class AudioFile implements Runnable, Serializable
->>>>>>> origin/clientDev:GrooveBerry_Client/src/files/AudioFile.java
 {
 
 	private static final long serialVersionUID = -726613633651477466L;
@@ -42,6 +18,7 @@ public class AudioFile implements Runnable, Serializable
 	private boolean running, mute, pause, loop, restart;
 	private final int byteChunkSize = 4096;//number of bytes to read at one time
 	private byte[] muteData;
+	private AudioListener listenerEvent;
 	private boolean isStopped;
 	//private FloatControl volume;
 
@@ -63,6 +40,19 @@ public class AudioFile implements Runnable, Serializable
 		this();
 		loadFile(filePath);
 	}
+	/*
+	public void volumeUp(){
+		if(volume.getValue()+10 < volume.getMaximum()){
+			volume.setValue(+10.0f);
+		}
+	}
+	
+	public void volumeDown(){
+		if(volume.getValue()-10 > volume.getMinimum()){
+			volume.setValue(-10.0f);
+		}
+	}
+	*/
 	/**
 	* Creates a file object. If the file path exists on the system, the given file is an mp3, and
 	* a song is not currently playing in this instance of the program, true is returned.
@@ -99,6 +89,18 @@ public class AudioFile implements Runnable, Serializable
 	}
 	
 	/**
+	 * Ajoute un listener au fichier audio
+	 * @param listener
+	 */
+	public void addListener(AudioListener listener) {
+	 	this.listenerEvent = listener;
+	}
+	
+	public void removeListener() {
+		this.listenerEvent = null;
+	}
+	
+	/**
 	* Pauses the audio at its current place. Calling this method once pauses the audio stream, calling it
 	* again unpauses the audio stream.
 	*/
@@ -121,8 +123,8 @@ public class AudioFile implements Runnable, Serializable
 		if (file != null) {
 			running = false;
 			isStopped = true;
-			setChanged();
-			notifyObservers("StopOfPlay");
+			if (this.listenerEvent != null)
+				this.listenerEvent.stopOfPlay();
 		}
 	}
 	
@@ -177,7 +179,7 @@ public class AudioFile implements Runnable, Serializable
 	public boolean isMuted() {
 		return mute;
 	}
-
+	
 	/**
 	* Returns if the audio is paused or not.
 	* @return Status of pause variable.
@@ -228,21 +230,11 @@ public class AudioFile implements Runnable, Serializable
 				restart = false;
 				AudioInputStream in = AudioSystem.getAudioInputStream(file);
 				AudioInputStream din = null;
-<<<<<<< HEAD:GrooveBerry_Client/src/files/AudioFile.java
-<<<<<<< HEAD:GrooveBerry_Serveur/src/files/AudioFile.java
-				AudioFormat baseFormat = in.getFormat();
-<<<<<<< HEAD:GrooveBerry_Client/src/files/AudioFile.java
-=======
-=======
->>>>>>> origin/clientDev:GrooveBerry_Client/src/files/AudioFile.java
 				javax.sound.sampled.AudioFormat baseFormat = in.getFormat();
 				/*this.volume = (FloatControl) this.getLine(baseFormat).getControl(FloatControl.Type.MASTER_GAIN);
 				if(this.volume != null){
 					this.volume.setValue(0);
 				}*/
->>>>>>> origin/clientDev:GrooveBerry_Client/src/files/AudioFile.java
-=======
->>>>>>> origin/serverDev:GrooveBerry_Serveur/src/files/AudioFile.java
 				AudioFormat decodedFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
 															baseFormat.getSampleRate(),
 															16,
@@ -255,10 +247,8 @@ public class AudioFile implements Runnable, Serializable
 				in.close();
 			} while((loop || restart) && running);
 			running = false;
-			if (!isStopped) {
-				setChanged();
-				notifyObservers("EndOfPlay");
-			}
+			if (this.listenerEvent != null && !isStopped)
+				this.listenerEvent.endOfPlay();
 			isStopped = false;
 		} catch(Exception e) {
 			System.err.println("Problem getting audio stream!");
@@ -349,17 +339,8 @@ public class AudioFile implements Runnable, Serializable
 		}
 		return x;
 	}
-<<<<<<< HEAD:GrooveBerry_Client/src/files/AudioFile.java
-<<<<<<< HEAD:GrooveBerry_Serveur/src/files/AudioFile.java
-=======
 
 	/*public FloatControl getVolume() {
 		return this.volume;
 	}*/
-<<<<<<< HEAD:GrooveBerry_Client/src/files/AudioFile.java
->>>>>>> origin/clientDev:GrooveBerry_Client/src/files/AudioFile.java
-=======
->>>>>>> origin/serverDev:GrooveBerry_Serveur/src/files/AudioFile.java
-=======
->>>>>>> origin/clientDev:GrooveBerry_Client/src/files/AudioFile.java
 }
